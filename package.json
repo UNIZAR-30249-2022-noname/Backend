@@ -1,0 +1,16 @@
+{
+  "name": "prueba-rabbit",
+  "version": "1.0.0",
+  "description": "",
+  "main": "send.js",
+  "scripts": {
+    "client": "node src/rpc_client.js",
+    "server": "node src/rpc_server.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "amqplib": "^0.8.0"
+  }
+}
