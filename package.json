@@ -4,13 +4,18 @@
   "description": "",
   "main": "send.js",
   "scripts": {
-    "client": "node src/rpc_client.js",
-    "server": "node src/rpc_server.js"
+    "client": "node src/rpc_cliente.js",
+    "server": "node build/rpc_servidor.js",
+    "build": "tsc -p ."
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
     "amqplib": "^0.8.0"
+  },
+  "devDependencies": {
+    "@types/node": "^17.0.21",
+    "typescript": "^4.6.2"
   }
 }

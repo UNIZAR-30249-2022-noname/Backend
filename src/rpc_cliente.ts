@@ -8,17 +8,17 @@ if (args.length == 0) {
   process.exit(1);
 }
 
-amqp.connect(amqpURL, function(error0, connection) {
+amqp.connect(amqpURL, function(error0: any, connection: any) {
   if (error0) {
     throw error0;
   }
-  connection.createChannel(function(error1, channel) {
+  connection.createChannel(function(error1: any, channel: any) {
     if (error1) {
       throw error1;
     }
     channel.assertQueue('', {
       exclusive: true
-    }, function(error2, q) {
+    }, function(error2: any, q: any) {
       if (error2) {
         throw error2;
       }
@@ -27,7 +27,7 @@ amqp.connect(amqpURL, function(error0, connection) {
 
       console.log(' [x] Requesting msg(%s)', mensaje);
 
-      channel.consume(q.queue, function(msg) {
+      channel.consume(q.queue, function(msg: any) {
         if (msg.properties.correlationId == correlationId) {
           console.log(' [.] Got %s', msg.content.toString());
           setTimeout(function() {
