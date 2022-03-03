@@ -47,7 +47,7 @@ amqp.connect(amqpURL, function(error0: any, connection: any) {
   });
 });
 
-function generateUuid() {
+function generateUuid(): String {
   return Math.random().toString() +
          Math.random().toString() +
          Math.random().toString();

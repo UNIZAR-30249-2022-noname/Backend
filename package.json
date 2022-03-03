@@ -4,7 +4,7 @@
   "description": "",
   "main": "send.js",
   "scripts": {
-    "client": "node src/rpc_cliente.js",
+    "client": "node build/rpc_cliente.js",
     "server": "node build/rpc_servidor.js",
     "build": "tsc -p ."
   },
