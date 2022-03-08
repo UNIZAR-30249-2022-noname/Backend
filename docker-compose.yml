@@ -1,0 +1,16 @@
+version: "3.9"
+
+services:
+  backend:
+    image: mysql:5.7
+    container_name: horarios_db
+    environment:
+      MYSQL_ROOT_PASSWORD: toor
+      MYSQL_DATABASE: app_db
+      MYSQL_USER: user
+      MYSQL_PASSWORD: user
+    ports:
+      - "6095:3306"
+    volumes:
+      - dbdata:/var/lib/mysql
+      - ./dump:/docker-entrypoint-initdb.d
