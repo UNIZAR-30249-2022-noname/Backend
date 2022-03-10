@@ -33,6 +33,6 @@ amqp.connect(amqpURL, function(error0: any, connection: any) {
   });
 });
 
-function procesarSolicitud(mensajeRecibido: any) {
+export function procesarSolicitud(mensajeRecibido: any) {
   return "Solicitud procesada: " +  mensajeRecibido;
 }
