@@ -1,4 +1,6 @@
 "use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.procesarSolicitud = void 0;
 var amqp = require('amqplib/callback_api');
 var amqpURL = "amqps://draayoqu:7lDJ4nHZhhKGUn2lQCvw8XE4VNuVxMvD@rat.rmq2.cloudamqp.com/draayoqu";
 amqp.connect(amqpURL, function (error0, connection) {
@@ -29,3 +31,4 @@ amqp.connect(amqpURL, function (error0, connection) {
 function procesarSolicitud(mensajeRecibido) {
     return "Solicitud procesada: " + mensajeRecibido;
 }
+exports.procesarSolicitud = procesarSolicitud;
