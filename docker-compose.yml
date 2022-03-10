@@ -2,7 +2,7 @@ version: "3.9"
 
 services:
   backend:
-    image: 1209200064/backend:1.0
+    image: 1209200064/backend:latest
     container_name: backend_lis
     ports:
       - "2750:2750"
