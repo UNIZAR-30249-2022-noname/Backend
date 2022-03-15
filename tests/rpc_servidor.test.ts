@@ -1,4 +1,4 @@
-import { procesarSolicitud } from "../src/rpc_servidor";
+import { procesarSolicitud } from "../src/Infraestructure/Adapters/rpc_servidor";
 
 describe("test procesarSolicitud function", () => {
     it("should return 'Solicitud procesada: hola' for procesarSolicitud(hola)", () => {

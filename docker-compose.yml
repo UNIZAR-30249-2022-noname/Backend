@@ -1,8 +1,53 @@
 version: "3.9"
 
 services:
+  geoserver:
+    image: kartoza/geoserver:2.16.2
+    depends_on:
+      - postgis
+    ports:
+      - "8081:8080"
+    environment:    
+      - "SAMPLE_DATA=true"
+    volumes:
+      - geoserverdata:/opt/geoserver/data_dir
+  postgis:
+    image: kartoza/postgis:9.6-2.4
+    ports:
+      - "25432:5432"
+    environment:
+      - "POSTGRES_USER=proyecto"
+      - "POSTGRES_PASS=proyectovm"
+      - "POSTGRES_DBNAME=proyectodb"
+      - "DEFAULT_ENCODING=UTF8"
+    volumes:
+      - dbdata:/var/lib/postgresql 
+  gateway:
+    image: arejula27/calendarunizar
+    ports:
+      - "8080:8080"
+  client:
+    image: arejula27/calendarwebclientunizar
+    ports:
+      - "3000:3000"
+    #environment:
+     # - "REACT_APP_GATEWAY=gateway"
   backend:
     image: 1209200064/backend:latest
     container_name: backend_lis
     ports:
       - "2750:2750"
+  pgadmin:
+    image: dpage/pgadmin4
+    ports:
+      - "9090:80"
+    environment:
+      - "PGADMIN_DEFAULT_EMAIL=user@example.com"
+      - 'PGADMIN_DEFAULT_PASSWORD=user'
+    depends_on:
+      - "postgis"       
+volumes:
+    geoserverdata:
+        external: true
+    dbdata:
+        external: true    
