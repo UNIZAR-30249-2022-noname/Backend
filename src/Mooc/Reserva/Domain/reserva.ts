@@ -1,14 +1,20 @@
 import {DatosReserva} from './datosreserva'
+import { 
+    BaseDomainEntity, 
+    Entity, 
+    UniqueEntityID, 
+    Result
+  } from 'types-ddd';
 
-export class Reserva {
+interface ReservaProps extends BaseDomainEntity {
+    datosreserva: DatosReserva;
+}
 
-    private readonly id: string;
-    public datosReserva: DatosReserva;
+export class Reserva extends Entity<ReservaProps> {
+
     //public readonly espacio: Espacio; falta crear esta entidad del Dominio
 
-    constructor({id,datosReserva}: {id: string,datosReserva: DatosReserva}) {
-        this.id = id;
-        //this.espacio = espacio;
-        this.datosReserva = datosReserva;
+    constructor(props: ReservaProps) {
+        super(props,Reserva.name);
     }
 }

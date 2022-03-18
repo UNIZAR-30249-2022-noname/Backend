@@ -1,15 +1,16 @@
-interface DatosReservaProps{
+import { ValueObject } from "types-ddd";
+
+export interface DatosReservaProps{
     readonly fecha: Date;
     readonly horaInicio: string;
     readonly horaFin: string;
 }
 
-export class DatosReserva {
+export class DatosReserva extends ValueObject<DatosReservaProps> {
 
-    private DatosReserva: DatosReservaProps;
 
     private constructor(propsReserva: DatosReservaProps){   
-        this.DatosReserva = propsReserva;
+        super(propsReserva);
     }
     /**
      * Forzamos una validación contra la lógica de dominio utilizando un constructor

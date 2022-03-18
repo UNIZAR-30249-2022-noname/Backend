@@ -2,7 +2,7 @@
  debe ser a traves del gateway usando las colas de rabbit.*/
 import express from "express";
 import {Request, Response } from "express";
-
+import "reflect-metadata";
 
 // Create Express server
 const app = express();
