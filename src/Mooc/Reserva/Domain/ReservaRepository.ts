@@ -1,5 +1,5 @@
-import { Reserva } from "./reserva";
+import { Reserva } from "./Entities/reserva";
 
 export interface ReservaRepository {
-    guardar(reserva: Reserva): Promise<void>;
+    guardar(reserva: Reserva): Promise<boolean>;
 }

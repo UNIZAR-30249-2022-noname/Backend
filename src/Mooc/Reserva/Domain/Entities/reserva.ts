@@ -1,5 +1,5 @@
 import {DatosReserva,DatosReservaProps} from './datosreserva'
-import {Espacio} from '../../Espacio/Domain/espacio'
+import {Espacio} from '../../../Espacio/Domain/espacio'
 import { 
     BaseDomainEntity, 
     Entity, 
@@ -8,9 +8,9 @@ import {
     DomainId
   } from 'types-ddd';
 
-interface ReservaProps extends BaseDomainEntity {
+export interface ReservaProps extends BaseDomainEntity {
     Datosreserva: DatosReserva;
-    IDEspacio: DomainId;
+    Espacio: Espacio;
 }
 
 export class Reserva extends Entity<ReservaProps> {

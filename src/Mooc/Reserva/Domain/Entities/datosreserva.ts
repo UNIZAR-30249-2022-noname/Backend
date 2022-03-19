@@ -20,7 +20,7 @@ export class DatosReserva extends ValueObject<DatosReservaProps> {
      * @param props datos de una reserva
      * @returns Crea una reserva si se cumple con la "PoliticaReserva", sino lanza un error.
      */
-    public static createDatosReserva(props: DatosReservaProps): DatosReserva | Error {
+    public static createDatosReserva(props: DatosReservaProps): DatosReserva{
         if(PoliticaReserva.seCumple(props)){ //Si se cumple la política se crea el objeto datosRserva
             return new DatosReserva(props)
         }
