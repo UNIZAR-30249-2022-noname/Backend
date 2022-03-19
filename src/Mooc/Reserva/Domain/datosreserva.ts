@@ -1,4 +1,5 @@
 import { ValueObject } from "types-ddd";
+import { PoliticaReserva } from "./politica_reserva";
 
 export interface DatosReservaProps{
     readonly fecha: Date;
@@ -17,15 +18,19 @@ export class DatosReserva extends ValueObject<DatosReservaProps> {
      * privado. Se debe llamar a este método que comprobara la lógica de dominio.
      * 
      * @param props datos de una reserva
-     * @returns Crea una reserva si se cumple con la "politicaReserva", sino lanza un error.
+     * @returns Crea una reserva si se cumple con la "PoliticaReserva", sino lanza un error.
      */
-    public static createDatosReserva(props: DatosReservaProps) {
-        //if(politicaReserva.seCumple(props)){ Definir la política de reserva que sea.
+    public static createDatosReserva(props: DatosReservaProps): DatosReserva | Error {
+        if(PoliticaReserva.seCumple(props)){ //Si se cumple la política se crea el objeto datosRserva
             return new DatosReserva(props)
-        //}
-        //else{
-        //    throw new Error("Error al crear la reserva por lo que sea")
-        //}
+        }
+        else{
+           throw new Error("Error al crear la reserva.")
+        }
           
-      }
+    }
+
+    public getProps(): DatosReservaProps {
+        return this.props
+    }
 }

@@ -1,20 +1,26 @@
-import {DatosReserva} from './datosreserva'
+import {DatosReserva,DatosReservaProps} from './datosreserva'
+import {Espacio} from '../../Espacio/Domain/espacio'
 import { 
     BaseDomainEntity, 
     Entity, 
     UniqueEntityID, 
-    Result
+    Result,
+    DomainId
   } from 'types-ddd';
 
 interface ReservaProps extends BaseDomainEntity {
-    datosreserva: DatosReserva;
+    Datosreserva: DatosReserva;
+    IDEspacio: DomainId;
 }
 
 export class Reserva extends Entity<ReservaProps> {
 
-    //public readonly espacio: Espacio; falta crear esta entidad del Dominio
-
     constructor(props: ReservaProps) {
         super(props,Reserva.name);
+    }
+    
+    public getDatosReservaProps(): DatosReservaProps {
+        const propsReserva: DatosReservaProps = this.props.Datosreserva.getProps();
+        return propsReserva;
     }
 }
