@@ -4,11 +4,11 @@ import {Espacio} from '../../../Espacio/Domain/espacio'
 import { ReservaRepository } from '../../Domain/ReservaRepository';
 import { ShortDomainId } from 'types-ddd';
 
-interface servicioReserva {
+export interface servicioReserva {
     guardarReserva(datosreserva: DatosReservaProps, espacio: Espacio): Promise<boolean>;
 }
 
-class servicioReservaImpl implements servicioReserva  {
+export class servicioReservaImpl implements servicioReserva  {
 
     constructor(private readonly Reservarepository: ReservaRepository){}
     

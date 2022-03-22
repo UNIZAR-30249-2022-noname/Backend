@@ -3,7 +3,7 @@ import { ReservaRepository } from "../Domain/ReservaRepository";
 import {poolConn} from '../../../Infraestructure/Adapters/pg-connection'
 import {ReservaQueries} from './ReservaQueries'
 
-export default class ReservaRepoImpl implements ReservaRepository { 
+export class ReservaRepoPGImpl implements ReservaRepository { 
     async guardar(reserva: Reserva): Promise<boolean> {
         var client = await poolConn.connect();
         const datosReserva = reserva.getDatosReservaProps();
