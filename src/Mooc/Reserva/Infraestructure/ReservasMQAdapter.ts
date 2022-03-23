@@ -3,7 +3,12 @@ import client, {Channel,Connection,ConsumeMessage} from 'amqplib'
 import { RabbitMQConfig } from '../../../Configuration/RabbitMQConfig';
 import {servicioReserva,servicioReservaImpl} from '../Application/usecase/guardarReservaUseCase'
 import {ReservaRepoPGImpl} from './ReservaRepoImpl'
-import { Client } from 'pg';
+import {DatosReservaProps} from '../Domain/Entities/datosreserva'
+import {Espacio} from '../../Espacio/Domain/espacio'
+import { DomainId, ShortDomainId } from 'types-ddd';
+
+import * as crypto from "crypto";
+
 
 class ReservasMQAdapter extends RabbitMQAdapter {
     
@@ -22,13 +27,21 @@ class ReservasMQAdapter extends RabbitMQAdapter {
 
         console.log(' [x] Awaiting RPC requests');
         const channel: client.Channel = await this.setupChannelAdapter();
-        channel.consume(this.mqConfig.RequestQueueName, (msg: ConsumeMessage | null) => {
+        channel.consume(this.mqConfig.RequestQueueName, async (msg: ConsumeMessage | null) => {
             if(msg){
               let mensajeRecibido: String = msg.content.toString();
               console.log(" [.] procesarSolicitud(%s)", mensajeRecibido);
-              //let resultadoOperacion = await this.servicioReservas.guardarReserva()
+              const reservaprops: DatosReservaProps = {
+                fecha: new Date(),
+                horaInicio: '10:00',
+                horaFin: '12:00'
+              }
+              let id: ShortDomainId = ShortDomainId.create(crypto.randomBytes(64).toString('hex'))
+              const espacio: Espacio = new Espacio({ID: id, Name: "hola", Capacity: 15, Building: "Ada", Kind: "Sanidad"})
+              let resultadoOperacion = await this.servicioReservas.guardarReserva(reservaprops,espacio)
+              console.log(resultadoOperacion)
               channel.sendToQueue(msg.properties.replyTo,
-                Buffer.from(mensajeRecibido.toString()), {
+                Buffer.from(msg.toString()), {
                   correlationId: '1234',
                 });
                channel.ack(msg)

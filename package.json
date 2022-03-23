@@ -5,7 +5,7 @@
   "main": "send.js",
   "scripts": {
     "client": "node build/rpc_cliente.js",
-    "server": "node build/Infraestructure/Adapters/rpc_servidor.js",
+    "server": "node build/Mooc/Reserva/Infraestructure/ReservasMQAdapter",
     "test": "jest --forceExit --coverage tests/",
     "dev": "ts-node-dev src/server.ts",
     "build": "tsc -p ."
@@ -15,10 +15,12 @@
   "license": "ISC",
   "dependencies": {
     "@types/amqplib": "^0.8.2",
+    "@types/crypto-js": "^4.1.1",
     "@types/pg": "^8.6.5",
     "amqplib": "^0.8.0",
+    "crypto-js": "^4.1.1",
     "express": "^4.17.3",
-    "pg": "^8.7.3",
+    "pg": "^8.6.0",
     "reflect-metadata": "^0.1.13",
     "ts-node-dev": "^1.1.8",
     "typeorm": "^0.3.0",
