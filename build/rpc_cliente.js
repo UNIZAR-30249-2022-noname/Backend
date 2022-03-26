@@ -24,6 +24,7 @@ amqp.connect(amqpURL, function (error0, connection) {
             var mensaje = args[0];
             console.log(' [x] Requesting msg(%s)', mensaje);
             channel.consume(q.queue, function (msg) {
+                console.log(msg.properties);
                 if (msg.properties.correlationId == correlationId) {
                     console.log(' [.] Got %s', msg.content.toString());
                     setTimeout(function () {
@@ -36,13 +37,12 @@ amqp.connect(amqpURL, function (error0, connection) {
             });
             channel.sendToQueue('rpc_queue', Buffer.from(mensaje.toString()), {
                 correlationId: correlationId,
+                //replyTo: 'rpc_queue2'
                 replyTo: q.queue
             });
         });
     });
 });
 function generateUuid() {
-    return Math.random().toString() +
-        Math.random().toString() +
-        Math.random().toString();
+    return "1234";
 }

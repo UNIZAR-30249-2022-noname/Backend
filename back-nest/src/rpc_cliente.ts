@@ -38,19 +38,13 @@ amqp.connect(amqpURL, function(error0: any, connection: any) {
       }, {
         noAck: true
       });
-      
-      setTimeout(() => {
-        channel.sendToQueue('reservas_queue', Buffer.from(JSON.stringify(mensaje.toString())), {
-            replyTo: q.queue,
-            correlationId: correlationId
-        });
-      }, 500)
-      /*channel.sendToQueue('reservas_queue',
+
+      channel.sendToQueue('rpc_queue',
         Buffer.from(mensaje.toString()),{
           correlationId: correlationId,
           //replyTo: 'rpc_queue2'
           replyTo: q.queue 
-      });*/
+        });
     });
   });
 });
