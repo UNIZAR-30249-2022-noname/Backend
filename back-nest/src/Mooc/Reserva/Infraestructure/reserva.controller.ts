@@ -4,7 +4,7 @@ import { RabbitMQConfig } from '../../../Configuration/RabbitMQConfig';
 import {servicioReservaI, ReservaService} from '../Application/reserva.service'
 import {ReservaRepoPGImpl} from './ReservaRepoImpl'
 import {DatosReservaProps} from '../Domain/Entities/datosreserva'
-import {Espacio, EspacioProps} from '../../Espacio/Domain/espacio'
+import {Espacio, EspacioProps} from '../../Espacio/Domain/Entities/espacio'
 import { DomainId, ShortDomainId } from 'types-ddd';
 
 import * as crypto from "crypto";
@@ -14,60 +14,44 @@ import {ClientProxy, MessagePattern, RmqContext, Payload, Ctx, EventPattern} fro
 @Controller()
 export class ReservasMQAdapter {
     
+    private GUARDAR_RESERVAS:string = 'guardar_reservas';
+    private ACTUALIZAR_RESERVAS:string = 'actualizar_reservas';
 
     constructor(@Inject('servicioReservaI') private readonly servicioReservas: servicioReservaI){}
           //    @Inject('RESERVAS_SERVICE') private readonly client: ClientProxy){ }
 
-    @MessagePattern('*')
-    async realizarReserva(@Payload() data: number[], @Ctx() context: RmqContext){
-      console.log(context.getMessage())
-    }
-
-    @EventPattern('*')
-    async receibir(@Payload() data: number[], @Ctx() context: RmqContext){
-      console.log(context.getMessage())
-
-    }
-/*
-    private async setupChannelAdapter(): Promise<client.Channel> {
-        return await this.mqConfig.createRPCQueue()
-    }
-
-    async RPCconsumeMessage(): Promise<void> {
-
-        console.log(' [x] Awaiting RPC requests');
-        const channel: client.Channel = await this.setupChannelAdapter();
-        channel.consume(this.mqConfig.RequestQueueName, async (msg: ConsumeMessage | null) => {
-            if(msg){
-              let mensajeRecibido: String = msg.content.toString();
-              console.log(" [.] procesarSolicitud(%s)", mensajeRecibido);
-              const reservaprops: DatosReservaProps = {
-                fecha: new Date(),
-                horaInicio: '10:00',
-                horaFin: '12:00'
-              }
-              let id: ShortDomainId = ShortDomainId.create(crypto.randomBytes(64).toString('hex'))
-              const espacioprops: EspacioProps = {
-                ID: id, 
-                Name: "hola", 
-                Capacity: 15, 
-                Building: "Ada", 
-                Kind: "Sanidad"
-              }
-              let resultadoOperacion = await this.servicioReservas.guardarReserva(reservaprops,espacioprops)
-              console.log(resultadoOperacion)
-              channel.sendToQueue(msg.properties.replyTo,
-                Buffer.from(msg.toString()), {
-                  correlationId: '1234',
-                });
-               channel.ack(msg)
+    @MessagePattern()
+    async recibirPeticionesReserva(@Payload() data: number[], @Ctx() context: RmqContext){
+      //Analizamos el tipo de mensaje recibido y en función de este llamamos a un servicio u a otro.
+      const messageID:string = context.getArgs()[0].properties.messageId;
+      switch (messageID) {
+        case this.GUARDAR_RESERVAS:
+            let mensajeRecibido: String = context.getMessage().content.toString();
+            console.log(" [.] Procesando Solicitud(%s)", mensajeRecibido);
+            const reservaprops: DatosReservaProps = {
+              Fecha: new Date().toISOString(),
+              HoraInicio: '10:00',
+              HoraFin: '12:00',
+              Persona: 'Sergio'
             }
-          });
-        
-    }*/
-    
-    
-
+            let id: ShortDomainId = ShortDomainId.create(crypto.randomBytes(64).toString('hex'))
+            const espacioprops: EspacioProps = {
+              ID: id, 
+              Name: "hola", 
+              Capacity: 15, 
+              Building: "Ada", 
+              Kind: "Sanidad"
+            }
+            let resultadoOperacion = await this.servicioReservas.guardarReserva(reservaprops,espacioprops)
+            console.log(resultadoOperacion)
+          break;
+      
+        default:
+          console.log("Petición de reservas no procesada.")
+          //devolver un mensaje de error a la cola de rabbit
+          break;
+      }
+    }
 }
 
 /**

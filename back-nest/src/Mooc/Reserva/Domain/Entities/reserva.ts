@@ -23,4 +23,8 @@ export class Reserva extends Entity<ReservaProps> {
         const propsReserva: DatosReservaProps = this.props.Datosreserva.getProps();
         return propsReserva;
     }
+
+    public getEspacio(): Espacio {
+        return this.props.Espacio;
+    }
 }

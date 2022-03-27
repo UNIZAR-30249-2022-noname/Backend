@@ -9,6 +9,9 @@ import { Injectable, Inject } from '@nestjs/common';
 
 export interface servicioReservaI {
     guardarReserva(datosreserva: DatosReservaProps, espacio: EspacioProps): Promise<boolean>;
+    actualizarReserva(id: string, hourstart: string, hourend: string, date: string): Promise<boolean>;
+    eliminarReserva(id: string): Promise<Boolean>;
+    buscarReservaPorId(id: string): Promise<Boolean>;
 }
 
 @Injectable()
@@ -36,6 +39,31 @@ export class ReservaService implements servicioReservaI {
             return false
         }
                
+    }
+
+    async actualizarReserva(id: string, hourstart: string, hourend: string, date: string): Promise<boolean> {
+        try {
+            console.log("Llamada a actualizarReserva")
+            return await this.Reservarepository.actualizar(id,hourstart,hourend,date);
+        } catch (error) {
+            console.log(error)
+            return false;
+        }
+    }
+
+    async eliminarReserva(id: string): Promise<Boolean> {
+        try {
+            console.log("Llamada a eliminarReserva")
+            return await this.Reservarepository.eliminar(id);
+        } catch (error) {
+            console.log(error)
+            return false;
+        }
+    }
+
+    async buscarReservaPorId(id: string): Promise<Boolean> {
+        console.log("Llamada a buscarReservaPorId")
+        return await this.Reservarepository.buscarReservaPorId(id);
     }
 
 

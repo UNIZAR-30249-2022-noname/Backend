@@ -42,7 +42,8 @@ amqp.connect(amqpURL, function(error0: any, connection: any) {
       setTimeout(() => {
         channel.sendToQueue('reservas_queue', Buffer.from(JSON.stringify(mensaje.toString())), {
             replyTo: q.queue,
-            correlationId: correlationId
+            correlationId: correlationId,
+            messageId: 'guardar_reservas',
         });
       }, 500)
       /*channel.sendToQueue('reservas_queue',

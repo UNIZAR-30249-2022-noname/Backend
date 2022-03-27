@@ -5,15 +5,6 @@ import {ReservaService,servicioReservaI} from './Mooc/Reserva/Application/reserv
 import {ReservasMQAdapter} from './Mooc/Reserva/Infraestructure/reserva.controller'
 import {ReservaRepoPGImpl} from './Mooc/Reserva/Infraestructure/ReservaRepoImpl'
 
-
-/*
-@Module({
-  imports: [],
-  controllers: [AppController],
-  providers: [AppService],
-})
-export class AppModule {}
-*/
 @Module({
   imports: [
     ClientsModule.register([
@@ -25,10 +16,11 @@ export class AppModule {}
           queue: 'reservas_queue',
           queueOptions: {
             durable: true, //garantiza persistencia de mensajes cuando se apaga la cola
-            noAck: true
+            noAck: true //ack auto
           },
         },
       },
+      
     ]),
   ],
   controllers: [ReservasMQAdapter],

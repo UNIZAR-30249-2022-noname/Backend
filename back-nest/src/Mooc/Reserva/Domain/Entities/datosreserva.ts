@@ -2,9 +2,10 @@ import { ValueObject } from "types-ddd";
 import { PoliticaReserva } from "./politica_reserva";
 
 export interface DatosReservaProps{
-    readonly fecha: Date;
-    readonly horaInicio: string;
-    readonly horaFin: string;
+    readonly HoraInicio: string;
+    readonly HoraFin: string;
+    readonly Fecha: string;
+    readonly Persona: string;
 }
 
 export class DatosReserva extends ValueObject<DatosReservaProps> {
@@ -28,9 +29,6 @@ export class DatosReserva extends ValueObject<DatosReservaProps> {
            throw new Error("Error al crear la reserva.")
         }
           
-    }
-    public getasString(): string{
-        return this.props.fecha.toString()
     }
 
     public getProps(): DatosReservaProps {

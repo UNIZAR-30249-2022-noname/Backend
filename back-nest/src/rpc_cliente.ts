@@ -43,7 +43,9 @@ amqp.connect(amqpURL, function(error0: any, connection: any) {
         Buffer.from(mensaje.toString()),{
           correlationId: correlationId,
           //replyTo: 'rpc_queue2'
-          replyTo: q.queue 
+          replyTo: q.queue,
+          appId: 'pene',
+          userId: 'poronga'
         });
     });
   });

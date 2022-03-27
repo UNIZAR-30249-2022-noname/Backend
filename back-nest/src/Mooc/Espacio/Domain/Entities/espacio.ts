@@ -18,4 +18,9 @@ export class Espacio extends Entity<EspacioProps> {
     constructor(props: EspacioProps) {
         super(props,Espacio.name);
     }
+
+    public getDatosEspacioProps(): EspacioProps {
+        const propsEspacio: EspacioProps = this.props;
+        return propsEspacio;
+    }
 }
