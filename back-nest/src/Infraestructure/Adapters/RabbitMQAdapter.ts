@@ -1,22 +1,25 @@
 var amqp = require('amqplib/callback_api');
-import client, {Channel,Connection,ConsumeMessage} from 'amqplib'
-import {RabbitMQConfig} from '../../Configuration/RabbitMQConfig'
-import {AMQP} from './AMQPPort'
+import client, { Channel, Connection, ConsumeMessage } from 'amqplib';
+import { RabbitMQConfig } from '../../Configuration/RabbitMQConfig';
+import { AMQP } from './AMQPPort';
 
-export abstract class RabbitMQAdapter implements AMQP{
-
-  protected mqConfig: RabbitMQConfig
+export abstract class RabbitMQAdapter implements AMQP {
+  protected mqConfig: RabbitMQConfig;
 
   constructor(RabbitConfig: RabbitMQConfig) {
-    this.mqConfig = RabbitConfig
+    this.mqConfig = RabbitConfig;
   }
   RPCconsumeMessage(): void {}
-  RPCpublishMessage(queue: string, channel: client.Channel, message: any): void {}    
+  RPCpublishMessage(
+    queue: string,
+    channel: client.Channel,
+    message: any,
+  ): void {}
 }
 
 //Simulación de cómo ejecutarlo
 //let rma: RabbitMQAdapter = new RabbitMQAdapter(new RabbitMQConfig(queue_name,null))
-//rma.receiveRabbitMessage(); 
+//rma.receiveRabbitMessage();
 
 /**
  *   public async receiveRabbitMessage(){

@@ -1,6 +1,6 @@
-import { Espacio } from "./Entities/espacio";
+import { Espacio } from './Entities/espacio';
 
 export interface EspacioRepository {
-    guardar(espacio: Espacio): Promise<boolean>;
-    buscarEspacioPorId(id: String): Promise<Espacio>;
+  guardar(espacio: Espacio): Promise<boolean>;
+  buscarEspacioPorId(id: String): Promise<Espacio>;
 }
