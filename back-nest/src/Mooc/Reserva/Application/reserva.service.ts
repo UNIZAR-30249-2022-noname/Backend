@@ -1,6 +1,6 @@
 import {DatosReservaProps, DatosReserva} from '../Domain/Entities/datosreserva'
 import {Reserva, ReservaProps} from '../Domain/Entities/reserva'
-import {Espacio, EspacioProps} from '../../Espacio/Domain/espacio'
+import {Espacio, EspacioProps} from '../../Espacio/Domain/Entities/espacio'
 import { ReservaRepository } from '../Domain/ReservaRepository';
 import { ShortDomainId } from 'types-ddd';
 import * as crypto from "crypto";
@@ -33,8 +33,7 @@ export class ReservaService implements servicioReservaI {
                 ID:  ShortDomainId.create(crypto.randomBytes(64).toString('hex')),
             }
             const reserva: Reserva = new Reserva(reservaprops)
-            //return await this.Reservarepository.guardar(reserva)
-            return true
+            return await this.Reservarepository.guardar(reserva)
         } catch (error) {
             return false
         }

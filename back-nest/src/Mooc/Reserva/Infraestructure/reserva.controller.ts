@@ -14,52 +14,38 @@ import {ClientProxy, MessagePattern, RmqContext, Payload, Ctx, EventPattern} fro
 @Controller()
 export class ReservasMQAdapter {
     
-    private GUARDAR_RESERVAS:string = 'guardar_reservas';
-    private ACTUALIZAR_RESERVAS:string = 'actualizar_reservas';
-
+    //Constructor inyeccion de dependencias de todos los servicios de aplicación que sean necesarios.
     constructor(@Inject('servicioReservaI') private readonly servicioReservas: servicioReservaI){}
           //    @Inject('RESERVAS_SERVICE') private readonly client: ClientProxy){ }
 
-    @MessagePattern()
-    async recibirPeticionesReserva(@Payload() data: number[], @Ctx() context: RmqContext){
-      //Analizamos el tipo de mensaje recibido y en función de este llamamos a un servicio u a otro.
-      const messageID:string = context.getArgs()[0].properties.messageId;
-      switch (messageID) {
-        case this.GUARDAR_RESERVAS:
-            let mensajeRecibido: String = context.getMessage().content.toString();
-            console.log(" [.] Procesando Solicitud(%s)", mensajeRecibido);
-            const reservaprops: DatosReservaProps = {
-              Fecha: new Date().toISOString(),
-              HoraInicio: '10:00',
-              HoraFin: '12:00',
-              Persona: 'Sergio'
-            }
-            let id: ShortDomainId = ShortDomainId.create(crypto.randomBytes(64).toString('hex'))
-            const espacioprops: EspacioProps = {
-              ID: id, 
-              Name: "hola", 
-              Capacity: 15, 
-              Building: "Ada", 
-              Kind: "Sanidad"
-            }
-            let resultadoOperacion = await this.servicioReservas.guardarReserva(reservaprops,espacioprops)
-            console.log(resultadoOperacion)
-          break;
-      
-        default:
-          console.log("Petición de reservas no procesada.")
-          //devolver un mensaje de error a la cola de rabbit
-          break;
+
+    //Endpoint para recibir una realización de una reserva
+    @MessagePattern('realizar-reserva')
+    async realizarReservas(@Payload() data: number[], @Ctx() context: RmqContext){
+      //Convierte el mensaje en un Objeton JSON.
+      const mensajeRecibido = JSON.parse(context.getMessage().content);
+      console.log("Procesando Solicitud(realizar-resreva)", mensajeRecibido);
+      const reservaprops: DatosReservaProps = {
+        Fecha: new Date().toISOString(),
+        HoraInicio: '10:00',
+        HoraFin: '12:00',
+        Persona: 'Sergio'
       }
+      let id: ShortDomainId = ShortDomainId.create(crypto.randomBytes(64).toString('hex'))
+      const espacioprops: EspacioProps = {
+        ID: id, 
+        Name: "hola", 
+        Capacity: 15, 
+        Building: "Ada", 
+        Kind: "Sanidad"
+      }
+      //let resultadoOperacion = await this.servicioReservas.guardarReserva(reservaprops,espacioprops)
+      //console.log(resultadoOperacion)
+    }
+
+    @MessagePattern()
+    recibirPeticionesReserva(@Payload() data: number[], @Ctx() context: RmqContext){
+      //const messageID:string = context.getArgs()[0].properties.messageId;
+      console.warn("Mensaje recibido sin ningun parametro.")
     }
 }
-
-/**
- * Ejecución main
- *
-const req_queue_name = 'rpc_queue';
-const rep_queue_name = 'rpc_queue';
-const servicioReservas: servicioReservaImpl = new servicioReservaImpl(new ReservaRepoPGImpl());
-const reservasAdapter: ReservasMQAdapter = new ReservasMQAdapter(new RabbitMQConfig(req_queue_name,rep_queue_name,null),servicioReservas);
-reservasAdapter.RPCconsumeMessage()
-*/

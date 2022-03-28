@@ -1,5 +1,5 @@
 import {DatosReserva,DatosReservaProps} from './datosreserva'
-import {Espacio} from '../../../Espacio/Domain/espacio'
+import {Espacio} from '../../../Espacio/Domain/Entities/espacio'
 import { 
     BaseDomainEntity, 
     Entity, 

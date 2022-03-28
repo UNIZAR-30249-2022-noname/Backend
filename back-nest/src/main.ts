@@ -6,16 +6,16 @@ import { INestMicroservice } from '@nestjs/common';
 
 async function bootstrap() {
 
-  const queues:string[] = ['reservas_queue']
+  const queues:string[] = ['request']
 
   queues.forEach( async (cola) => {
     const app = await NestFactory.createMicroservice<MicroserviceOptions>(AppModule, {
       transport: Transport.RMQ,
       options: {
-        urls: ['amqps://draayoqu:7lDJ4nHZhhKGUn2lQCvw8XE4VNuVxMvD@rat.rmq2.cloudamqp.com/draayoqu'],
+        urls: ['amqps://cnvzbkyj:zrT84snzxNyFwAZl1MV2vI9Gg8OtjiRV@whale.rmq.cloudamqp.com/cnvzbkyj'],
         queue: cola,
         queueOptions: {
-          durable: true, //garantiza persistencia de mensajes cuando se apaga la cola
+          durable: false, //garantiza persistencia de mensajes cuando se apaga la cola
           noAck: true
         },
       },
