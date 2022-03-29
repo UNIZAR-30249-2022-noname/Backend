@@ -1,10 +1,10 @@
 import {
   servicioReservaI,
   ReservaService,
-} from '../Application/reserva.service';
-import {MessagePort} from '../../../Infraestructure/Adapters/AMQPPort'
-import { DatosReservaProps } from '../Domain/Entities/datosreserva';
-import { Espacio, EspacioProps } from '../../Espacio/Domain/Entities/espacio';
+} from '../../Mooc/Reserva/Application/reserva.service';
+import {MessagePort} from './AMQPPort'
+import { DatosReservaProps } from '../../Mooc/Reserva/Domain/Entities/datosreserva';
+import { Espacio, EspacioProps } from '../../Mooc/Espacio/Domain/Entities/espacio';
 import { DomainId, ShortDomainId } from 'types-ddd';
 import * as crypto from 'crypto';
 import { Controller, Inject } from '@nestjs/common';
@@ -15,7 +15,7 @@ import {
   Payload,
   Ctx,
 } from '@nestjs/microservices';
-import { Reserva } from '../Domain/Entities/reserva';
+import { Reserva } from '../../Mooc/Reserva/Domain/Entities/reserva';
 
 @Controller()
 export class AMQPController implements MessagePort {

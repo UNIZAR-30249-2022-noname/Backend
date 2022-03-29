@@ -16,4 +16,5 @@ export class Espacio extends Entity<EspacioProps> {
     const propsEspacio: EspacioProps = this.props;
     return propsEspacio;
   }
+  
 }
