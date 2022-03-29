@@ -9,7 +9,7 @@ import {Reserva} from '../../../Reserva/Domain/Entities/reserva'
 
 export interface servicioEspacio {
   guardarEspacio(espacioProps: EspacioProps): Promise<boolean>;
-  buscarEspacioPorId(id: String): Promise<Espacio>;
+  buscarEspacioPorId(id: String): Promise<Espacio[]>;
   listarReservas(id:String, fecha:String): Promise<Reserva[]>
 }
 
@@ -33,7 +33,7 @@ export class servicioEspacioImpl implements servicioEspacio {
     }
   }
 
-  async buscarEspacioPorId(id: String): Promise<Espacio> {
+  async buscarEspacioPorId(id: String): Promise<Espacio[]> {
     try {
       console.log('Llamada a buscarEspacioPorId');
       return await this.Espaciorepository.buscarEspacioPorId(id);

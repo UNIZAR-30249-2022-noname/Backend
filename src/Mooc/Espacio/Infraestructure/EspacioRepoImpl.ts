@@ -24,7 +24,7 @@ export class EspacioRepoPGImpl implements EspacioRepository {
     return resultadoQuery.rowCount > 0;
   }
 
-  async buscarEspacioPorId(id: String): Promise<Espacio> {
+  async buscarEspacioPorId(id: String): Promise<Espacio[]> {
     var client = await poolConn.connect();
     var resultadoQuery = await client.query(
       EspacioQueries.QUERY_BUSCAR_ESPACIO_POR_ID,
@@ -32,13 +32,14 @@ export class EspacioRepoPGImpl implements EspacioRepository {
     );
     client.release();
     console.log(resultadoQuery);
-    const espacioprops: EspacioProps = {
-      ID: ShortDomainId.create(crypto.randomBytes(64).toString('hex')),
-      Name: 'hola',
-      Capacity: 50,
-      Building: 'hola',
-      Kind: 'hola',
-    };
-    return new Espacio(espacioprops);
+    return resultadoQuery.rows;
   }
+
+  /*async filtrarEspaciosReservables(capacity: number, day: string, hour: string, floor: string, building: string, kind: string): Promise<Espacio[]> {
+    var client = await poolConn.connect();
+    var resultadoBuscarEspacios = await client.query(EspacioQueries.QUERY_BUSCAR_ESPACIOS_POR_FILTRO,[capacity,building,kind,floor]);
+    client.release();
+    console.log(resultadoBuscarEspacios);
+    return [];
+  }*/
 }

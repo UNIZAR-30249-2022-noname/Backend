@@ -21,7 +21,8 @@ export interface servicioReservaI {
     date: string,
   ): Promise<boolean>;
   eliminarReserva(id: string): Promise<Boolean>;
-  buscarReservaPorId(id: string): Promise<Boolean>;
+  buscarReservaPorId(id: string): Promise<Reserva[]>;
+  buscarReservaPorEspacio(idEspacio: string): Promise<Reserva[]>;
 }
 
 @Injectable()
@@ -51,6 +52,7 @@ export class ReservaService implements servicioReservaI {
       const reserva: Reserva = new Reserva(reservaprops);
       return await this.Reservarepository.guardar(reserva);
     } catch (error) {
+      console.log(error);
       return false;
     }
   }
@@ -85,8 +87,13 @@ export class ReservaService implements servicioReservaI {
     }
   }
 
-  async buscarReservaPorId(id: string): Promise<Boolean> {
+  async buscarReservaPorId(id: string): Promise<Reserva[]> {
     console.log('Llamada a buscarReservaPorId');
     return await this.Reservarepository.buscarReservaPorId(id);
+  }
+
+  async buscarReservaPorEspacio(idEspacio: string): Promise<Reserva[]> {
+      console.log('Llamada a buscarReservaPorEspacio');
+      return await this.Reservarepository.buscarReservasPorEspacio(idEspacio);
   }
 }

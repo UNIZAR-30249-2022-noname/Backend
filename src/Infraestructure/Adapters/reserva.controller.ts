@@ -50,10 +50,30 @@ export class AMQPController implements MessagePort {
       Capacity: 15,
       Building: 'Ada',
       Kind: 'Sanidad',
+      Reservas: []
     };
     //let resultadoOperacion = await this.servicioReservas.guardarReserva(reservaprops,espacioprops)
+    //console.log(resultadoOperacion)
     //Devuelve lo que tenga que devolver en formato JSON.
     return espacioprops;
+  }
+
+  @MessagePattern('buscar-reserva-por-id')
+  async buscarReservaPorId(
+    @Payload() data: number[],
+    @Ctx() context: RmqContext,
+  ) {
+    let resultadoOperacion = await this.servicioReservas.buscarReservaPorId("10")
+    return resultadoOperacion;
+  }
+
+  @MessagePattern('buscar-reserva-por-espacio')
+  async buscarReservaPorEspacio(
+    @Payload() data: number[],
+    @Ctx() context: RmqContext,
+  ) {
+    let resultadoOperacion = await this.servicioReservas.buscarReservaPorEspacio("1")
+    return resultadoOperacion;
   }
 
   @MessagePattern()

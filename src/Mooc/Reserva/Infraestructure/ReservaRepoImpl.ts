@@ -50,8 +50,8 @@ export class ReservaRepoPGImpl implements ReservaRepository {
     client.release();
     return true;
   }
-  //Aquí en vez de devolver un booleano deberíamos devolver el objeto resorver rehidratado de la base de datos
-  async buscarReservaPorId(id: string): Promise<Boolean> {
+  
+  async buscarReservaPorId(id: string): Promise<Reserva[]> {
     var client = await poolConn.connect();
     var resultadoQuery = await client.query(
       ReservaQueries.QUERY_BUSCAR_RESERVA_POR_ID,
@@ -60,6 +60,18 @@ export class ReservaRepoPGImpl implements ReservaRepository {
     //Analizar resultados devolver una cosa u otra
     client.release();
     console.log(resultadoQuery.rows);
-    return true;
+    return resultadoQuery.rows;
+  }
+  
+  async buscarReservasPorEspacio(idEspacio: string): Promise<Reserva[]> {
+    var client = await poolConn.connect();
+    var resultadoQuery = await client.query(
+      ReservaQueries.QUERY_BUSCAR_RESERVAS_POR_ESPACIO,
+      [idEspacio],
+    );
+    //Analizar resultados devolver una cosa u otra
+    client.release();
+    console.log(resultadoQuery.rows);
+      return resultadoQuery.rows;
   }
 }
