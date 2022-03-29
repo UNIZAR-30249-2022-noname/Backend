@@ -30,7 +30,7 @@ export class ReservaRepoPGImpl implements ReservaRepository {
     hourstart: string,
     hourend: string,
     date: string,
-  ): Promise<boolean> {
+  ): Promise<boolean> { 
     var client = await poolConn.connect();
     var resultadoQuery = await client.query(
       ReservaQueries.QUERY_ACTUALIZAR_RESERVA,

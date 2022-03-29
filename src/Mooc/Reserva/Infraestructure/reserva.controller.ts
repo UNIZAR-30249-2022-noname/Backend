@@ -15,6 +15,7 @@ import {
   Payload,
   Ctx,
 } from '@nestjs/microservices';
+import { Reserva } from '../Domain/Entities/reserva';
 
 @Controller()
 export class AMQPController implements MessagePort {

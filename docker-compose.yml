@@ -37,6 +37,8 @@ services:
     container_name: backend_lis
     ports:
       - "2750:2750"
+    environment:
+      - "production=true"
   pgadmin:
     image: dpage/pgadmin4
     ports:
