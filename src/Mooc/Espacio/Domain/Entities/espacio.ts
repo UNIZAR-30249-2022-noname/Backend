@@ -1,3 +1,4 @@
+import { Reserva } from 'src/Mooc/Reserva/Domain/Entities/reserva';
 import { BaseDomainEntity, Entity, UniqueEntityID, Result } from 'types-ddd';
 
 export interface EspacioProps extends BaseDomainEntity {
@@ -5,6 +6,7 @@ export interface EspacioProps extends BaseDomainEntity {
   Capacity: number;
   Building: string;
   Kind: string;
+  Reservas: Reserva[];
 }
 
 export class Espacio extends Entity<EspacioProps> {
@@ -16,5 +18,5 @@ export class Espacio extends Entity<EspacioProps> {
     const propsEspacio: EspacioProps = this.props;
     return propsEspacio;
   }
-  
+
 }
