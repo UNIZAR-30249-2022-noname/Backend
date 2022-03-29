@@ -9,6 +9,4 @@ RUN npm install -g ts-node
 COPY . .
 #Esto no es necesario pero nos vale para probar
 EXPOSE 2750
-CMD ["npm" ,"run", "build"]
-CMD ["npm", "run", "server"]
-CMD ["npm", "run", "dev"]
+CMD ["npm", "run", "start"]
