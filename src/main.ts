@@ -16,6 +16,7 @@ async function bootstrap() {
             'amqps://cnvzbkyj:zrT84snzxNyFwAZl1MV2vI9Gg8OtjiRV@whale.rmq.cloudamqp.com/cnvzbkyj',
           ],
           queue: cola,
+          replyQueue: 'reply',
           queueOptions: {
             durable: false, //garantiza persistencia de mensajes cuando se apaga la cola
             noAck: true,    //ack automático o no.
@@ -23,7 +24,7 @@ async function bootstrap() {
         },
       },
     );
-    app.listen().then(() => console.log('Servicio rabbit funcionando.'));
+    app.listen().then(() => console.log('Servicio rabbit' + cola +  'funcionando.'));
   });
 }
 

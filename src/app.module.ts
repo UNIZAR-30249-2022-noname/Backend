@@ -5,29 +5,29 @@ import {
   ReservaService,
   servicioReservaI,
 } from './Mooc/Reserva/Application/reserva.service';
-import { ReservasMQAdapter } from './Mooc/Reserva/Infraestructure/reserva.controller';
+import { AMQPController } from './Mooc/Reserva/Infraestructure/reserva.controller';
 import { ReservaRepoPGImpl } from './Mooc/Reserva/Infraestructure/ReservaRepoImpl';
 
 @Module({
   imports: [
     ClientsModule.register([
       {
-        name: 'RESERVAS_SERVICE',
+        name: 'REPLY_CLIENT',
         transport: Transport.RMQ,
         options: {
           urls: [
-            'amqps://draayoqu:7lDJ4nHZhhKGUn2lQCvw8XE4VNuVxMvD@rat.rmq2.cloudamqp.com/draayoqu',
+            'amqps://cnvzbkyj:zrT84snzxNyFwAZl1MV2vI9Gg8OtjiRV@whale.rmq.cloudamqp.com/cnvzbkyj',
           ],
-          queue: 'reservas_queue',
+          queue: 'request',
           queueOptions: {
-            durable: true, //garantiza persistencia de mensajes cuando se apaga la cola
+            durable: false, //garantiza persistencia de mensajes cuando se apaga la cola
             noAck: true, //ack auto
           },
         },
       },
     ]),
   ],
-  controllers: [ReservasMQAdapter],
+  controllers: [AMQPController],
   providers: [
     {
       provide: 'servicioReservaI',

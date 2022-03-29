@@ -1,15 +1,11 @@
-import { RabbitMQAdapter } from '../../../Infraestructure/Adapters/RabbitMQAdapter';
-import client, { Channel, Connection, ConsumeMessage } from 'amqplib';
-import { RabbitMQConfig } from '../../../Configuration/RabbitMQConfig';
 import {
   servicioReservaI,
   ReservaService,
 } from '../Application/reserva.service';
-import { ReservaRepoPGImpl } from './ReservaRepoImpl';
+import {MessagePort} from '../../../Infraestructure/Adapters/AMQPPort'
 import { DatosReservaProps } from '../Domain/Entities/datosreserva';
 import { Espacio, EspacioProps } from '../../Espacio/Domain/Entities/espacio';
 import { DomainId, ShortDomainId } from 'types-ddd';
-
 import * as crypto from 'crypto';
 import { Controller, Inject } from '@nestjs/common';
 import {
@@ -18,15 +14,14 @@ import {
   RmqContext,
   Payload,
   Ctx,
-  EventPattern,
 } from '@nestjs/microservices';
 
 @Controller()
-export class ReservasMQAdapter {
+export class AMQPController implements MessagePort {
+  
   //Constructor inyeccion de dependencias de todos los servicios de aplicación que sean necesarios.
   constructor(
-    @Inject('servicioReservaI')
-    private readonly servicioReservas: servicioReservaI,
+    @Inject('servicioReservaI') private readonly servicioReservas: servicioReservaI,
   ) {}
   //    @Inject('RESERVAS_SERVICE') private readonly client: ClientProxy){ }
 
@@ -56,7 +51,8 @@ export class ReservasMQAdapter {
       Kind: 'Sanidad',
     };
     //let resultadoOperacion = await this.servicioReservas.guardarReserva(reservaprops,espacioprops)
-    //console.log(resultadoOperacion)
+    //Devuelve lo que tenga que devolver en formato JSON.
+    return espacioprops;
   }
 
   @MessagePattern()

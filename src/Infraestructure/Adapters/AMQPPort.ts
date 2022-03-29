@@ -1,6 +1,19 @@
-import client, {Channel,Connection,Replies} from 'amqplib'
+import {
+  ClientProxy,
+  MessagePattern,
+  RmqContext,
+  Payload,
+  Ctx,
+} from '@nestjs/microservices';
 
-export interface AMQP {
-    RPCconsumeMessage():void;
-    RPCpublishMessage(queue: string,channel: client.Channel,message: any):void;
+export interface MessagePort {
+  recibirPeticionesReserva(
+    data: number[],
+    context: RmqContext,
+  ): any
+
+  realizarReservas(
+    data: number[],
+    context: RmqContext,
+  ): any
 }
