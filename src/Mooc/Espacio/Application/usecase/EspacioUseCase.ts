@@ -1,7 +1,7 @@
 import {
   Espacio,
   EspacioProps,
-} from '../../../Espacio/Domain/Entities/espacio';
+} from '../../Domain/Entities/espacio';
 import { ShortDomainId } from 'types-ddd';
 import * as crypto from 'crypto';
 import { EspacioRepository } from '../../Domain/EspacioRepository';
@@ -21,7 +21,7 @@ export class servicioEspacioImpl implements servicioEspacio {
   }
 
   async guardarEspacio(espacioProps: EspacioProps): Promise<boolean> {
-    try {
+   /* try {
       //<--Para construir un objeto Reserva igual estaría bien hacer un Factory porque hay mucho código por aqui-->
       //Creamos el objeto valor reserva y validamos la lógica de negocio para crear una reserva.
       console.log('Llamada a guardarEspacio');
@@ -30,16 +30,19 @@ export class servicioEspacioImpl implements servicioEspacio {
     } catch (error: any) {
       console.log(error);
       return false;
-    }
+    }*/
+    throw new Error('not implemented')
   }
 
   async buscarEspacioPorId(id: String): Promise<Espacio[]> {
-    try {
+    /*try {
       console.log('Llamada a buscarEspacioPorId');
       return await this.Espaciorepository.buscarEspacioPorId(id);
     } catch (error: any) {
       console.log(error);
       return error;
     }
+  */
+  throw new Error('not implemented')
   }
 }

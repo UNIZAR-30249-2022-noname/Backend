@@ -6,24 +6,22 @@ import {
   UniqueEntityID,
   Result,
   DomainId,
+  ShortDomainId,
 } from 'types-ddd';
+import { BEntity } from 'src/BaseEntity/BEntity';
 
-export interface ReservaProps extends BaseDomainEntity {
-  Datosreserva: DatosReserva;
-  Espacio: Espacio;
-}
-
-export class Reserva extends Entity<ReservaProps> {
-  constructor(props: ReservaProps) {
-    super(props, Reserva.name);
+export class Reserva extends BEntity{
+ 
+  constructor(id: ShortDomainId,private Datosreserva: DatosReserva, private Espacio: Espacio) { 
+    super(id);
   }
 
   public getDatosReservaProps(): DatosReservaProps {
-    const propsReserva: DatosReservaProps = this.props.Datosreserva.getProps();
-    return propsReserva;
+    return this.Datosreserva.getProps();
   }
 
-  public getEspacio(): Espacio {
-    return this.props.Espacio;
+  getEspacio(): Espacio{
+    return this.Espacio;
   }
+
 }

@@ -26,19 +26,19 @@ services:
     #image: arejula27/calendarunizar
     #ports:
     #  - "8080:8080"
-  #client:
-    #image: arejula27/calendarwebclientunizar
-    #ports:
-    #  - "3000:3000"
-    #environment:
-     # - "REACT_APP_GATEWAY=gateway"
-  backend:
-    image: 1209200064/backend:latest
-    container_name: backend_lis
+  client:
+    image: arejula27/calendarwebclientunizar
     ports:
-      - "2750:2750"
+      - "3000:3000"
     environment:
-      - "production=true"
+      - "REACT_APP_GATEWAY=gateway"
+  #backend:
+  #  image: 1209200064/backend:latest
+  #  container_name: backend_lis
+  #  ports:
+  #    - "2750:2750"
+  #  environment:
+  #    - "production=true"
   pgadmin:
     image: dpage/pgadmin4
     ports:

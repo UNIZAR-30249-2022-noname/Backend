@@ -18,7 +18,12 @@
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
-    "test:e2e": "jest --config ./test/jest-e2e.json"
+    "test:e2e": "jest --config ./test/jest-e2e.json",
+    "typeorm": "ts-node -r tsconfig-paths/register ./node_modules/typeorm/cli.js",
+    "migrations:generate": "npm run typeorm -- migration:generate -d ./src/Config/ormconfig.ts ./src/Migrations/migrate",
+    "migrations:run": "npm run typeorm -- migration:run -d ./src/Config/ormconfig.ts",
+    "migrations:drop": "npm run typeorm -- schema:drop -d ./src/Config/ormconfig.ts",
+    "migrations:show": "npm run typeorm -- migration:show -d ./src/Config/ormconfig.ts"
   },
   "dependencies": {
     "@nestjs/cli": "^8.2.4",
@@ -26,6 +31,7 @@
     "@nestjs/core": "^8.0.0",
     "@nestjs/microservices": "^8.4.3",
     "@nestjs/platform-express": "^8.0.0",
+    "@nestjs/typeorm": "^8.0.3",
     "@types/amqplib": "^0.8.2",
     "@types/crypto-js": "^4.1.1",
     "@types/pg": "^8.6.5",
@@ -33,12 +39,12 @@
     "amqplib": "^0.8.0",
     "crypto-js": "^4.1.1",
     "express": "^4.17.3",
-    "pg": "^8.6.0",
+    "pg": "^8.7.3",
     "reflect-metadata": "^0.1.13",
     "rimraf": "^3.0.2",
     "rxjs": "^7.2.0",
     "ts-node-dev": "^1.1.8",
-    "typeorm": "^0.3.0",
+    "typeorm": "^0.3.4",
     "types-ddd": "^2.10.0"
   },
   "devDependencies": {

@@ -1,5 +1,6 @@
-//const { Client } = require('pg');
 import { PoolConfig, Pool } from 'pg';
+import { DataSource } from 'typeorm';
+import dataSource from '../../Config/ormconfig_db'
 
 var Puerto = 25432;
 var Host = 'localhost';
@@ -11,7 +12,14 @@ if (process.env.production) {
 
 console.log("Conectando con la base de datos: %s:%d",Host,Puerto);
 
-const poolconfig: PoolConfig = {
+export async function initializeDBConnector(datasrc: DataSource){
+  if (!datasrc.isInitialized){
+    datasrc = await dataSource.initialize();
+  }
+  return datasrc;
+}
+
+export const poolconfig: PoolConfig = {
   database: 'proyectodb',
   host: Host,
   user: 'proyecto',

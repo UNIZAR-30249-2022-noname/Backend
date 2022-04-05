@@ -2,16 +2,16 @@ import { ValueObject } from 'types-ddd';
 import { PoliticaReserva } from './politica_reserva';
 
 export interface DatosReservaProps {
-  readonly HoraInicio: string;
-  readonly HoraFin: string;
-  readonly Fecha: string;
+  readonly horaInicio: string;
+  readonly horaFin: string;
+  readonly fecha: string;
   readonly Persona: string;
 }
 
-export class DatosReserva extends ValueObject<DatosReservaProps> {
-  private constructor(propsReserva: DatosReservaProps) {
-    super(propsReserva);
-  }
+export class DatosReserva{
+
+
+  private constructor(private propsReserva: DatosReservaProps) { }
   /**
    * Forzamos una validación contra la lógica de dominio utilizando un constructor
    * privado. Se debe llamar a este método que comprobara la lógica de dominio.
@@ -29,6 +29,6 @@ export class DatosReserva extends ValueObject<DatosReservaProps> {
   }
 
   public getProps(): DatosReservaProps {
-    return this.props;
+    return this.propsReserva;
   }
 }

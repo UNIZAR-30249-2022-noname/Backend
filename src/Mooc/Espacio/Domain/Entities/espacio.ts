@@ -1,21 +1,26 @@
+import { BEntity } from 'src/BaseEntity/BEntity';
 import { Reserva } from 'src/Mooc/Reserva/Domain/Entities/reserva';
-import { BaseDomainEntity, Entity, UniqueEntityID, Result } from 'types-ddd';
+import { BaseDomainEntity, Entity, Result, ShortDomainId } from 'types-ddd';
 
-export interface EspacioProps extends BaseDomainEntity {
+export interface EspacioProps{
   Name: string;
   Capacity: number;
   Building: string;
   Kind: string;
-  Reservas: Reserva[];
 }
 
-export class Espacio extends Entity<EspacioProps> {
-  constructor(props: EspacioProps) {
-    super(props, Espacio.name);
+export class Espacio extends BEntity {
+  constructor(
+    id: ShortDomainId,
+    private readonly espacioProps: EspacioProps,
+    private Reservas: Reserva[],
+  ) {
+    super(id);
   }
 
+
   public getDatosEspacioProps(): EspacioProps {
-    const propsEspacio: EspacioProps = this.props;
+    const propsEspacio: EspacioProps = this.espacioProps;
     return propsEspacio;
   }
 

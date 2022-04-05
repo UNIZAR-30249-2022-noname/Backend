@@ -2,7 +2,6 @@ import {
   servicioReservaI,
   ReservaService,
 } from '../../Mooc/Reserva/Application/reserva.service';
-import {MessagePort} from './AMQPPort'
 import { DatosReservaProps } from '../../Mooc/Reserva/Domain/Entities/datosreserva';
 import { Espacio, EspacioProps } from '../../Mooc/Espacio/Domain/Entities/espacio';
 import { DomainId, ShortDomainId } from 'types-ddd';
@@ -15,16 +14,15 @@ import {
   Payload,
   Ctx,
 } from '@nestjs/microservices';
-import { Reserva } from '../../Mooc/Reserva/Domain/Entities/reserva';
+import {Reserve}  from 'src/Mooc/Reserva/Domain/Entities/reserva.entity';
 
 @Controller()
-export class AMQPController implements MessagePort {
+export class AMQPController{
   
   //Constructor inyeccion de dependencias de todos los servicios de aplicación que sean necesarios.
   constructor(
     @Inject('servicioReservaI') private readonly servicioReservas: servicioReservaI,
   ) {}
-  //    @Inject('RESERVAS_SERVICE') private readonly client: ClientProxy){ }
 
   //Endpoint para recibir una realización de una reserva
   @MessagePattern('realizar-reserva')
@@ -36,26 +34,24 @@ export class AMQPController implements MessagePort {
     const mensajeRecibido = JSON.parse(context.getMessage().content);
     console.log('Procesando Solicitud(realizar-resreva)', mensajeRecibido);
     const reservaprops: DatosReservaProps = {
-      Fecha: new Date().toISOString(),
-      HoraInicio: '10:00',
-      HoraFin: '12:00',
+      fecha: new Date().toString(),
+      horaInicio: '10:00',
+      horaFin: '12:00',
       Persona: 'Sergio',
     };
     let id: ShortDomainId = ShortDomainId.create(
       crypto.randomBytes(64).toString('hex'),
     );
     const espacioprops: EspacioProps = {
-      ID: id,
       Name: 'hola',
       Capacity: 15,
       Building: 'Ada',
       Kind: 'Sanidad',
-      Reservas: []
     };
-    //let resultadoOperacion = await this.servicioReservas.guardarReserva(reservaprops,espacioprops)
-    //console.log(resultadoOperacion)
     //Devuelve lo que tenga que devolver en formato JSON.
-    return espacioprops;
+    let resultadoOperacion: Reserve = await this.servicioReservas.guardarReserva(reservaprops,espacioprops);
+    console.log(resultadoOperacion)
+    return resultadoOperacion;
   }
 
   @MessagePattern('buscar-reserva-por-id')
@@ -63,8 +59,7 @@ export class AMQPController implements MessagePort {
     @Payload() data: number[],
     @Ctx() context: RmqContext,
   ) {
-    let resultadoOperacion = await this.servicioReservas.buscarReservaPorId("10")
-    return resultadoOperacion;
+ 
   }
 
   @MessagePattern('buscar-reserva-por-espacio')
@@ -72,16 +67,23 @@ export class AMQPController implements MessagePort {
     @Payload() data: number[],
     @Ctx() context: RmqContext,
   ) {
-    let resultadoOperacion = await this.servicioReservas.buscarReservaPorEspacio("1")
-    return resultadoOperacion;
+   
   }
 
-  @MessagePattern()
-  recibirPeticionesReserva(
+  @MessagePattern('recibir-reserva')
+  async TesteitoReservas(
     @Payload() data: number[],
     @Ctx() context: RmqContext,
   ) {
-    //const messageID:string = context.getArgs()[0].properties.messageId;
-    console.warn('Mensaje recibido sin ningun parametro.');
+
+    const reservaprops: DatosReservaProps = {
+      fecha: new Date().toISOString(),
+      horaInicio: '10:00',
+      horaFin: '12:00',
+      Persona: 'Sergio',
+    };
+    return reservaprops
   }
+
+
 }
