@@ -13,8 +13,7 @@ export interface EspacioProps{
 export class Espacio extends BEntity {
   constructor(
     id: ShortDomainId,
-    private readonly espacioProps: EspacioProps,
-    private Reservas: Reserva[],
+    private readonly espacioProps: EspacioProps
   ) {
     super(id);
   }

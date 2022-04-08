@@ -29,7 +29,7 @@ export class ReservaService implements servicioReservaI {
     const Datos_Reserva: DatosReserva =
         DatosReserva.createDatosReserva(datosreserva);
     const id: ShortDomainId = ShortDomainId.create(crypto.randomBytes(64).toString('hex'))
-    const ReservaARealizar: Reserva = new Reserva(id,Datos_Reserva,new Espacio(id,espacioprops,null))
+    const ReservaARealizar: Reserva = new Reserva(id,Datos_Reserva,new Espacio(id,espacioprops))
     const reservahecha: Reserve = await this.reservarepository.guardar(ReservaARealizar);
     return reservahecha
   }
