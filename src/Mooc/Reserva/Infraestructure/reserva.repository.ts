@@ -5,7 +5,7 @@ import { Injectable } from '@nestjs/common';
 import {Reserve}  from '../Domain/Entities/reserva.entity';
 import { DatosReserva, DatosReservaProps } from '../Domain/Entities/datosreserva';
 import dataSource from '../../../Config/ormconfig_db';
-import { DataSource } from 'typeorm';
+import { DataSource, DeleteResult, UpdateResult } from 'typeorm';
 import * as crypto from 'crypto';
 import {initializeDBConnector} from '../../../Infraestructure/Adapters/pg-connection'
 import { Espacio, EspacioProps } from '../../Espacio/Domain/Entities/espacio';
@@ -41,53 +41,49 @@ export class ReservaRepoPGImpl implements ReservaRepository {
     return reservaHecha
   }
   async actualizar(
-    id: string,
+    id: number,
     hourstart: string,
     hourend: string,
     date: string,
-  ): Promise<boolean> { 
-    var client = await poolConn.connect();
-    var resultadoQuery = await client.query(
-      ReservaQueries.QUERY_ACTUALIZAR_RESERVA,
-      [hourstart, hourend, date, id],
-    );
-    //Analizar resultados devolver una cosa u otra
-    client.release();
+  ): Promise<boolean> {
+    const DataSrc: DataSource = await initializeDBConnector(dataSource);
+    const ReserveRepo = DataSrc.getRepository(Reserve);
+    const ReservaActualizada: UpdateResult = await ReserveRepo.update(id, { fecha:date, horaInicio:hourstart, horaFin:hourend });
+    console.log(ReservaActualizada)
+    
     return true;
   }
-  async eliminar(id: string): Promise<boolean> {
-    var client = await poolConn.connect();
-    var resultadoQuery = await client.query(
-      ReservaQueries.QUERY_ELIMINAR_RESERVA,
-      [id],
-    );
-    //Analizar resultados devolver una cosa u otra
-    client.release();
+  async eliminar(id: number): Promise<boolean> {
+    const DataSrc: DataSource = await initializeDBConnector(dataSource);
+    const ReserveRepo = DataSrc.getRepository(Reserve);
+    const ReservaEliminada: DeleteResult = await ReserveRepo.delete(id);
+    console.log(ReservaEliminada);
+    
     return true;
   }
   
-  async buscarReservaPorId(id: string): Promise<Reserva[]> {
-    var client = await poolConn.connect();
-    var resultadoQuery = await client.query(
-      ReservaQueries.QUERY_BUSCAR_RESERVA_POR_ID,
-      [id],
-    );
-    //Analizar resultados devolver una cosa u otra
-    client.release();
-    console.log(resultadoQuery.rows);
-    return resultadoQuery.rows;
+  async buscarReservaPorId(id: number): Promise<Reserve> {
+    const DataSrc: DataSource = await initializeDBConnector(dataSource);
+    const ReserveRepo = DataSrc.getRepository(Reserve);
+    const ReservaObtenida: Reserve = await ReserveRepo.findOne({
+      where: {
+        id: id,
+      },
+    });
+
+    return ReservaObtenida;
   }
   
-  async buscarReservasPorEspacio(idEspacio: string): Promise<Reserva[]> {
-    var client = await poolConn.connect();
-    var resultadoQuery = await client.query(
-      ReservaQueries.QUERY_BUSCAR_RESERVAS_POR_ESPACIO,
-      [idEspacio],
-    );
-    //Analizar resultados devolver una cosa u otra
-    client.release();
-    console.log(resultadoQuery.rows);
-      return resultadoQuery.rows;
+  async buscarReservasPorEspacio(idEspacio: string): Promise<Reserve[]> {
+      const DataSrc: DataSource = await initializeDBConnector(dataSource);
+      const ReserveRepo = DataSrc.getRepository(Reserve);
+      const ReservasObtenidas: Reserve[] = await ReserveRepo.find({
+        where: {
+          espacioId: idEspacio,
+        },
+      });
+  
+      return ReservasObtenidas;
   }
 
   async testFind(datosReserva: DatosReservaProps): Promise<Reserve[]>{
@@ -100,6 +96,7 @@ export class ReservaRepoPGImpl implements ReservaRepository {
       Name: 'hola',
       Capacity: 15,
       Building: 'Ada',
+      Floor: 'Baja',
       Kind: 'Sanidad',
     };
     reserva.fillReserveWithDomainEntity(new Reserva(ShortDomainId.create(crypto.randomBytes(64).toString('hex')),Datos_Reserva,new Espacio(null,null,null)))

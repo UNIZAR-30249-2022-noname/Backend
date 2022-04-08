@@ -7,13 +7,13 @@ import * as crypto from 'crypto';
 import { EspacioRepository } from '../../Domain/EspacioRepository';
 import {Reserva} from '../../../Reserva/Domain/Entities/reserva'
 
-export interface servicioEspacio {
+export interface servicioEspacioI {
   guardarEspacio(espacioProps: EspacioProps): Promise<boolean>;
   buscarEspacioPorId(id: String): Promise<Espacio[]>;
   listarReservas(id:String, fecha:String): Promise<Reserva[]>
 }
 
-export class servicioEspacioImpl implements servicioEspacio {
+export class EspacioService implements servicioEspacioI {
   constructor(private readonly Espaciorepository: EspacioRepository) {}
   
   listarReservas(id: String, fecha: String): Promise<Reserva[]> {

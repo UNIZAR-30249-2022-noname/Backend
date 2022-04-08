@@ -5,13 +5,13 @@ import  {Reserve}  from './Entities/reserva.entity';
 export interface ReservaRepository {
   guardar(reserva: Reserva): Promise<Reserve>;
   actualizar(
-    id: string,
+    id: number,
     hourstart: string,
     hourend: string,
     date: string,
   ): Promise<boolean>;
-  eliminar(id: string): Promise<boolean>;
-  buscarReservaPorId(id: string): Promise<Reserva[]>;
-  buscarReservasPorEspacio(idEspacio: string): Promise<Reserva[]>;
+  eliminar(id: number): Promise<boolean>;
+  buscarReservaPorId(id: number): Promise<Reserve>;
+  buscarReservasPorEspacio(idEspacio: string): Promise<Reserve[]>;
   testFind(datosReserva: DatosReservaProps): Promise<Reserve[]>;
 }

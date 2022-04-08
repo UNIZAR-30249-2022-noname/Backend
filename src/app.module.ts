@@ -7,6 +7,8 @@ import {
 } from './Mooc/Reserva/Application/reserva.service';
 import { AMQPController } from './Infraestructure/Adapters/reserva.controller';
 import { ReservaRepoPGImpl } from './Mooc/Reserva/Infraestructure/reserva.repository';
+import { EspacioRepoPGImpl } from './Mooc/Espacio/Infraestructure/espacio.repository';
+import { EspacioService } from './Mooc/Espacio/Application/usecase/espacio.service';
 
 @Module({
   imports: [
@@ -37,6 +39,14 @@ import { ReservaRepoPGImpl } from './Mooc/Reserva/Infraestructure/reserva.reposi
     {
       provide: 'ReservaRepository',
       useClass: ReservaRepoPGImpl,
+    },
+    {
+      provide: 'servicioEspacioI',
+      useClass: EspacioService,
+    },
+    {
+      provide: 'EspacioRepository',
+      useClass: EspacioRepoPGImpl,
     }
   ],
 })

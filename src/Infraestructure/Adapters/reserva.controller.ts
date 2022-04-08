@@ -46,6 +46,7 @@ export class AMQPController{
       Name: 'hola',
       Capacity: 15,
       Building: 'Ada',
+      Floor: 'Baja',
       Kind: 'Sanidad',
     };
     //Devuelve lo que tenga que devolver en formato JSON.

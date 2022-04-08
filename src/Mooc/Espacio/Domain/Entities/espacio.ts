@@ -6,6 +6,7 @@ export interface EspacioProps{
   Name: string;
   Capacity: number;
   Building: string;
+  Floor: string;
   Kind: string;
 }
 

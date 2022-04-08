@@ -20,6 +20,9 @@ export class Reserve {
     @Column()
     persona: string;
 
+    @Column({ type: "varchar", length: 50})
+    espacioId: string;
+
     @ManyToOne(() => Space, (espacio) => espacio.reservas)
     espacio: Space
 
