@@ -93,13 +93,14 @@ export class ReservaRepoPGImpl implements ReservaRepository {
     const ReserveRepo = DataSrc.getRepository(Reserve)
     const reserva: Reserve = new Reserve();
     const espacioprops: EspacioProps = {
+      Id: 'hola',
       Name: 'hola',
       Capacity: 15,
       Building: 'Ada',
       Floor: 'Baja',
       Kind: 'Sanidad',
     };
-    reserva.fillReserveWithDomainEntity(new Reserva(ShortDomainId.create(crypto.randomBytes(64).toString('hex')),Datos_Reserva,new Espacio(null,null,null)))
+    reserva.fillReserveWithDomainEntity(new Reserva(ShortDomainId.create(crypto.randomBytes(64).toString('hex')),Datos_Reserva,new Espacio(null,null)))
     //reserva.fecha = datosReserva.fecha;
     //reserva.horaFin = datosReserva.horaFin
     //reserva.horaInicio = datosReserva.horaInicio

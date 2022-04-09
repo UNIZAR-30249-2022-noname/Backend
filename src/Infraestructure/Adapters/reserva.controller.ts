@@ -15,6 +15,7 @@ import {
   Ctx,
 } from '@nestjs/microservices';
 import {Reserve}  from 'src/Mooc/Reserva/Domain/Entities/reserva.entity';
+import { servicioEspacioI } from 'src/Mooc/Espacio/Application/usecase/espacio.service';
 
 @Controller()
 export class AMQPController{
@@ -22,6 +23,7 @@ export class AMQPController{
   //Constructor inyeccion de dependencias de todos los servicios de aplicación que sean necesarios.
   constructor(
     @Inject('servicioReservaI') private readonly servicioReservas: servicioReservaI,
+    @Inject('servicioEspacioI') private readonly servicioEspacios: servicioEspacioI
   ) {}
 
   //Endpoint para recibir una realización de una reserva
@@ -43,6 +45,7 @@ export class AMQPController{
       crypto.randomBytes(64).toString('hex'),
     );
     const espacioprops: EspacioProps = {
+      Id: 'hola',
       Name: 'hola',
       Capacity: 15,
       Building: 'Ada',
@@ -86,5 +89,14 @@ export class AMQPController{
     return reservaprops
   }
 
+  @MessagePattern('importar-espacios')
+  async importarEspacios(
+    @Payload() data: number[],
+    @Ctx() context: RmqContext,
+  ) {
+    // FALTA CONVERTIR EL BINARIO DE RABBIT A CSV Y PASARSELO A importarEspacios. ACTUALMENTE COGE AUTOMÁTICAMENTE EL TB_ESPACIOS.csv
+    await this.servicioEspacios.importarEspacios();
 
+    return true;
+  }
 }

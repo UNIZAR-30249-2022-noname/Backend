@@ -29,6 +29,7 @@ export class Space {
     constructor() { }
 
     public fillEspacioWithDomainEntity(espacio: Espacio){
+        this.id = espacio.getDatosEspacioProps().Id;
         this.name = espacio.getDatosEspacioProps().Name;
         this.Capacity = espacio.getDatosEspacioProps().Capacity;
         this.Building = espacio.getDatosEspacioProps().Building;

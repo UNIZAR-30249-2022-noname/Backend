@@ -3,6 +3,7 @@ import { Reserva } from 'src/Mooc/Reserva/Domain/Entities/reserva';
 import { BaseDomainEntity, Entity, Result, ShortDomainId } from 'types-ddd';
 
 export interface EspacioProps{
+  Id: string;
   Name: string;
   Capacity: number;
   Building: string;

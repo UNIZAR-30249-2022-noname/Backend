@@ -4,7 +4,7 @@ import { initializeDBConnector, poolConn } from '../../../Infraestructure/Adapte
 import * as crypto from 'crypto';
 import { ShortDomainId } from 'types-ddd';
 import { Space } from '../Domain/Entities/espacio.entity';
-import { DataSource } from 'typeorm';
+import { DataSource, InsertResult } from 'typeorm';
 import dataSource from 'src/Config/ormconfig_db';
 
 enum EspacioQueries {
@@ -29,7 +29,7 @@ export class EspacioRepoPGImpl implements EspacioRepository {
         id: spaceDTO.id,
       },
     });
-    
+
     return espacioGuardado;
   }
 
@@ -52,5 +52,19 @@ export class EspacioRepoPGImpl implements EspacioRepository {
     console.log(EspaciosObtenidos);
 
     return EspaciosObtenidos;
+  }
+
+  async importarEspacios(espacios: Espacio[]): Promise<InsertResult> {
+    const DataSrc: DataSource = await initializeDBConnector(dataSource);
+    const SpaceRepo = DataSrc.getRepository(Space);
+    const spacesDTO: Space[] = espacios.map(function (espacio) {
+      const spaceDTO: Space = new Space();
+      spaceDTO.fillEspacioWithDomainEntity(espacio);
+      return spaceDTO;
+    });
+    const espaciosImportados: InsertResult = await SpaceRepo.insert(spacesDTO);
+    console.log(espaciosImportados)
+    
+    return espaciosImportados;
   }
 }
