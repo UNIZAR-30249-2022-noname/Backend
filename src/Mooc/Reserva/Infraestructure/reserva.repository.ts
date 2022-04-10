@@ -1,6 +1,5 @@
 import { Reserva } from '../Domain/Entities/reserva';
 import { ReservaRepository } from '../Domain/ReservaRepository';
-import { poolConn } from '../../../Infraestructure/Adapters/pg-connection';
 import { Injectable } from '@nestjs/common';
 import {Reserve}  from '../Domain/Entities/reserva.entity';
 import { DatosReserva, DatosReservaProps } from '../Domain/Entities/datosreserva';
@@ -100,10 +99,7 @@ export class ReservaRepoPGImpl implements ReservaRepository {
       Floor: 'Baja',
       Kind: 'Sanidad',
     };
-    reserva.fillReserveWithDomainEntity(new Reserva(ShortDomainId.create(crypto.randomBytes(64).toString('hex')),Datos_Reserva,new Espacio(null,null)))
-    //reserva.fecha = datosReserva.fecha;
-    //reserva.horaFin = datosReserva.horaFin
-    //reserva.horaInicio = datosReserva.horaInicio
+    reserva.fillReserveWithDomainEntity(new Reserva(null,Datos_Reserva,new Espacio(null,null)))
     console.log(reserva);
     await ReserveRepo.save(reserva);
     const lreservas: Reserve[] = await ReserveRepo.find();

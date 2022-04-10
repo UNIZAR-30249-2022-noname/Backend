@@ -12,7 +12,7 @@ import { BEntity } from 'src/BaseEntity/BEntity';
 
 export class Reserva extends BEntity{
  
-  constructor(id: ShortDomainId,private Datosreserva: DatosReserva, private Espacio: Espacio) { 
+  constructor(id: string, private Datosreserva: DatosReserva, private Espacio: Espacio) { 
     super(id);
   }
 

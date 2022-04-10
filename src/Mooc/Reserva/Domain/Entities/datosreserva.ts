@@ -2,8 +2,8 @@ import { ValueObject } from 'types-ddd';
 import { PoliticaReserva } from './politica_reserva';
 
 export interface DatosReservaProps {
-  readonly horaInicio: string;
-  readonly horaFin: string;
+  readonly horaInicio: number;
+  horaFin?: number;
   readonly fecha: string;
   readonly Persona: string;
 }
@@ -25,6 +25,13 @@ export class DatosReserva{
       return new DatosReserva(props);
     } else {
       throw new Error('Error al crear la reserva.');
+    }
+  }
+
+  public calcularHoraFin(duracion: number): number {
+    if(duracion % 60 === 0) {
+      this.propsReserva.horaFin = this.propsReserva.horaInicio + (duracion / 60)
+      return this.propsReserva.horaFin;
     }
   }
 

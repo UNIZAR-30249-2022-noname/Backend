@@ -5,7 +5,7 @@ import {
   ReservaService,
   servicioReservaI,
 } from './Mooc/Reserva/Application/reserva.service';
-import { AMQPController } from './Infraestructure/Adapters/reserva.controller';
+import { AMQPController } from './Infraestructure/Adapters/rabbit.controller';
 import { ReservaRepoPGImpl } from './Mooc/Reserva/Infraestructure/reserva.repository';
 import { EspacioRepoPGImpl } from './Mooc/Espacio/Infraestructure/espacio.repository';
 import { EspacioService } from './Mooc/Espacio/Application/usecase/espacio.service';

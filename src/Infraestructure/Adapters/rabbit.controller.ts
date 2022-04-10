@@ -36,14 +36,10 @@ export class AMQPController{
     const mensajeRecibido = JSON.parse(context.getMessage().content);
     console.log('Procesando Solicitud(realizar-resreva)', mensajeRecibido);
     const reservaprops: DatosReservaProps = {
-      fecha: new Date().toString(),
-      horaInicio: '10:00',
-      horaFin: '12:00',
-      Persona: 'Sergio',
+      fecha: mensajeRecibido.Reserva.Date,
+      horaInicio: mensajeRecibido.Reserva.InitHour.hour,
+      Persona: mensajeRecibido.Reserva.Person,
     };
-    let id: ShortDomainId = ShortDomainId.create(
-      crypto.randomBytes(64).toString('hex'),
-    );
     const espacioprops: EspacioProps = {
       Id: 'hola',
       Name: 'hola',
@@ -52,8 +48,9 @@ export class AMQPController{
       Floor: 'Baja',
       Kind: 'Sanidad',
     };
+    const duracion: number = mensajeRecibido.Reserva.InitHour.min
     //Devuelve lo que tenga que devolver en formato JSON.
-    let resultadoOperacion: Reserve = await this.servicioReservas.guardarReserva(reservaprops,espacioprops);
+    let resultadoOperacion: Reserve = await this.servicioReservas.guardarReserva(reservaprops,espacioprops,duracion);
     console.log(resultadoOperacion)
     return resultadoOperacion;
   }
@@ -63,10 +60,12 @@ export class AMQPController{
     @Payload() data: number[],
     @Ctx() context: RmqContext,
   ) {
- 
+    const mensajeRecibido = JSON.parse(context.getMessage().content);
+    //this.servicioEspacios.filtrarEspacios()
+    return true;
   }
 
-  @MessagePattern('buscar-reserva-por-espacio')
+  @MessagePattern('filtrar-espacios')
   async buscarReservaPorEspacio(
     @Payload() data: number[],
     @Ctx() context: RmqContext,
@@ -74,29 +73,14 @@ export class AMQPController{
    
   }
 
-  @MessagePattern('recibir-reserva')
-  async TesteitoReservas(
-    @Payload() data: number[],
-    @Ctx() context: RmqContext,
-  ) {
-
-    const reservaprops: DatosReservaProps = {
-      fecha: new Date().toISOString(),
-      horaInicio: '10:00',
-      horaFin: '12:00',
-      Persona: 'Sergio',
-    };
-    return reservaprops
-  }
 
   @MessagePattern('importar-espacios')
   async importarEspacios(
     @Payload() data: number[],
     @Ctx() context: RmqContext,
   ) {
-    // FALTA CONVERTIR EL BINARIO DE RABBIT A CSV Y PASARSELO A importarEspacios. ACTUALMENTE COGE AUTOMÁTICAMENTE EL TB_ESPACIOS.csv
-    await this.servicioEspacios.importarEspacios();
-
-    return true;
+    // TODO: FALTA CONVERTIR EL BINARIO DE RABBIT A CSV Y PASARSELO A importarEspacios. ACTUALMENTE COGE AUTOMÁTICAMENTE EL TB_ESPACIOS.csv
+    const resultadoOperacionInsertar = await this.servicioEspacios.importarEspacios();
+    return resultadoOperacionInsertar;
   }
 }

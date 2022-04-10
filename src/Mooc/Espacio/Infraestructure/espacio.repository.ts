@@ -1,6 +1,6 @@
 import { Espacio, EspacioProps } from '../Domain/Entities/espacio';
 import { EspacioRepository } from '../Domain/EspacioRepository';
-import { initializeDBConnector, poolConn } from '../../../Infraestructure/Adapters/pg-connection';
+import { initializeDBConnector} from '../../../Infraestructure/Adapters/pg-connection';
 import * as crypto from 'crypto';
 import { ShortDomainId } from 'types-ddd';
 import { Space } from '../Domain/Entities/espacio.entity';
@@ -17,7 +17,7 @@ enum EspacioQueries {
 
 export class EspacioRepoPGImpl implements EspacioRepository {
   async guardar(espacio: Espacio): Promise<Space> {
-    //Inicializar el repositorio para le entidad Space
+    //Inicializar el repositorio para la entidad Space
     const DataSrc: DataSource = await initializeDBConnector(dataSource);
     const SpaceRepo = DataSrc.getRepository(Space)
     const spaceDTO: Space = new Space();
@@ -45,12 +45,13 @@ export class EspacioRepoPGImpl implements EspacioRepository {
     return EspacioObtenido;
   }
 
-  async filtrarEspaciosReservables(capacity: number, day: string, hour: string, floor: string, building: string, kind: string): Promise<any> {
+  async filtrarEspaciosReservables(espacioprops: Espacio): Promise<Space[]> {
+    //Inicializamos el conector
     const DataSrc: DataSource = await initializeDBConnector(dataSource);
     const SpaceRepo = DataSrc.getRepository(Space);
-    const EspaciosObtenidos: any = await SpaceRepo.query(EspacioQueries.QUERY_FILTRAR_ESPACIOS)
+    //Buscamos todos los espacios que cumplan la condición de búsqueda
+    const EspaciosObtenidos: Space[] = await SpaceRepo.query(EspacioQueries.QUERY_FILTRAR_ESPACIOS)
     console.log(EspaciosObtenidos);
-
     return EspaciosObtenidos;
   }
 
@@ -63,8 +64,6 @@ export class EspacioRepoPGImpl implements EspacioRepository {
       return spaceDTO;
     });
     const espaciosImportados: InsertResult = await SpaceRepo.insert(spacesDTO);
-    console.log(espaciosImportados)
-    
     return espaciosImportados;
   }
 }

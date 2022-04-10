@@ -31,8 +31,8 @@ export class Reserve {
 
     public fillReserveWithDomainEntity(reserva: Reserva){
         this.fecha = reserva.getDatosReservaProps().fecha;
-        this.horaInicio = reserva.getDatosReservaProps().horaInicio;
-        this.horaFin = reserva.getDatosReservaProps().horaFin;
+        this.horaInicio = reserva.getDatosReservaProps().horaInicio.toString();
+        this.horaFin = reserva.getDatosReservaProps().horaFin.toString();
         this.persona = reserva.getDatosReservaProps().Persona;
     }
 

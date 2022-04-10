@@ -10,25 +10,33 @@ import { Injectable, Inject } from '@nestjs/common';
 import { Space } from '../../Domain/Entities/espacio.entity';
 import csv from 'csv-parser';
 import fs from 'fs';
+import { InsertResult } from 'typeorm';
 
 export interface servicioEspacioI {
   guardarEspacio(espacioProps: EspacioProps): Promise<Space>;
   buscarEspacioPorId(id: String): Promise<Espacio[]>;
   listarReservas(id:String, fecha:String): Promise<Reserva[]>;
   importarEspacios(): Promise<Boolean>;
+  filtrarEspacios(espacioprops: EspacioProps):Promise<Space[]>;
 }
 
 @Injectable()
 export class EspacioService implements servicioEspacioI {
-  constructor(@Inject('EspacioRepository')
-  private readonly espaciorepository: EspacioRepository) {}
+  
+  constructor(@Inject('EspacioRepository') private readonly espaciorepository: EspacioRepository) {}
+
+  async filtrarEspacios(espacioprops: EspacioProps): Promise<Space[]> {
+    let EntidadEspacio: Espacio = new Espacio(espacioprops.Id,espacioprops);
+    const listaEspacios: Space[] = await this.espaciorepository.filtrarEspaciosReservables(EntidadEspacio)
+    return listaEspacios;
+  }
   
   listarReservas(id: String, fecha: String): Promise<Reserva[]> {
     throw new Error('Method not implemented.');
   }
 
   async guardarEspacio(espacioProps: EspacioProps): Promise<Space> {
-    const EspacioAGuardar: Espacio = new Espacio(ShortDomainId.create("CRE.1"), espacioProps)
+    const EspacioAGuardar: Espacio = new Espacio("CRE.1", espacioProps)
     const espacioGuardado: Space = await this.espaciorepository.guardar(EspacioAGuardar);
     return espacioGuardado;
   }
@@ -46,27 +54,43 @@ export class EspacioService implements servicioEspacioI {
   }
 
   async importarEspacios(): Promise<Boolean> {
-    const results: any[] = [];
-    fs.createReadStream('./src/Mooc/Espacio/Application/usecase/TB_ESPACIOS.csv')
-    .pipe(csv())
-    .on('data', (data) => results.push(data))
-    .on('end', () => {
-      //console.log(results[0]);
-      const espacios: Espacio[] = results.map(function (result) {
-        var espacioprops: EspacioProps = {
-          Id: result.ID_ESPACIO,
-          Name: result.ID_CENTRO,
-          Capacity: result.NMRO_PLAZAS,
-          Building: result.ID_EDIFICIO,
-          Floor: result.ID_UTC,
-          Kind: result.TIPO_DE_USO,
-        };
-        return new Espacio(ShortDomainId.create(result.ID_ESPACIO), espacioprops)
-      });
-      this.espaciorepository.importarEspacios(espacios);
-    });
 
-    return true;
+    const results: any[] = [];
+    // TODO: Hacer esto transacional.
+    //Creamos una promise que se encarga de insertar todos los campos del fichero CSV en la base de Datos
+    const InsertarEspaciosPromise = 
+    new Promise<InsertResult>((resolve, reject) => {
+      fs.createReadStream('./src/Mooc/Espacio/Application/usecase/TB_ESPACIOS.csv')
+      .on('error', err => {
+        reject(err)
+      })
+      .pipe(csv())
+      .on('data', (data) => results.push(data))
+      .on('end', async () => {
+        //console.log(results[0]);
+        const espacios: Espacio[] = results.map(function (result) {
+          var espacioprops: EspacioProps = {
+            Id: result.ID_ESPACIO,
+            Name: result.ID_CENTRO,
+            Capacity: result.NMRO_PLAZAS,
+            Building: result.ID_EDIFICIO,
+            Floor: result.ID_UTC,
+            Kind: result.TIPO_DE_USO,
+          };
+          return new Espacio(result.ID_ESPACIO, espacioprops)
+        });
+        const resultadoOperacion = await this.espaciorepository.importarEspacios(espacios);
+        resolve(resultadoOperacion)
+      });
+    });
+    
+    try {
+       return (await InsertarEspaciosPromise).identifiers.length > 0;
+    } catch (error: any) {
+      console.error("Error al insertar espacios en la Base de datos, mensaje de error: ",error.message);
+      return false
+    }
+
   }
 
 }
