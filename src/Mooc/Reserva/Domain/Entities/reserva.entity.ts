@@ -1,5 +1,5 @@
 import { Space } from 'src/Mooc/Espacio/Domain/Entities/espacio.entity';
-import {Entity, Column, PrimaryGeneratedColumn, ManyToOne} from 'typeorm';
+import {Entity, Column, PrimaryGeneratedColumn, ManyToOne, JoinColumn} from 'typeorm';
 import {DatosReserva, DatosReservaProps} from './datosreserva';
 import { Reserva } from './reserva';
 
@@ -24,6 +24,9 @@ export class Reserve {
     espacioid: string;
 
     @ManyToOne(() => Space, (espacio) => espacio.reservas)
+    @JoinColumn({ 
+        name: 'espacioid'
+    })
     espacio: Space
 
    

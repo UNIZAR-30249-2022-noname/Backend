@@ -32,20 +32,25 @@ export class AMQPController{
     @Payload() data: number[],
     @Ctx() context: RmqContext,
   ) {
+    
     //Convierte el mensaje en un Objeton JSON.
     const mensajeRecibido = JSON.parse(context.getMessage().content);
     console.log('Procesando Solicitud(realizar-resreva)', mensajeRecibido);
+    const horainicio = mensajeRecibido.body.Scheduled[0].Hour
+    const horafin = mensajeRecibido.body.Scheduled[1].Hour 
+    const evento: string = mensajeRecibido.body.event
     const reservaprops: DatosReservaProps = {
-      fecha: mensajeRecibido.Reserva.Date,
-      horaInicio: mensajeRecibido.Reserva.InitHour.hour,
-      Persona: mensajeRecibido.Reserva.Person,
+      fecha: mensajeRecibido.body.Day,
+      horaInicio: horainicio,
+      horaFin: horafin,
+      Persona: mensajeRecibido.body.owner,
     };
-    const idEspacio: string = mensajeRecibido.Reserva.id;
+    const idEspacio: string = mensajeRecibido.space;
     const duracion: number = mensajeRecibido.Reserva.InitHour.min
     //Devuelve lo que tenga que devolver en formato JSON.
     let resultadoOperacion: Reserve = await this.servicioReservas.guardarReserva(reservaprops,idEspacio,duracion);
     console.log(resultadoOperacion)
-    return resultadoOperacion;
+    return {id: resultadoOperacion.id, CorrelationId: mensajeRecibido.id };
   }
 
   @MessagePattern('buscar-reserva-por-id')

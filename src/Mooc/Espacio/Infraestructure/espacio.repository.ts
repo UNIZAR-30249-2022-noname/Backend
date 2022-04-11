@@ -14,7 +14,7 @@ enum EspacioQueries {
   QUERY_BUSCAR_ESPACIOS_POR_FILTRO = 'SELECT * FROM espacios WHERE capacity>=$1 AND building=$2 AND kind=$3 AND floor=$4',
   //SELECT * FROM space WHERE id=(SELECT espacioId FROM reserve r WHERE NOT (r.fecha='10/04/2022' AND ('11' >= r.horainicio AND '11' < r.horafin))) AND capacity>=1 AND building='CRE.1065.' AND kind='17' AND floor='00.095'
   QUERY_FILTRAR_ESPACIOS = 'SELECT * FROM space WHERE id=(SELECT espacioId FROM reserve r WHERE NOT (r.fecha=$1 AND ($2 >= r.horainicio AND $2 < r.horafin)))' + 
-  ' AND Capacity>=$3 AND Building=$4 AND Kind=$5 AND floor=$6'
+  ' AND Capacity>=$3 AND Building=$4 AND floor=$5'
 }
 
 export class EspacioRepoPGImpl implements EspacioRepository {
