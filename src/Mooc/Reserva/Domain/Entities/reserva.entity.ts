@@ -37,6 +37,7 @@ export class Reserve {
         this.horainicio = reserva.getDatosReservaProps().horaInicio.toString();
         this.horafin = reserva.getDatosReservaProps().horaFin.toString();
         this.persona = reserva.getDatosReservaProps().Persona;
+        this.espacioid = reserva.getEspacio();
     }
 
 }

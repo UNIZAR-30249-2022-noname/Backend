@@ -78,8 +78,12 @@ export class EspacioService implements servicioEspacioI {
           };
           return new Espacio(result.ID_ESPACIO, espacioprops)
         });
-        const resultadoOperacion = await this.espaciorepository.importarEspacios(espacios);
-        resolve(resultadoOperacion)
+        try {
+          const resultadoOperacion = await this.espaciorepository.importarEspacios(espacios);
+          resolve(resultadoOperacion)
+        } catch (error) {
+          reject(error)
+        }
       });
     });
     

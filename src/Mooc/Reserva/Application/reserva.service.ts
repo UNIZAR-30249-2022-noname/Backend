@@ -15,7 +15,6 @@ export interface servicioReservaI {
   guardarReserva(
     datosreserva: DatosReservaProps,
     idEspacio: string,
-    duracion: number
   ): Promise<Reserve>;
 }
 
@@ -24,11 +23,10 @@ export class ReservaService implements servicioReservaI {
   constructor(@Inject('ReservaRepository')
   private readonly reservarepository: ReservaRepository) {}
 
-  async guardarReserva(datosreserva: DatosReservaProps, idEspacio: string,duracion: number): Promise<Reserve> {
+  async guardarReserva(datosreserva: DatosReservaProps, idEspacio: string): Promise<Reserve> {
     //Creamos los datos de la reserva correspondiente que nos realizan.
     let Datos_Reserva: DatosReserva =
         DatosReserva.createDatosReserva(datosreserva);
-    Datos_Reserva.calcularHoraFin(duracion)
     const ReservaARealizar: Reserva = new Reserva(null,Datos_Reserva,idEspacio)
     const reservahecha: Reserve = await this.reservarepository.guardar(ReservaARealizar);
     return reservahecha
