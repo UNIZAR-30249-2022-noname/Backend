@@ -3,7 +3,7 @@ import {
   DatosReserva,
 } from '../Domain/Entities/datosreserva';
 import { Reserva} from '../Domain/Entities/reserva';
-import { Espacio, EspacioProps } from '../../Espacio/Domain/Entities/espacio';
+import { Espacio } from '../../Espacio/Domain/Entities/espacio';
 import { ReservaRepository } from '../Domain/ReservaRepository';
 import { ShortDomainId } from 'types-ddd';
 import * as crypto from 'crypto';
@@ -14,10 +14,9 @@ import { ReservaRepoPGImpl } from '../Infraestructure/reserva.repository';
 export interface servicioReservaI {
   guardarReserva(
     datosreserva: DatosReservaProps,
-    espacio: EspacioProps,
+    idEspacio: string,
     duracion: number
   ): Promise<Reserve>;
-  testFind(datosReserva: DatosReservaProps): Promise<Reserve[]>;
 }
 
 @Injectable()
@@ -25,19 +24,15 @@ export class ReservaService implements servicioReservaI {
   constructor(@Inject('ReservaRepository')
   private readonly reservarepository: ReservaRepository) {}
 
-  async guardarReserva(datosreserva: DatosReservaProps, espacioprops: EspacioProps,duracion: number): Promise<Reserve> {
+  async guardarReserva(datosreserva: DatosReservaProps, idEspacio: string,duracion: number): Promise<Reserve> {
     //Creamos los datos de la reserva correspondiente que nos realizan.
     let Datos_Reserva: DatosReserva =
         DatosReserva.createDatosReserva(datosreserva);
     Datos_Reserva.calcularHoraFin(duracion)
-    const ReservaARealizar: Reserva = new Reserva(null,Datos_Reserva,new Espacio(espacioprops.Id,espacioprops))
+    const ReservaARealizar: Reserva = new Reserva(null,Datos_Reserva,idEspacio)
     const reservahecha: Reserve = await this.reservarepository.guardar(ReservaARealizar);
     return reservahecha
   }
 
-  async testFind(datosReserva: DatosReservaProps): Promise<Reserve[]>{
-    console.log("Llaman a testFind")
-    const lreservas: Reserve[] = await this.reservarepository.testFind(datosReserva);
-    return lreservas
-  }
+
 }

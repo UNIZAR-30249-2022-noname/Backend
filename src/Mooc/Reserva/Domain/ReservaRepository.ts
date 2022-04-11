@@ -13,5 +13,4 @@ export interface ReservaRepository {
   eliminar(id: number): Promise<boolean>;
   buscarReservaPorId(id: number): Promise<Reserve>;
   buscarReservasPorEspacio(idEspacio: string): Promise<Reserve[]>;
-  testFind(datosReserva: DatosReservaProps): Promise<Reserve[]>;
 }

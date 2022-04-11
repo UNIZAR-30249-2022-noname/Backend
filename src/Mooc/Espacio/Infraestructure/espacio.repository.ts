@@ -1,4 +1,4 @@
-import { Espacio, EspacioProps } from '../Domain/Entities/espacio';
+import { Espacio } from '../Domain/Entities/espacio';
 import { EspacioRepository } from '../Domain/EspacioRepository';
 import { initializeDBConnector} from '../../../Infraestructure/Adapters/pg-connection';
 import * as crypto from 'crypto';
@@ -12,7 +12,9 @@ enum EspacioQueries {
   QUERY_INTRODUCIR_ESPACIO = 'INSERT INTO espacios (id,name,capacity,building,kind) VALUES ($1,$2,$3,$4,$5)',
   QUERY_OBTENER_ESPACIOS = 'SELECT * FROM espacios',
   QUERY_BUSCAR_ESPACIOS_POR_FILTRO = 'SELECT * FROM espacios WHERE capacity>=$1 AND building=$2 AND kind=$3 AND floor=$4',
-  QUERY_FILTRAR_ESPACIOS = 'SELECT * FROM space WHERE id=(SELECT espacioId FROM reserve WHERE NOT fecha=$1 OR NOT horaInicio=$2) AND Capacity>=$1 AND Building=$2 AND Kind=$3 AND floor=$4'
+  //SELECT * FROM space WHERE id=(SELECT espacioId FROM reserve r WHERE NOT (r.fecha='10/04/2022' AND ('11' >= r.horainicio AND '11' < r.horafin))) AND capacity>=1 AND building='CRE.1065.' AND kind='17' AND floor='00.095'
+  QUERY_FILTRAR_ESPACIOS = 'SELECT * FROM space WHERE id=(SELECT espacioId FROM reserve r WHERE NOT (r.fecha=$1 AND ($2 >= r.horainicio AND $2 < r.horafin)))' + 
+  ' AND Capacity>=$3 AND Building=$4 AND Kind=$5 AND floor=$6'
 }
 
 export class EspacioRepoPGImpl implements EspacioRepository {

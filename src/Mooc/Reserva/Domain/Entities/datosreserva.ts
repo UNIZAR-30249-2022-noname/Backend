@@ -1,3 +1,4 @@
+import { assert } from 'console';
 import { ValueObject } from 'types-ddd';
 import { PoliticaReserva } from './politica_reserva';
 
@@ -29,10 +30,9 @@ export class DatosReserva{
   }
 
   public calcularHoraFin(duracion: number): number {
-    if(duracion % 60 === 0) {
-      this.propsReserva.horaFin = this.propsReserva.horaInicio + (duracion / 60)
-      return this.propsReserva.horaFin;
-    }
+    assert( duracion >= 0 && duracion % 60 === 0,"Duración no valida.")
+    this.propsReserva.horaFin = this.propsReserva.horaInicio + (duracion / 60)
+    return this.propsReserva.horaFin;   
   }
 
   public getProps(): DatosReservaProps {

@@ -17,7 +17,7 @@ export interface servicioEspacioI {
   buscarEspacioPorId(id: String): Promise<Espacio[]>;
   listarReservas(id:String, fecha:String): Promise<Reserva[]>;
   importarEspacios(): Promise<Boolean>;
-  filtrarEspacios(espacioprops: EspacioProps):Promise<Space[]>;
+  filtrarEspacios(espacioprops: EspacioProps, espacioId: string):Promise<Space[]>;
 }
 
 @Injectable()
@@ -25,8 +25,8 @@ export class EspacioService implements servicioEspacioI {
   
   constructor(@Inject('EspacioRepository') private readonly espaciorepository: EspacioRepository) {}
 
-  async filtrarEspacios(espacioprops: EspacioProps): Promise<Space[]> {
-    let EntidadEspacio: Espacio = new Espacio(espacioprops.Id,espacioprops);
+  async filtrarEspacios(espacioprops: EspacioProps, espacioId: string): Promise<Space[]> {
+    let EntidadEspacio: Espacio = new Espacio(espacioId,espacioprops);
     const listaEspacios: Space[] = await this.espaciorepository.filtrarEspaciosReservables(EntidadEspacio)
     return listaEspacios;
   }
@@ -70,7 +70,6 @@ export class EspacioService implements servicioEspacioI {
         //console.log(results[0]);
         const espacios: Espacio[] = results.map(function (result) {
           var espacioprops: EspacioProps = {
-            Id: result.ID_ESPACIO,
             Name: result.ID_CENTRO,
             Capacity: result.NMRO_PLAZAS,
             Building: result.ID_EDIFICIO,

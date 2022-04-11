@@ -12,16 +12,16 @@ export class Reserve {
     fecha: string;
 
     @Column()
-    horaInicio: string;
+    horainicio: string;
 
     @Column()
-    horaFin: string;
+    horafin: string;
 
     @Column()
     persona: string;
 
     @Column({ type: "varchar", length: 50})
-    espacioId: string;
+    espacioid: string;
 
     @ManyToOne(() => Space, (espacio) => espacio.reservas)
     espacio: Space
@@ -31,8 +31,8 @@ export class Reserve {
 
     public fillReserveWithDomainEntity(reserva: Reserva){
         this.fecha = reserva.getDatosReservaProps().fecha;
-        this.horaInicio = reserva.getDatosReservaProps().horaInicio.toString();
-        this.horaFin = reserva.getDatosReservaProps().horaFin.toString();
+        this.horainicio = reserva.getDatosReservaProps().horaInicio.toString();
+        this.horafin = reserva.getDatosReservaProps().horaFin.toString();
         this.persona = reserva.getDatosReservaProps().Persona;
     }
 

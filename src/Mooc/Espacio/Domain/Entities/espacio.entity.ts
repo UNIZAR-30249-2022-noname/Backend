@@ -11,16 +11,16 @@ export class Space {
     name: string;
 
     @Column({ type: "integer"})
-    Capacity: number;
+    capacity: number;
 
     @Column({ type: "varchar", length: 25})
-    Building: string;
+    building: string;
 
     @Column({ type: "varchar", length: 25})
-    Floor: string;
+    floor: string;
 
     @Column({ type: "varchar", length: 50})
-    Kind: string;
+    kind: string;
     
     @OneToMany(() => Reserve, (reserve) => reserve.espacio)
     reservas: Reserve[]
@@ -29,12 +29,12 @@ export class Space {
     constructor() { }
 
     public fillEspacioWithDomainEntity(espacio: Espacio){
-        this.id = espacio.getDatosEspacioProps().Id;
+        this.id = espacio.id.toString();
         this.name = espacio.getDatosEspacioProps().Name;
-        this.Capacity = espacio.getDatosEspacioProps().Capacity;
-        this.Building = espacio.getDatosEspacioProps().Building;
-        this.Floor = espacio.getDatosEspacioProps().Floor;
-        this.Kind = espacio.getDatosEspacioProps().Kind;
+        this.capacity = espacio.getDatosEspacioProps().Capacity;
+        this.building = espacio.getDatosEspacioProps().Building;
+        this.floor = espacio.getDatosEspacioProps().Floor;
+        this.kind = espacio.getDatosEspacioProps().Kind;
     }
 
 }

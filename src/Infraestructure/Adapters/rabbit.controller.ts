@@ -3,7 +3,7 @@ import {
   ReservaService,
 } from '../../Mooc/Reserva/Application/reserva.service';
 import { DatosReservaProps } from '../../Mooc/Reserva/Domain/Entities/datosreserva';
-import { Espacio, EspacioProps } from '../../Mooc/Espacio/Domain/Entities/espacio';
+import { Espacio} from '../../Mooc/Espacio/Domain/Entities/espacio';
 import { DomainId, ShortDomainId } from 'types-ddd';
 import * as crypto from 'crypto';
 import { Controller, Inject } from '@nestjs/common';
@@ -40,17 +40,10 @@ export class AMQPController{
       horaInicio: mensajeRecibido.Reserva.InitHour.hour,
       Persona: mensajeRecibido.Reserva.Person,
     };
-    const espacioprops: EspacioProps = {
-      Id: 'hola',
-      Name: 'hola',
-      Capacity: 15,
-      Building: 'Ada',
-      Floor: 'Baja',
-      Kind: 'Sanidad',
-    };
+    const idEspacio: string = mensajeRecibido.Reserva.id;
     const duracion: number = mensajeRecibido.Reserva.InitHour.min
     //Devuelve lo que tenga que devolver en formato JSON.
-    let resultadoOperacion: Reserve = await this.servicioReservas.guardarReserva(reservaprops,espacioprops,duracion);
+    let resultadoOperacion: Reserve = await this.servicioReservas.guardarReserva(reservaprops,idEspacio,duracion);
     console.log(resultadoOperacion)
     return resultadoOperacion;
   }

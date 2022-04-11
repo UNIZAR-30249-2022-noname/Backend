@@ -5,7 +5,7 @@ import * as crypto from 'crypto';
 
 
 export abstract class BEntity {
-    protected id: ShortDomainId;
+    public id: ShortDomainId;
 
     constructor(id: string) {
         this.id = this.generateShortID(id);

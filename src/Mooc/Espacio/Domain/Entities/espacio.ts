@@ -3,7 +3,6 @@ import { Reserva } from 'src/Mooc/Reserva/Domain/Entities/reserva';
 import { BaseDomainEntity, Entity, Result, ShortDomainId } from 'types-ddd';
 
 export interface EspacioProps{
-  Id: string;
   Name: string;
   Capacity: number;
   Building: string;
@@ -14,7 +13,7 @@ export interface EspacioProps{
 export class Espacio extends BEntity {
   constructor(
     id: string,
-    private readonly espacioProps: EspacioProps
+    private  espacioProps: EspacioProps
   ) {
     super(id);
   }

@@ -47,7 +47,7 @@ export class ReservaRepoPGImpl implements ReservaRepository {
   ): Promise<boolean> {
     const DataSrc: DataSource = await initializeDBConnector(dataSource);
     const ReserveRepo = DataSrc.getRepository(Reserve);
-    const ReservaActualizada: UpdateResult = await ReserveRepo.update(id, { fecha:date, horaInicio:hourstart, horaFin:hourend });
+    const ReservaActualizada: UpdateResult = await ReserveRepo.update(id, { fecha:date, horainicio:hourstart, horafin:hourend });
     console.log(ReservaActualizada)
     
     return true;
@@ -78,33 +78,13 @@ export class ReservaRepoPGImpl implements ReservaRepository {
       const ReserveRepo = DataSrc.getRepository(Reserve);
       const ReservasObtenidas: Reserve[] = await ReserveRepo.find({
         where: {
-          espacioId: idEspacio,
+          espacioid: idEspacio,
         },
       });
   
       return ReservasObtenidas;
   }
 
-  async testFind(datosReserva: DatosReservaProps): Promise<Reserve[]>{
-    const Datos_Reserva: DatosReserva =
-        DatosReserva.createDatosReserva(datosReserva);
-    const DataSrc: DataSource = await initializeDBConnector(dataSource);
-    const ReserveRepo = DataSrc.getRepository(Reserve)
-    const reserva: Reserve = new Reserve();
-    const espacioprops: EspacioProps = {
-      Id: 'hola',
-      Name: 'hola',
-      Capacity: 15,
-      Building: 'Ada',
-      Floor: 'Baja',
-      Kind: 'Sanidad',
-    };
-    reserva.fillReserveWithDomainEntity(new Reserva(null,Datos_Reserva,new Espacio(null,null)))
-    console.log(reserva);
-    await ReserveRepo.save(reserva);
-    const lreservas: Reserve[] = await ReserveRepo.find();
-    return lreservas
-  }
 }
 /*
 const Datos_Reserva: DatosReserva =

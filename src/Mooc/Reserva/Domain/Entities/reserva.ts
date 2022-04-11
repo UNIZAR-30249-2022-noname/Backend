@@ -12,7 +12,7 @@ import { BEntity } from 'src/BaseEntity/BEntity';
 
 export class Reserva extends BEntity{
  
-  constructor(id: string, private Datosreserva: DatosReserva, private Espacio: Espacio) { 
+  constructor(id: string, private Datosreserva: DatosReserva, private idEspacio: string) { 
     super(id);
   }
 
@@ -20,8 +20,8 @@ export class Reserva extends BEntity{
     return this.Datosreserva.getProps();
   }
 
-  getEspacio(): Espacio{
-    return this.Espacio;
+  getEspacio(): string{
+    return this.idEspacio;
   }
 
 }
