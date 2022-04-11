@@ -1,3 +1,4 @@
+import { Issue } from 'src/Mooc/Incidencia/Domain/Entities/incidencia.entity';
 import {Entity, Column, PrimaryGeneratedColumn, OneToMany, PrimaryColumn} from 'typeorm';
 import { Reserve } from '../../../Reserva/Domain/Entities/reserva.entity';
 import { Espacio } from './espacio';
@@ -24,6 +25,9 @@ export class Space {
     
     @OneToMany(() => Reserve, (reserve) => reserve.espacio)
     reservas: Reserve[]
+
+    @OneToMany(() => Issue, (issue) => issue.espacio)
+    incidencias: Issue[]
 
    
     constructor() { }

@@ -9,6 +9,7 @@ import { AMQPController } from './Infraestructure/Adapters/rabbit.controller';
 import { ReservaRepoPGImpl } from './Mooc/Reserva/Infraestructure/reserva.repository';
 import { EspacioRepoPGImpl } from './Mooc/Espacio/Infraestructure/espacio.repository';
 import { EspacioService } from './Mooc/Espacio/Application/usecase/espacio.service';
+import { IncidenciaRepoPGImpl } from './Mooc/Incidencia/Infraestructure/incidencia.repository';
 
 @Module({
   imports: [
@@ -47,6 +48,10 @@ import { EspacioService } from './Mooc/Espacio/Application/usecase/espacio.servi
     {
       provide: 'EspacioRepository',
       useClass: EspacioRepoPGImpl,
+    },
+    {
+      provide: 'IncidenciaRepository',
+      useClass: IncidenciaRepoPGImpl,
     }
   ],
 })
