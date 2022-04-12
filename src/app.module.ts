@@ -10,6 +10,7 @@ import { ReservaRepoPGImpl } from './Mooc/Reserva/Infraestructure/reserva.reposi
 import { EspacioRepoPGImpl } from './Mooc/Espacio/Infraestructure/espacio.repository';
 import { EspacioService } from './Mooc/Espacio/Application/usecase/espacio.service';
 import { IncidenciaRepoPGImpl } from './Mooc/Incidencia/Infraestructure/incidencia.repository';
+import { IncidenciaService } from './Mooc/Incidencia/Application/usecase/incidencia.service';
 
 @Module({
   imports: [
@@ -48,6 +49,10 @@ import { IncidenciaRepoPGImpl } from './Mooc/Incidencia/Infraestructure/incidenc
     {
       provide: 'EspacioRepository',
       useClass: EspacioRepoPGImpl,
+    },
+    {
+      provide: 'servicioIncidenciaI',
+      useClass: IncidenciaService,
     },
     {
       provide: 'IncidenciaRepository',

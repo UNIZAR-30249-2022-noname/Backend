@@ -4,7 +4,7 @@ export interface IncidenciaProps {
     Title: string;
     Description: string;
     State: number;
-    Tags: string;
+    Tags: string[];
     IdSpace: string;
 }
 

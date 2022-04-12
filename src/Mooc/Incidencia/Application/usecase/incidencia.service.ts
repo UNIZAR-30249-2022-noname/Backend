@@ -41,7 +41,7 @@ export class IncidenciaService implements servicioIncidenciaI {
                 Title: IssueObtenida.titulo,
                 Description: IssueObtenida.descripcion,
                 State: IssueObtenida.estado,
-                Tags: IssueObtenida.etiquetas,
+                Tags: IssueObtenida.etiquetas.split(','),
                 IdSpace: IssueObtenida.espacioid
             };
             return new Incidencia(IssueObtenida.id.toString(), incidenciaprops)

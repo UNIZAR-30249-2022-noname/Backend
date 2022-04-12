@@ -8,19 +8,19 @@ export class Space {
     @PrimaryColumn({ type: "varchar", length: 50})
     id: string;
     
-    @Column({ type: "varchar", length: 50})
+    @Column({ type: "varchar", length: 100})
     name: string;
 
     @Column({ type: "integer"})
     capacity: number;
 
-    @Column({ type: "varchar", length: 25})
+    @Column({ type: "varchar", length: 100})
     building: string;
 
     @Column({ type: "varchar", length: 25})
     floor: string;
 
-    @Column({ type: "varchar", length: 50})
+    @Column({ type: "varchar", length: 100})
     kind: string;
     
     @OneToMany(() => Reserve, (reserve) => reserve.espacio)

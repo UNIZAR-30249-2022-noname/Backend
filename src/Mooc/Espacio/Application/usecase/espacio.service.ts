@@ -11,6 +11,7 @@ import { Space } from '../../Domain/Entities/espacio.entity';
 import csv from 'csv-parser';
 import fs from 'fs';
 import { InsertResult } from 'typeorm';
+import { buildingValues, kindValues } from './importarEspaciosValues'
 
 export interface servicioEspacioI {
   guardarEspacio(espacioProps: EspacioProps): Promise<Space>;
@@ -69,12 +70,14 @@ export class EspacioService implements servicioEspacioI {
       .on('end', async () => {
         //console.log(results[0]);
         const espacios: Espacio[] = results.map(function (result) {
+          var edificio: string = "B"+ result.ID_ESPACIO.split('.')[1];
+          var planta = "F" + result.ID_ESPACIO.split('.')[2];
           var espacioprops: EspacioProps = {
             Name: result.ID_CENTRO,
             Capacity: result.NMRO_PLAZAS,
-            Building: result.ID_EDIFICIO,
-            Floor: result.ID_UTC,
-            Kind: result.TIPO_DE_USO,
+            Building: Object.values(buildingValues)[Object.keys(buildingValues).indexOf(edificio)],
+            Floor: Object.values(buildingValues)[Object.keys(buildingValues).indexOf(planta)],
+            Kind: Object.values(kindValues)[Object.keys(kindValues).indexOf("K" + result.TIPO_DE_USO)],
           };
           return new Espacio(result.ID_ESPACIO, espacioprops)
         });

@@ -33,7 +33,7 @@ export class Issue {
         this.titulo = incidencia.getDatosIncidenciaProps().Title;
         this.descripcion = incidencia.getDatosIncidenciaProps().Description;
         this.estado = incidencia.getDatosIncidenciaProps().State;
-        this.etiquetas = incidencia.getDatosIncidenciaProps().Tags;
+        this.etiquetas = incidencia.getDatosIncidenciaProps().Tags.toString();
         this.espacioid = incidencia.getDatosIncidenciaProps().IdSpace;
     }
 }

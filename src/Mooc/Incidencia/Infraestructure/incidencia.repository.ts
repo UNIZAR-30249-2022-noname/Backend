@@ -19,7 +19,7 @@ export class IncidenciaRepoPGImpl implements IncidenciaRepository {
             },
         });
         
-        return issueHecha.id;
+        return issueHecha === null ? -1 : issueHecha.id;
     }
 
     async actualizarEstado(id: number, state: number): Promise<number> {
@@ -28,7 +28,7 @@ export class IncidenciaRepoPGImpl implements IncidenciaRepository {
         const IncidenciaActualizada: UpdateResult = await IssueRepo.update(id, { estado: state });
         console.log(IncidenciaActualizada);
 
-        return id;
+        return IncidenciaActualizada.affected > 0 ? id : -1;
     }
 
     async eliminar(id: number): Promise<number> {
@@ -37,7 +37,7 @@ export class IncidenciaRepoPGImpl implements IncidenciaRepository {
         const IncidenciaEliminada: DeleteResult = await IssueRepo.delete(id);
         console.log(IncidenciaEliminada);
 
-        return id;
+        return IncidenciaEliminada.affected > 0 ? id : -1;
     }
 
     async obtenerTodas(): Promise<Issue[]> {
