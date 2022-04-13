@@ -1,9 +1,9 @@
 import { Controller, Get, Query, Post, Body, Put, Param, Delete, Req } from '@nestjs/common';
-import { EspacioService } from './Mooc/Espacio/Application/usecase/espacio.service';
-import { EspacioRepoPGImpl } from './Mooc/Espacio/Infraestructure/espacio.repository';
-import { IncidenciaService } from './Mooc/Incidencia/Application/usecase/incidencia.service';
-import { IncidenciaProps } from './Mooc/Incidencia/Domain/Entities/incidencia';
-import { IncidenciaRepoPGImpl } from './Mooc/Incidencia/Infraestructure/incidencia.repository';
+import { EspacioService } from '../../Mooc/Espacio/Application/usecase/espacio.service';
+import { EspacioRepoPGImpl } from '../../Mooc/Espacio/Infraestructure/espacio.repository';
+import { IncidenciaService } from '../../Mooc/Incidencia/Application/usecase/incidencia.service';
+import { IncidenciaProps } from '../../Mooc/Incidencia/Domain/Entities/incidencia';
+import { IncidenciaRepoPGImpl } from '../../Mooc/Incidencia/Infraestructure/incidencia.repository';
 
 @Controller('test')
 export class TestController {

@@ -1,4 +1,4 @@
-import { Space } from 'src/Mooc/Espacio/Domain/Entities/espacio.entity';
+import { Space } from '../../../Espacio/Domain/Entities/espacio.entity';
 import {Entity, Column, PrimaryGeneratedColumn, ManyToOne, JoinColumn} from 'typeorm';
 import { Incidencia } from './incidencia';
 

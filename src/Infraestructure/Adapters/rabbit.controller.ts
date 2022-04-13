@@ -28,6 +28,10 @@ export class AMQPController{
     @Inject('servicioEspacioI') private readonly servicioEspacios: servicioEspacioI,
     @Inject('servicioIncidenciaI') private readonly servicioIncidencias: servicioIncidenciaI
   ) {}
+  
+  /*******************************/
+  /***********RESERVAS************/
+  /*******************************/
 
   //Endpoint para recibir una realización de una reserva
   @MessagePattern('realizar-reserva')
@@ -86,7 +90,9 @@ export class AMQPController{
     return resultadoOperacionInsertar;
   }
 
-  // AQUÍ EMPIEZA EL CONTROLLER DE INCIDENCIAS
+  /*******************************/
+  /***********INCIDENCIAS*********/
+  /*******************************/
   @MessagePattern('crear-incidencia')
   async crearIncidencia(
     @Payload() data: number[],
@@ -149,7 +155,9 @@ export class AMQPController{
     return resultadoOperacion;
   }
 
-  // AQUÍ EMPIEZA EL CONTROLLER PARA DEVOLVER LOS EDIFICIOS Y LAS PLANTAS
+  /***************************************/
+  /***********EDIFICIOS Y PLANTAS*********/
+  /***************************************/
   @MessagePattern('obtener-edificios')
   async obtenerEdificios(
     @Payload() data: number[],

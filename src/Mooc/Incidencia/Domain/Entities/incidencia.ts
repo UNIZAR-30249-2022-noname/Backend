@@ -1,4 +1,4 @@
-import { BEntity } from 'src/BaseEntity/BEntity';
+import { BEntity } from '../../../../BaseEntity/BEntity';
 
 export interface IncidenciaProps {
     Title: string;

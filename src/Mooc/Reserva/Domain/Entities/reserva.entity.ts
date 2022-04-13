@@ -1,4 +1,4 @@
-import { Space } from 'src/Mooc/Espacio/Domain/Entities/espacio.entity';
+import { Space } from '../../../Espacio/Domain/Entities/espacio.entity';
 import {Entity, Column, PrimaryGeneratedColumn, ManyToOne, JoinColumn} from 'typeorm';
 import {DatosReserva, DatosReservaProps} from './datosreserva';
 import { Reserva } from './reserva';

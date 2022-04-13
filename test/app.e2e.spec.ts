@@ -1,18 +1,19 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication } from '@nestjs/common';
 import request from 'supertest';
-import { AppModule } from '../src/app.module';
+import { TestHttpModule } from '../src/Infraestructure/testhttp.module';
+
 
 it('Testing to see if Jest works', () => {
   expect(1).toBe(1)
 })
 
-/*describe('AppController (e2e)', () => {
+describe('AppController (e2e)', () => {
   let app: INestApplication;
 
   beforeEach(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
-      imports: [AppModule],
+      imports: [TestHttpModule],
     }).compile();
 
     app = moduleFixture.createNestApplication();
@@ -21,8 +22,8 @@ it('Testing to see if Jest works', () => {
 
   it('/ (GET)', () => {
     return request(app.getHttpServer())
-      .get('/')
+      .get('/test/prueba')
       .expect(200)
-      .expect('Hello World!');
+      .expect('Hello World');
   });
-});*/
+});

@@ -1,4 +1,4 @@
-import { Issue } from 'src/Mooc/Incidencia/Domain/Entities/incidencia.entity';
+import { Issue } from '../../../Incidencia/Domain/Entities/incidencia.entity';
 import {Entity, Column, PrimaryGeneratedColumn, OneToMany, PrimaryColumn} from 'typeorm';
 import { Reserve } from '../../../Reserva/Domain/Entities/reserva.entity';
 import { Espacio } from './espacio';
