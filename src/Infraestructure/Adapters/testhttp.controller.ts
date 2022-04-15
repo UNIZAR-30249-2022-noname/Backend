@@ -1,4 +1,6 @@
 import { Controller, Get, Query, Post, Body, Put, Param, Delete, Req } from '@nestjs/common';
+import { ReservaService } from 'src/Mooc/Reserva/Application/reserva.service';
+import { ReservaRepoPGImpl } from 'src/Mooc/Reserva/Infraestructure/reserva.repository';
 import { EspacioService } from '../../Mooc/Espacio/Application/usecase/espacio.service';
 import { EspacioRepoPGImpl } from '../../Mooc/Espacio/Infraestructure/espacio.repository';
 import { IncidenciaService } from '../../Mooc/Incidencia/Application/usecase/incidencia.service';
@@ -56,6 +58,13 @@ export class TestController {
     const resultado = await servicioIncidencia.eliminarIncidencia(parseInt(incidenciasObtenidas[incidenciasObtenidas.length-1].id.toString()));
     
     return(resultado);
+  }
+
+  @Post('/eliminarReserva')
+  async eliminarReserva(@Body() mensaje: any) {
+    let servicioReserva: ReservaService = new ReservaService(new ReservaRepoPGImpl());
+    const resultado = await servicioReserva.eliminarReserva(mensaje.id);
+    return(resultado)
   }
 
 }

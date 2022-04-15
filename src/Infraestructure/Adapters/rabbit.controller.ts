@@ -60,6 +60,17 @@ export class AMQPController{
     return {id: resultadoOperacion.id, CorrelationId: mensajeRecibido.id };
   }
 
+  @MessagePattern('cancelar-reserva')
+  async cancelarReserva( 
+    @Payload() data: number[],
+    @Ctx() context: RmqContext,)
+  {
+    const mensajeRecibido = JSON.parse(context.getMessage().content);
+    const idReserva: string = mensajeRecibido.body.id;
+    let resultadoOperacion =  this.servicioReservas.eliminarReserva(idReserva);
+    return resultadoOperacion;
+  }
+
   @MessagePattern('buscar-reserva-por-id')
   async buscarReservaPorId(
     @Payload() data: number[],

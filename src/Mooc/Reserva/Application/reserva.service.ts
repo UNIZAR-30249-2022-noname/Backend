@@ -16,6 +16,7 @@ export interface servicioReservaI {
     datosreserva: DatosReservaProps,
     idEspacio: string,
   ): Promise<Reserve>;
+  eliminarReserva(idReserva: string): Promise<Boolean>;
 }
 
 @Injectable()
@@ -30,6 +31,11 @@ export class ReservaService implements servicioReservaI {
     const ReservaARealizar: Reserva = new Reserva(null,Datos_Reserva,idEspacio)
     const reservahecha: Reserve = await this.reservarepository.guardar(ReservaARealizar);
     return reservahecha
+  }
+
+  async eliminarReserva(idReserva: string): Promise<Boolean> {
+    const resultado = this.reservarepository.eliminar(parseInt(idReserva))
+    return resultado
   }
 
 

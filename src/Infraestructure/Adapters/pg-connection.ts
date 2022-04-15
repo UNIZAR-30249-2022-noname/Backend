@@ -18,3 +18,9 @@ export async function initializeDBConnector(datasrc: DataSource){
   }
   return datasrc;
 }
+
+export async function returnRepository(target: any) {
+  const DataSrc: DataSource = await initializeDBConnector(dataSource);
+  const repository = DataSrc.getRepository(target);
+  return repository;
+}

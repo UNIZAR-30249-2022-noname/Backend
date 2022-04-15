@@ -6,7 +6,7 @@ import { DatosReserva, DatosReservaProps } from '../Domain/Entities/datosreserva
 import dataSource from '../../../Config/ormconfig_db';
 import { DataSource, DeleteResult, UpdateResult } from 'typeorm';
 import * as crypto from 'crypto';
-import {initializeDBConnector} from '../../../Infraestructure/Adapters/pg-connection'
+import {initializeDBConnector, returnRepository} from '../../../Infraestructure/Adapters/pg-connection'
 import { Espacio, EspacioProps } from '../../Espacio/Domain/Entities/espacio';
 import { ShortDomainId } from 'types-ddd';
 
@@ -53,12 +53,12 @@ export class ReservaRepoPGImpl implements ReservaRepository {
     return true;
   }
   async eliminar(id: number): Promise<boolean> {
-    const DataSrc: DataSource = await initializeDBConnector(dataSource);
-    const ReserveRepo = DataSrc.getRepository(Reserve);
+    //Elimina una reserva dada la su identificador
+    const ReserveRepo = await returnRepository(Reserve);
     const ReservaEliminada: DeleteResult = await ReserveRepo.delete(id);
     console.log(ReservaEliminada);
-    
-    return true;
+    //Devuelve verdad si y solo si se ha eliminado al menos una reserva de la base de datos
+    return ReservaEliminada.affected > 0 ? true : false;
   }
   
   async buscarReservaPorId(id: number): Promise<Reserve> {
