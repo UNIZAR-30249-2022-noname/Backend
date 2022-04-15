@@ -1,14 +1,5 @@
 import { DatosReserva, DatosReservaProps } from './datosreserva';
-import { Espacio } from '../../../Espacio/Domain/Entities/espacio';
-import {
-  BaseDomainEntity,
-  Entity,
-  UniqueEntityID,
-  Result,
-  DomainId,
-  ShortDomainId,
-} from 'types-ddd';
-import { BEntity } from 'src/BaseEntity/BEntity';
+import { BEntity } from '../../../../BaseEntity/BEntity';
 
 export class Reserva extends BEntity{
  

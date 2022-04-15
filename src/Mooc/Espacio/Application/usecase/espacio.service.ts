@@ -2,7 +2,6 @@ import {
   Espacio,
   EspacioProps,
 } from '../../Domain/Entities/espacio';
-import { ShortDomainId } from 'types-ddd';
 import * as crypto from 'crypto';
 import { EspacioRepository } from '../../Domain/EspacioRepository';
 import {Reserva} from '../../../Reserva/Domain/Entities/reserva'
@@ -11,14 +10,13 @@ import { Space } from '../../Domain/Entities/espacio.entity';
 import csv from 'csv-parser';
 import fs from 'fs';
 import { InsertResult } from 'typeorm';
-import { buildingValues, kindValues } from './importarEspaciosValues'
 
 export interface servicioEspacioI {
   guardarEspacio(espacioProps: EspacioProps): Promise<Space>;
   buscarEspacioPorId(id: String): Promise<Espacio[]>;
-  listarReservas(id:String, fecha:String): Promise<Reserva[]>;
+  listarReservas(idEspacio:String, fecha:String): Promise<Reserva[]>;
   importarEspacios(): Promise<Boolean>;
-  filtrarEspacios(espacioprops: EspacioProps, espacioId: string):Promise<Space[]>;
+  filtrarEspacios(espacioprops: EspacioProps,fecha?: string, hora?: number):Promise<Space[]>;
 }
 
 @Injectable()
@@ -26,13 +24,17 @@ export class EspacioService implements servicioEspacioI {
   
   constructor(@Inject('EspacioRepository') private readonly espaciorepository: EspacioRepository) {}
 
-  async filtrarEspacios(espacioprops: EspacioProps, espacioId: string): Promise<Space[]> {
-    let EntidadEspacio: Espacio = new Espacio(espacioId,espacioprops);
+  async filtrarEspacios(espacioprops: EspacioProps,fecha?: string, hora?: number): Promise<Space[]> {
+    let EntidadEspacio: Espacio = new Espacio(null,espacioprops);
+    const query = ''
+    if(fecha != null){
+      
+    }
     const listaEspacios: Space[] = await this.espaciorepository.filtrarEspaciosReservables(EntidadEspacio)
     return listaEspacios;
   }
   
-  listarReservas(id: String, fecha: String): Promise<Reserva[]> {
+  listarReservas(idEspacio: String, fecha: String): Promise<Reserva[]> {
     throw new Error('Method not implemented.');
   }
 
@@ -68,18 +70,8 @@ export class EspacioService implements servicioEspacioI {
       .pipe(csv())
       .on('data', (data) => results.push(data))
       .on('end', async () => {
-        //console.log(results[0]);
-        const espacios: Espacio[] = results.map(function (result) {
-          var edificio: string = "B"+ result.ID_ESPACIO.split('.')[1];
-          var planta = "F" + result.ID_ESPACIO.split('.')[2];
-          var espacioprops: EspacioProps = {
-            Name: result.ID_CENTRO,
-            Capacity: result.NMRO_PLAZAS,
-            Building: Object.values(buildingValues)[Object.keys(buildingValues).indexOf(edificio)],
-            Floor: Object.values(buildingValues)[Object.keys(buildingValues).indexOf(planta)],
-            Kind: Object.values(kindValues)[Object.keys(kindValues).indexOf("K" + result.TIPO_DE_USO)],
-          };
-          return new Espacio(result.ID_ESPACIO, espacioprops)
+        const espacios: Espacio[] = results.map(function (espacio) {
+          return Espacio.crearEspacioPersonalizado(espacio);
         });
         try {
           const resultadoOperacion = await this.espaciorepository.importarEspacios(espacios);
@@ -93,7 +85,14 @@ export class EspacioService implements servicioEspacioI {
     try {
        return (await InsertarEspaciosPromise).identifiers.length > 0;
     } catch (error: any) {
-      console.error("Error al insertar espacios en la Base de datos, mensaje de error: ",error.message);
+      switch(error.code){
+        case '23505':
+          console.log("Los espacios ya se encuentran almacenados en la base de datos.")
+          break;
+        default:
+          console.error("Error al insertar espacios en la Base de datos, mensaje de error: ",error.message);
+          break;
+      }
       return false
     }
 

@@ -3,8 +3,7 @@ import {
   ReservaService,
 } from '../../Mooc/Reserva/Application/reserva.service';
 import { DatosReservaProps } from '../../Mooc/Reserva/Domain/Entities/datosreserva';
-import { Espacio} from '../../Mooc/Espacio/Domain/Entities/espacio';
-import { DomainId, ShortDomainId } from 'types-ddd';
+import { Espacio, EspacioProps} from '../../Mooc/Espacio/Domain/Entities/espacio';
 import * as crypto from 'crypto';
 import { Controller, Inject } from '@nestjs/common';
 import {
@@ -14,10 +13,10 @@ import {
   Payload,
   Ctx,
 } from '@nestjs/microservices';
-import {Reserve}  from 'src/Mooc/Reserva/Domain/Entities/reserva.entity';
-import { servicioEspacioI } from 'src/Mooc/Espacio/Application/usecase/espacio.service';
-import { servicioIncidenciaI } from 'src/Mooc/Incidencia/Application/usecase/incidencia.service';
-import { Incidencia, IncidenciaProps } from 'src/Mooc/Incidencia/Domain/Entities/incidencia';
+import {Reserve}  from '../../Mooc/Reserva/Domain/Entities/reserva.entity';
+import { servicioEspacioI } from '../../Mooc/Espacio/Application/usecase/espacio.service';
+import { servicioIncidenciaI } from '../../Mooc/Incidencia/Application/usecase/incidencia.service';
+import { Incidencia, IncidenciaProps } from '../../Mooc/Incidencia/Domain/Entities/incidencia';
 
 @Controller()
 export class AMQPController{
@@ -45,7 +44,6 @@ export class AMQPController{
     console.log('Procesando Solicitud(realizar-reserva)', mensajeRecibido);
     const horainicio: number = mensajeRecibido.body.scheduled[0].hour
     const horafin:number = mensajeRecibido.body.scheduled[1].hour
-    console.log(horainicio) 
     const evento: string = mensajeRecibido.body.event
     const reservaprops: DatosReservaProps = {
       fecha: mensajeRecibido.body.day,
@@ -68,26 +66,34 @@ export class AMQPController{
     const mensajeRecibido = JSON.parse(context.getMessage().content);
     const idReserva: string = mensajeRecibido.body.id;
     let resultadoOperacion =  this.servicioReservas.eliminarReserva(idReserva);
-    return resultadoOperacion;
+    return {resultadoOperacion: resultadoOperacion, CorrelationId: mensajeRecibido.id};
   }
 
-  @MessagePattern('buscar-reserva-por-id')
-  async buscarReservaPorId(
-    @Payload() data: number[],
-    @Ctx() context: RmqContext,
-  ) {
-    const mensajeRecibido = JSON.parse(context.getMessage().content);
-    //this.servicioEspacios.filtrarEspacios()
-    return true;
-  }
-
-  // AQUÍ EMPIEZA EL CONTROLLER DE INCIDENCIAS
+  /*
+  -----Recibimos del gateway------
+  Capacity int    `json:"capacity"`
+	Day      string `json:"day"`
+	Hour     Hour   `json:"hour"`
+	Floor    string `json:"floor"`
+	Building string `json:"building"`
+  */
   @MessagePattern('filtrar-espacios')
   async buscarReservaPorEspacio(
     @Payload() data: number[],
     @Ctx() context: RmqContext,
   ) {
-   
+    const mensajeRecibido = JSON.parse(context.getMessage().content);
+    const espacioprops: EspacioProps = {
+      Name: '',
+      Capacity: mensajeRecibido.body.capacity,
+      Building: mensajeRecibido.body.building,
+      Floor: mensajeRecibido.body.floor,
+      Kind: ''
+    }
+    const fecha: string | null = mensajeRecibido.body.day;
+    const hour: number | null = mensajeRecibido.body.scheduled[0].hour
+    //this.servicioEspacios.filtrarEspacios(espacioprops,fecha,hour)
+    return "WIP"
   }
 
 

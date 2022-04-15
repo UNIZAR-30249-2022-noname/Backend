@@ -1,11 +1,12 @@
 import { Controller, Get, Query, Post, Body, Put, Param, Delete, Req } from '@nestjs/common';
-import { ReservaService } from 'src/Mooc/Reserva/Application/reserva.service';
-import { ReservaRepoPGImpl } from 'src/Mooc/Reserva/Infraestructure/reserva.repository';
+import { ReservaService } from '../../Mooc/Reserva/Application/reserva.service';
+import { ReservaRepoPGImpl } from '../../Mooc/Reserva/Infraestructure/reserva.repository';
 import { EspacioService } from '../../Mooc/Espacio/Application/usecase/espacio.service';
 import { EspacioRepoPGImpl } from '../../Mooc/Espacio/Infraestructure/espacio.repository';
 import { IncidenciaService } from '../../Mooc/Incidencia/Application/usecase/incidencia.service';
 import { IncidenciaProps } from '../../Mooc/Incidencia/Domain/Entities/incidencia';
 import { IncidenciaRepoPGImpl } from '../../Mooc/Incidencia/Infraestructure/incidencia.repository';
+import { DatosReservaProps } from '../../Mooc/Reserva/Domain/Entities/datosreserva';
 
 @Controller('test')
 export class TestController {
@@ -14,6 +15,7 @@ export class TestController {
   test(){
     return "Hello World"
   }
+  
 
   @Post('/subirEspacios')
   async create() {
@@ -66,6 +68,25 @@ export class TestController {
     const resultado = await servicioReserva.eliminarReserva(mensaje.id);
     return(resultado)
   }
+
+  @Post('/reserve')
+  async crearReserva(@Body() mensaje: any) {
+    let servicioReserva: ReservaService = new ReservaService(new ReservaRepoPGImpl());
+    const horainicio: number = mensaje.hour
+    const horafin:number = mensaje.hourfin
+    const evento: string = mensaje.event
+    const reservaprops: DatosReservaProps = {
+      fecha: mensaje.date,
+      horaInicio: horainicio,
+      horaFin: horafin,
+      Persona: mensaje.person,
+    };
+    const idEspacio: string = mensaje.space;
+
+    const resultado = await servicioReserva.guardarReserva(reservaprops, idEspacio);
+    return(resultado)
+  }
+
 
 }
 

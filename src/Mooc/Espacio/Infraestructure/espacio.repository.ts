@@ -14,14 +14,20 @@ enum EspacioQueries {
   QUERY_BUSCAR_ESPACIOS_POR_FILTRO = 'SELECT * FROM espacios WHERE capacity>=$1 AND building=$2 AND kind=$3 AND floor=$4',
   //SELECT * FROM space WHERE id=(SELECT espacioId FROM reserve r WHERE NOT (r.fecha='10/04/2022' AND ('11' >= r.horainicio AND '11' < r.horafin))) AND capacity>=1 AND building='CRE.1065.' AND kind='17' AND floor='00.095'
   //Filtra los espacios si se da una fecha y una hora.
-  QUERY_FILTRAR_ESPACIOS_FECHA_HORA = 'SELECT * FROM space WHERE id=(SELECT espacioId FROM reserve r WHERE NOT (r.fecha=$1 AND ($2 >= r.horainicio AND $2 < r.horafin)))' + 
-  ' AND Capacity>=$3 AND Building=$4 AND floor=$5',
-  //Filtra los espacios si se da solo una fecha. TODO: Añadir condiciones de capacidad, edificio, floor y kind.
-  QUERY_FILTRAR_ESPACIOS_FECHA = 'SELECT * FROM space EXCEPT('
+  QUERY_FILTRAR_ESPACIOS_FECHA_HORA = 'SELECT * FROM space WHERE capacity >= $1 AND floor IN ($2) AND building=$3 EXCEPT('
   + ' SELECT * FROM SPACE WHERE id = ANY('
   +    'SELECT espacioid'
   +   'FROM reserve'
-  +    'WHERE fecha = $1'
+  +    'WHERE fecha = $4 AND ( $5 >= horainicio AND  $5 < horafin)'
+  +  ')'
+  +')'
+  ,
+  //Filtra los espacios si se da solo una fecha. TODO: Añadir condiciones de capacidad, edificio, floor y kind.
+  QUERY_FILTRAR_ESPACIOS_FECHA = 'SELECT * FROM space WHERE capacity >= $1 AND floor IN ($2) AND building=$3 EXCEPT('
+  + ' SELECT * FROM SPACE WHERE id = ANY('
+  +    'SELECT espacioid'
+  +   'FROM reserve'
+  +    'WHERE fecha = $4'
   +  ')'
   +')'
   +'UNION'
@@ -29,11 +35,21 @@ enum EspacioQueries {
   +'SELECT * FROM space WHERE id = ANY('
   +  'SELECT espacioid'
   +  'FROM reserve'
-  +  'WHERE fecha = $1'
+  +  'WHERE fecha = $4'
   +  'GROUP BY espacioid' 
-  +  'HAVING COUNT(*) <=14'
+  +  'HAVING COUNT(*) <=11'
   +')'
   +')'
+  ,
+  QUERY_FILTRAR_ESPACIOS_HORA = 'SELECT * FROM space WHERE capacity >= $1 AND floor IN ($2) AND building=$3 EXCEPT('
+  + ' SELECT * FROM SPACE WHERE id = ANY('
+  +    'SELECT espacioid'
+  +   'FROM reserve'
+  +    `WHERE fecha >= '01/01/1900' AND ( $5 >= horainicio AND  $5 < horafin)`
+  +  ')'
+  +')'
+  ,
+  QUERY_FILTRAR_ESPACIOS = 'SELECT * FROM space WHERE capacity >= 1 AND floor IN ($2) AND building=$3'
 }
 
 export class EspacioRepoPGImpl implements EspacioRepository {
@@ -66,10 +82,11 @@ export class EspacioRepoPGImpl implements EspacioRepository {
     return EspacioObtenido;
   }
 
-  async filtrarEspaciosReservables(espacioprops: Espacio): Promise<Space[]> {
+  async filtrarEspaciosReservables(espacioprops: Espacio,fecha?: string, hora?: number): Promise<Space[]> {
     //Inicializamos el conector
     const DataSrc: DataSource = await initializeDBConnector(dataSource);
     const SpaceRepo = DataSrc.getRepository(Space);
+    
     //Buscamos todos los espacios que cumplan la condición de búsqueda
     const EspaciosObtenidos: Space[] = await SpaceRepo.query(EspacioQueries.QUERY_FILTRAR_ESPACIOS_FECHA_HORA)
     console.log(EspaciosObtenidos);
