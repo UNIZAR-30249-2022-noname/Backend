@@ -1,9 +1,10 @@
 import { Space } from '../../../Espacio/Domain/Entities/espacio.entity';
-import {Entity, Column, PrimaryGeneratedColumn, ManyToOne, JoinColumn} from 'typeorm';
+import {Entity, Column, PrimaryGeneratedColumn, ManyToOne, JoinColumn, Unique} from 'typeorm';
 import {DatosReserva, DatosReservaProps} from './datosreserva';
 import { Reserva } from './reserva';
 
 @Entity()
+@Unique(['horainicio','fecha'])
 export class Reserve {
     @PrimaryGeneratedColumn()
     id: number;

@@ -55,7 +55,8 @@ export class AMQPController{
     //Devuelve lo que tenga que devolver en formato JSON.
     let resultadoOperacion: Reserve = await this.servicioReservas.guardarReserva(reservaprops,idEspacio);
     console.log(resultadoOperacion)
-    return {id: resultadoOperacion.id, CorrelationId: mensajeRecibido.id };
+    const idReserva: number = resultadoOperacion != null ? resultadoOperacion.id : -1;
+    return {id: idReserva, CorrelationId: mensajeRecibido.id };
   }
 
   @MessagePattern('cancelar-reserva')

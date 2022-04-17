@@ -1,5 +1,6 @@
 import { assert } from 'console';
 import { ValueObject } from 'types-ddd';
+import ReservaException from '../reservaexception';
 import { PoliticaReserva } from './politica_reserva';
 
 export interface DatosReservaProps {
@@ -20,12 +21,13 @@ export class DatosReserva{
    * @param props datos de una reserva
    * @returns Crea una reserva si se cumple con la "PoliticaReserva", sino lanza un error.
    */
-  public static createDatosReserva(props: DatosReservaProps): DatosReserva {
-    if (PoliticaReserva.seCumple(props)) {
+  public static async createDatosReserva(props: DatosReservaProps): Promise<DatosReserva> {
+    //Comprobamos si se cumple la politica de reserva
+    if ((await PoliticaReserva.seCumple(props))) {
       //Si se cumple la política se crea el objeto datosRserva
       return new DatosReserva(props);
     } else {
-      throw new Error('Error al crear la reserva.');
+      throw new ReservaException(ReservaException.WRONG_RESERVE_MSG);
     }
   }
 

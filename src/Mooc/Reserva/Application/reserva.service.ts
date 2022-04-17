@@ -25,12 +25,19 @@ export class ReservaService implements servicioReservaI {
   private readonly reservarepository: ReservaRepository) {}
 
   async guardarReserva(datosreserva: DatosReservaProps, idEspacio: string): Promise<Reserve> {
-    //Creamos los datos de la reserva correspondiente que nos realizan.
-    let Datos_Reserva: DatosReserva =
-        DatosReserva.createDatosReserva(datosreserva);
-    const ReservaARealizar: Reserva = new Reserva(null,Datos_Reserva,idEspacio)
-    const reservahecha: Reserve = await this.reservarepository.guardar(ReservaARealizar);
-    return reservahecha
+    try{
+      //Creamos los datos de la reserva correspondiente que nos realizan.
+      let Datos_Reserva: DatosReserva = await
+          DatosReserva.createDatosReserva(datosreserva);
+      //Instanciamos la reserva si se cumplen los invariantes de una reserva
+      const ReservaARealizar: Reserva = new Reserva(null,Datos_Reserva,idEspacio)
+      //Llamamos al repositorio
+      const reservahecha: Reserve = await this.reservarepository.guardar(ReservaARealizar);
+      return reservahecha
+    }catch( error: any ){
+      console.info(error.message);
+      return null;
+    }
   }
 
   async eliminarReserva(idReserva: string): Promise<Boolean> {

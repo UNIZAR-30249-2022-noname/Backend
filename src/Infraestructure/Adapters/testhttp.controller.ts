@@ -84,7 +84,8 @@ export class TestController {
     const idEspacio: string = mensaje.space;
 
     const resultado = await servicioReserva.guardarReserva(reservaprops, idEspacio);
-    return(resultado)
+    const idReserva: number = resultado != null ? resultado.id : -1;
+    return {id: idReserva};
   }
 
 
