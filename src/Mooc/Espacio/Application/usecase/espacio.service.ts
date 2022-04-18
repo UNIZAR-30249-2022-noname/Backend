@@ -25,12 +25,18 @@ export class EspacioService implements servicioEspacioI {
   constructor(@Inject('EspacioRepository') private readonly espaciorepository: EspacioRepository) {}
 
   async filtrarEspacios(espacioprops: EspacioProps,fecha?: string, hora?: number): Promise<Space[]> {
-    let EntidadEspacio: Espacio = new Espacio(null,espacioprops);
-    const query = ''
-    if(fecha != null){
-      
+    //Seleccionamos la query a ejecutar en función de los parámetros.
+    let query = -1
+    if(fecha == null && hora == null){
+      query = 0
+    }else if(fecha != null && hora == null){
+      query = 1
+    }else if(fecha == null && hora != null){
+      query = 2
+    }else{
+      query = 3
     }
-    const listaEspacios: Space[] = await this.espaciorepository.filtrarEspaciosReservables(EntidadEspacio)
+    const listaEspacios: Space[] = await this.espaciorepository.filtrarEspaciosReservables(espacioprops,query,fecha,hora)
     return listaEspacios;
   }
   

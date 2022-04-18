@@ -12,7 +12,7 @@ export interface EspacioProps{
 export class Espacio extends BEntity {
   constructor(
     id: string,
-    private  espacioProps: EspacioProps
+    public  espacioProps: EspacioProps
   ) {
     super(id);
   }
@@ -23,17 +23,28 @@ export class Espacio extends BEntity {
     return propsEspacio;
   }
 
-  public actualizarInformacionEspacio(espacioProps: EspacioProps) {
-    this.espacioProps.Capacity = (espacioProps.Capacity !== null) ? espacioProps.Capacity : 1;
-    this.espacioProps.Building = (espacioProps.Building !== null) ? espacioProps.Building : 'Ada Byron'
-    switch (this.espacioProps.Building) {
+  public static Crear_ActualizarInformacionEspacio(espacioProps: EspacioProps): Espacio {
+    let capacity:number = (espacioProps.Capacity != null) ? espacioProps.Capacity : 1;
+    let building: string = (espacioProps.Building != null) ? espacioProps.Building : 'Ada Byron'
+    let floor: string = null;
+    switch (espacioProps.Building) {
       case 'Ada Byron':
-        this.espacioProps.Floor = (espacioProps.Floor !== null) ? espacioProps.Floor :`'Sótano','Baja', 'Primera', 'Segunda', 'Tercera','Cuarta','Quinta'`
+        floor = (espacioProps.Floor != null) ? '{' + espacioProps.Floor + '}' : `{Baja,Primera,Segunda,Tercera,Cuarta,Quinta}`
         break;
       default:
-        this.espacioProps.Floor = (espacioProps.Floor !== null) ? espacioProps.Floor :`'Sótano','Baja', 'Primera', 'Segunda', 'Tercera'`
+        floor = (espacioProps.Floor != null) ? '{' + espacioProps.Floor + '}' : `{Baja,Primera,Segunda,Tercera}`
         break;
     }
+    return new Espacio(
+      null,
+      {
+        Name: espacioProps.Name,
+        Capacity: capacity,
+        Building: building,
+        Floor: floor,
+        Kind: espacioProps.Kind
+      }
+    )
   }
 
   public static crearEspacioPersonalizado(espacio: any): Espacio{

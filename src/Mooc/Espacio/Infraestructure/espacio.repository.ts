@@ -1,8 +1,6 @@
-import { Espacio } from '../Domain/Entities/espacio';
+import { Espacio, EspacioProps } from '../Domain/Entities/espacio';
 import { EspacioRepository } from '../Domain/EspacioRepository';
-import { initializeDBConnector} from '../../../Infraestructure/Adapters/pg-connection';
-import * as crypto from 'crypto';
-import { ShortDomainId } from 'types-ddd';
+import { initializeDBConnector, returnRepository} from '../../../Infraestructure/Adapters/pg-connection';
 import { Space } from '../Domain/Entities/espacio.entity';
 import { DataSource, InsertResult } from 'typeorm';
 import dataSource from '../../../Config/ormconfig_db';
@@ -12,47 +10,56 @@ enum EspacioQueries {
   QUERY_INTRODUCIR_ESPACIO = 'INSERT INTO espacios (id,name,capacity,building,kind) VALUES ($1,$2,$3,$4,$5)',
   QUERY_OBTENER_ESPACIOS = 'SELECT * FROM espacios',
   QUERY_BUSCAR_ESPACIOS_POR_FILTRO = 'SELECT * FROM espacios WHERE capacity>=$1 AND building=$2 AND kind=$3 AND floor=$4',
-  //SELECT * FROM space WHERE id=(SELECT espacioId FROM reserve r WHERE NOT (r.fecha='10/04/2022' AND ('11' >= r.horainicio AND '11' < r.horafin))) AND capacity>=1 AND building='CRE.1065.' AND kind='17' AND floor='00.095'
-  //Filtra los espacios si se da una fecha y una hora.
-  QUERY_FILTRAR_ESPACIOS_FECHA_HORA = 'SELECT * FROM space WHERE capacity >= $1 AND floor IN ($2) AND building=$3 EXCEPT('
+  //Filtra los espacios si se da una fecha y una hora. fecha != null y hora != null (0)
+  QUERY_FILTRAR_ESPACIOS_FECHA_HORA = 'SELECT * FROM space WHERE capacity >= $1 AND floor = ANY ($2) AND building=$3 EXCEPT('
   + ' SELECT * FROM SPACE WHERE id = ANY('
-  +    'SELECT espacioid'
-  +   'FROM reserve'
-  +    'WHERE fecha = $4 AND ( $5 >= horainicio AND  $5 < horafin)'
+  +    ' SELECT espacioid'
+  +   ' FROM reserve'
+  +    ' WHERE fecha = $4 AND horainicio = $5'
   +  ')'
   +')'
   ,
-  //Filtra los espacios si se da solo una fecha. TODO: Añadir condiciones de capacidad, edificio, floor y kind.
-  QUERY_FILTRAR_ESPACIOS_FECHA = 'SELECT * FROM space WHERE capacity >= $1 AND floor IN ($2) AND building=$3 EXCEPT('
+  //Filtra los espacios si se da solo una fecha. fecha != null y hora == null.
+  QUERY_FILTRAR_ESPACIOS_FECHA = 'SELECT * FROM space WHERE capacity >= $1 AND floor = ANY ($2) AND building=$3 EXCEPT('
   + ' SELECT * FROM SPACE WHERE id = ANY('
-  +    'SELECT espacioid'
-  +   'FROM reserve'
-  +    'WHERE fecha = $4'
+  +    ' SELECT espacioid'
+  +   ' FROM reserve'
+  +    ' WHERE fecha = $4'
   +  ')'
   +')'
-  +'UNION'
-  +'('
-  +'SELECT * FROM space WHERE id = ANY('
-  +  'SELECT espacioid'
-  +  'FROM reserve'
-  +  'WHERE fecha = $4'
-  +  'GROUP BY espacioid' 
-  +  'HAVING COUNT(*) <=11'
+  +' UNION'
+  +' ('
+  +' SELECT * FROM space WHERE id = ANY('
+  +  ' SELECT espacioid'
+  +  ' FROM reserve'
+  +  ' WHERE fecha = $4'
+  +  ' GROUP BY espacioid' 
+  +  ' HAVING COUNT(*) <= 11'
   +')'
   +')'
   ,
-  QUERY_FILTRAR_ESPACIOS_HORA = 'SELECT * FROM space WHERE capacity >= $1 AND floor IN ($2) AND building=$3 EXCEPT('
+  //hora !=null y fecha == null
+  QUERY_FILTRAR_ESPACIOS_HORA = 'SELECT * FROM space WHERE capacity >= $1 AND floor = ANY ($2) AND building=$3 EXCEPT('
   + ' SELECT * FROM SPACE WHERE id = ANY('
-  +    'SELECT espacioid'
-  +   'FROM reserve'
-  +    `WHERE fecha >= '01/01/1900' AND ( $5 >= horainicio AND  $5 < horafin)`
+  +    ' SELECT espacioid'
+  +    ' FROM reserve'
+  +    ' WHERE horainicio = $4'
   +  ')'
   +')'
   ,
-  QUERY_FILTRAR_ESPACIOS = 'SELECT * FROM space WHERE capacity >= 1 AND floor IN ($2) AND building=$3'
+  //Fecha y hora == null
+  QUERY_FILTRAR_ESPACIOS = 'SELECT * FROM space WHERE capacity >= $1 AND floor = ANY ($2) AND building=$3'
 }
 
 export class EspacioRepoPGImpl implements EspacioRepository {
+
+  private mapaTraduccionQueries: {[key: number]: {query: string, parameters: (string)[]} } = {
+    0: {query: EspacioQueries.QUERY_FILTRAR_ESPACIOS, parameters: ['capacity','floor','building']},
+    1: {query: EspacioQueries.QUERY_FILTRAR_ESPACIOS_FECHA, parameters: ['capacity','floor','building','fecha']},
+    2: {query: EspacioQueries.QUERY_FILTRAR_ESPACIOS_HORA, parameters: ['capacity','floor','building','hora']},
+    3: {query: EspacioQueries.QUERY_FILTRAR_ESPACIOS_FECHA_HORA, parameters: ['capacity','floor','building','fecha','hora']}
+}
+
   async guardar(espacio: Espacio): Promise<Space> {
     //Inicializar el repositorio para la entidad Space
     const DataSrc: DataSource = await initializeDBConnector(dataSource);
@@ -82,14 +89,17 @@ export class EspacioRepoPGImpl implements EspacioRepository {
     return EspacioObtenido;
   }
 
-  async filtrarEspaciosReservables(espacioprops: Espacio,fecha?: string, hora?: number): Promise<Space[]> {
+  async filtrarEspaciosReservables(espacioprops: EspacioProps, queryindex: number,fecha?: string, hora?: number): Promise<Space[]> {
     //Inicializamos el conector
-    const DataSrc: DataSource = await initializeDBConnector(dataSource);
-    const SpaceRepo = DataSrc.getRepository(Space);
-    
+    const repositorioReserva = await returnRepository(Space);
+    // Destructuramos la query y los parámetros.
+    const {query,parameters} = this.mapaTraduccionQueries[queryindex];
+    const espacio: Espacio = Espacio.Crear_ActualizarInformacionEspacio(espacioprops);
+    //Traduccimos los parámetros.
+    sustituirParametros(parameters, espacio,fecha,hora);
+    console.log(parameters)
     //Buscamos todos los espacios que cumplan la condición de búsqueda
-    const EspaciosObtenidos: Space[] = await SpaceRepo.query(EspacioQueries.QUERY_FILTRAR_ESPACIOS_FECHA_HORA)
-    console.log(EspaciosObtenidos);
+    const EspaciosObtenidos: Space[] = await repositorioReserva.query(query,parameters).catch(err => { console.log(err) });
     return EspaciosObtenidos;
   }
 
@@ -105,3 +115,26 @@ export class EspacioRepoPGImpl implements EspacioRepository {
     return espaciosImportados;
   }
 }
+
+ function sustituirParametros(parameters: any[], espacio: Espacio,fecha: string,hora: number) {
+  parameters.forEach((parametro, indice) => {
+    switch (parametro) {
+      case 'capacity':
+        parameters[indice] = espacio.espacioProps.Capacity;
+        break;
+      case 'floor':
+        parameters[indice] =   espacio.espacioProps.Floor;
+        break;
+      case 'building':
+        parameters[indice] = espacio.espacioProps.Building;
+        break;
+      case 'fecha':
+        parameters[indice] = fecha;
+        break;
+      case 'hora':
+       parameters[indice] = hora.toString();
+        break;
+    }
+  });
+}
+

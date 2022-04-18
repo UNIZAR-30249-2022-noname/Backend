@@ -91,10 +91,10 @@ export class AMQPController{
       Floor: mensajeRecibido.body.floor,
       Kind: ''
     }
-    const fecha: string | null = mensajeRecibido.body.day;
-    const hour: number | null = mensajeRecibido.body.scheduled[0].hour
-    //this.servicioEspacios.filtrarEspacios(espacioprops,fecha,hour)
-    return "WIP"
+    const fecha: string | null = mensajeRecibido.body.day == undefined ? null : mensajeRecibido.body.day;
+    const hour: number | null = mensajeRecibido.body.scheduled[0].hour == undefined ? null : mensajeRecibido.body.scheduled[0].hour;
+    const resultado = await this.servicioEspacios.filtrarEspacios(espacioprops,fecha,hour)
+    return resultado
   }
 
 

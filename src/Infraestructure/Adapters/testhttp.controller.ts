@@ -2,6 +2,7 @@ import { Controller, Get, Query, Post, Body, Put, Param, Delete, Req } from '@ne
 import { ReservaService } from '../../Mooc/Reserva/Application/reserva.service';
 import { ReservaRepoPGImpl } from '../../Mooc/Reserva/Infraestructure/reserva.repository';
 import { EspacioService } from '../../Mooc/Espacio/Application/usecase/espacio.service';
+import { Espacio, EspacioProps} from '../../Mooc/Espacio/Domain/Entities/espacio';
 import { EspacioRepoPGImpl } from '../../Mooc/Espacio/Infraestructure/espacio.repository';
 import { IncidenciaService } from '../../Mooc/Incidencia/Application/usecase/incidencia.service';
 import { IncidenciaProps } from '../../Mooc/Incidencia/Domain/Entities/incidencia';
@@ -86,6 +87,25 @@ export class TestController {
     const resultado = await servicioReserva.guardarReserva(reservaprops, idEspacio);
     const idReserva: number = resultado != null ? resultado.id : -1;
     return {id: idReserva};
+  }
+
+  @Post('/filtrarEspacios')
+  async filtrarEspacios(@Body() mensaje: any) {
+    let servicioEspacio: EspacioService = new EspacioService(new EspacioRepoPGImpl());
+
+    const espacioprops: EspacioProps = {
+      Name: '',
+      Capacity: mensaje.capacity,
+      Building: mensaje.building,
+      Floor: mensaje.floor,
+      Kind: ''
+    }
+    const fecha: string | null = mensaje.day == undefined ? null : mensaje.day;
+    const hour: number | null = mensaje.hour == undefined ? null : mensaje.hour;
+    //console.log(fecha,hour)
+    //console.log(espacioprops)
+    const resultado = await servicioEspacio.filtrarEspacios(espacioprops,fecha,hour)
+    return {resultado: resultado};
   }
 
 

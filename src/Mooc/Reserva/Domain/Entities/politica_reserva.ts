@@ -30,7 +30,7 @@ export abstract class PoliticaReserva {
       fecha: Equal(props.fecha)
     })
     // Si no existe una solapación (resultado = null) devolver verdadero, si existe devolver falso.
-    return (resultado == null) ? true : false
+    return (resultado == null)
   }
 }
 /*
