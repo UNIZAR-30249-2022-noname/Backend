@@ -21,7 +21,6 @@ services:
       - "POSTGRES_DBNAME=proyectodb"
       - "DEFAULT_ENCODING=UTF8"
     volumes:
-      - ./dump:/docker-entrypoint-initdb.d
       - dbdata:/var/lib/postgresql 
   gateway:
     image: arejula27/calendarunizar
