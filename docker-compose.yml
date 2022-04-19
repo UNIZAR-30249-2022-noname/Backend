@@ -35,6 +35,8 @@ services:
   backend:
     image: 1209200064/backend:latest
     container_name: backend_lis
+    depends_on:
+      - "postgis"   
     ports:
       - "3400:3400"
     environment:
