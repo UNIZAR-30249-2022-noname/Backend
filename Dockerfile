@@ -16,4 +16,4 @@ EXPOSE 3400
 #CMD ["npm", "run", "migrations:generate"]
 #CMD ["npm", "run", "migrations:run"]
 #CMD ["npm", "run", "start"]
-CMD ["sh", "-c", "npm run migrations:generate && npm run migrations:run && npm run start"]
+CMD ["sh", "-c", "npm run migrations:generate; npm run migrations:run; npm run start"]
