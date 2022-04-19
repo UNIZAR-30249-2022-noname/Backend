@@ -13,6 +13,4 @@ RUN npm run build
 #RUN npm run migrations:run
 #Esto no es necesario pero nos vale para probar
 EXPOSE 3400
-#CMD ["npm", "run", "migrations:generate"]
-#CMD ["npm", "run", "migrations:run"]
-CMD ["npm", "run", "start"]
+CMD ["sh", "./run_all.sh"]

@@ -22,6 +22,11 @@ services:
       - "DEFAULT_ENCODING=UTF8"
     volumes:
       - dbdata:/var/lib/postgresql 
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
   gateway:
     image: arejula27/calendarunizar
     ports:
@@ -32,13 +37,16 @@ services:
       - "3000:3000"
     environment:
       - "REACT_APP_GATEWAY=gateway"
-  #backend:
-    #image: 1209200064/backend:latest
-    #container_name: backend_lis
-    #ports:
-    #  - "3400:3400"
-    #environment:
-    #  - "production=true"
+  backend:
+    image: 1209200064/backend:latest
+    container_name: backend_lis
+    depends_on:
+      postgis:
+          condition: service_healthy
+    ports:
+      - "3400:3400"
+    environment:
+      - "production=true"
   pgadmin:
     image: dpage/pgadmin4
     ports:
