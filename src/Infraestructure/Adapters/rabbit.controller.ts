@@ -86,15 +86,17 @@ export class AMQPController{
     const mensajeRecibido = JSON.parse(context.getMessage().content);
     const espacioprops: EspacioProps = {
       Name: '',
-      Capacity: mensajeRecibido.body.capacity,
-      Building: mensajeRecibido.body.building,
-      Floor: mensajeRecibido.body.floor,
+      Capacity: (mensajeRecibido.body.capacity === '') ? null : mensajeRecibido.body.capacity,
+      Building: (mensajeRecibido.body.building === '') ? null : mensajeRecibido.body.building,
+      Floor: (mensajeRecibido.body.floor === '') ? null : mensajeRecibido.body.floor,
       Kind: ''
     }
-    const fecha: string | null = mensajeRecibido.body.day == undefined ? null : mensajeRecibido.body.day;
-    const hour: number | null = mensajeRecibido.body.scheduled[0].hour == undefined ? null : mensajeRecibido.body.scheduled[0].hour;
+    //Extraemos parámetros
+    const fecha: string | null = mensajeRecibido.body.day === '' ? null : mensajeRecibido.body.day;
+    const hour: number | null = mensajeRecibido.body.hour.hour ===  0 ? null : mensajeRecibido.body.hour.hour;
     const resultado = await this.servicioEspacios.filtrarEspacios(espacioprops,fecha,hour)
-    return resultado
+    console.warn(resultado.length)
+    return {spaces: resultado, CorrelationId: mensajeRecibido.id}
   }
 
 

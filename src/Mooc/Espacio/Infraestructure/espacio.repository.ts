@@ -34,7 +34,7 @@ enum EspacioQueries {
   +  ' FROM reserve'
   +  ' WHERE fecha = $4'
   +  ' GROUP BY espacioid' 
-  +  ' HAVING COUNT(*) <= 11'
+  +  ' HAVING COUNT(*) <= 12'
   +')'
   +')'
   ,
@@ -58,7 +58,7 @@ export class EspacioRepoPGImpl implements EspacioRepository {
     1: {query: EspacioQueries.QUERY_FILTRAR_ESPACIOS_FECHA, parameters: ['capacity','floor','building','fecha']},
     2: {query: EspacioQueries.QUERY_FILTRAR_ESPACIOS_HORA, parameters: ['capacity','floor','building','hora']},
     3: {query: EspacioQueries.QUERY_FILTRAR_ESPACIOS_FECHA_HORA, parameters: ['capacity','floor','building','fecha','hora']}
-}
+  }
 
   async guardar(espacio: Espacio): Promise<Space> {
     //Inicializar el repositorio para la entidad Space
@@ -96,10 +96,9 @@ export class EspacioRepoPGImpl implements EspacioRepository {
     const {query,parameters} = this.mapaTraduccionQueries[queryindex];
     const espacio: Espacio = Espacio.Crear_ActualizarInformacionEspacio(espacioprops);
     //Traduccimos los parámetros.
-    sustituirParametros(parameters, espacio,fecha,hora);
-    console.log(parameters)
+    const parametrosQuery = sustituirParametros([...parameters], espacio,fecha,hora);
     //Buscamos todos los espacios que cumplan la condición de búsqueda
-    const EspaciosObtenidos: Space[] = await repositorioReserva.query(query,parameters).catch(err => { console.log(err) });
+    const EspaciosObtenidos: Space[] = await repositorioReserva.query(query,parametrosQuery).catch(err => { console.log(err) });
     return EspaciosObtenidos;
   }
 
@@ -116,14 +115,15 @@ export class EspacioRepoPGImpl implements EspacioRepository {
   }
 }
 
- function sustituirParametros(parameters: any[], espacio: Espacio,fecha: string,hora: number) {
+ function sustituirParametros(parameters: any[], espacio: Espacio,fecha: string,hora: number): any[] {
+  
   parameters.forEach((parametro, indice) => {
     switch (parametro) {
       case 'capacity':
         parameters[indice] = espacio.espacioProps.Capacity;
         break;
       case 'floor':
-        parameters[indice] =   espacio.espacioProps.Floor;
+        parameters[indice] =  espacio.espacioProps.Floor;
         break;
       case 'building':
         parameters[indice] = espacio.espacioProps.Building;
@@ -136,5 +136,6 @@ export class EspacioRepoPGImpl implements EspacioRepository {
         break;
     }
   });
+  return parameters;
 }
 

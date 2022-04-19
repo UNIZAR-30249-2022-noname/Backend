@@ -7,6 +7,12 @@ RUN npm install\
         && npm install typescript -g
 RUN npm install -g ts-node
 COPY . .
+RUN npm run build
+#Falla si no hay base de datos desplegada.
+#RUN npm run migrations:generate 
+#RUN npm run migrations:run
 #Esto no es necesario pero nos vale para probar
-EXPOSE 2750
+EXPOSE 3400
+#CMD ["npm", "run", "migrations:generate"]
+#CMD ["npm", "run", "migrations:run"]
 CMD ["npm", "run", "start"]

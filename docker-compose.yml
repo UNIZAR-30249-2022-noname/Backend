@@ -22,10 +22,10 @@ services:
       - "DEFAULT_ENCODING=UTF8"
     volumes:
       - dbdata:/var/lib/postgresql 
-  #gateway:
-    #image: arejula27/calendarunizar
-    #ports:
-    #  - "8080:8080"
+  gateway:
+    image: arejula27/calendarunizar
+    ports:
+      - "8080:8080"
   client:
     image: arejula27/calendarwebclientunizar
     ports:
@@ -33,12 +33,12 @@ services:
     environment:
       - "REACT_APP_GATEWAY=gateway"
   #backend:
-  #  image: 1209200064/backend:latest
-  #  container_name: backend_lis
-  #  ports:
-  #    - "2750:2750"
-  #  environment:
-  #    - "production=true"
+    #image: 1209200064/backend:latest
+    #container_name: backend_lis
+    #ports:
+    #  - "3400:3400"
+    #environment:
+    #  - "production=true"
   pgadmin:
     image: dpage/pgadmin4
     ports:

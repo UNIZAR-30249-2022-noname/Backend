@@ -18,7 +18,7 @@ export class Reserve {
     @Column()
     horafin: string;
 
-    @Column()
+    @Column({ type: "varchar", length: 50})
     persona: string;
 
     @Column({ type: "varchar", length: 50})

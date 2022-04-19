@@ -3,7 +3,7 @@ import { DataSource } from "typeorm";
 
 const dataSource = new DataSource({
   "type": 'postgres',
-  "host": process.env.production ? 'postgres' : 'localhost',
+  "host": process.env.production ? 'postgis' : 'localhost',
   "port": (process.env.production) ? 5432 : 25432,
   "username": "proyecto",
   "password": "proyectovm",
