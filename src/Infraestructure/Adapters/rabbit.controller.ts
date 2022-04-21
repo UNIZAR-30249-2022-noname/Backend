@@ -84,6 +84,7 @@ export class AMQPController{
     @Ctx() context: RmqContext,
   ) {
     const mensajeRecibido = JSON.parse(context.getMessage().content);
+    console.log(mensajeRecibido);
     const espacioprops: EspacioProps = {
       Name: '',
       Capacity: (mensajeRecibido.body.capacity === '') ? null : mensajeRecibido.body.capacity,
