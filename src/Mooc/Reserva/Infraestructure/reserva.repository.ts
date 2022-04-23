@@ -73,16 +73,15 @@ export class ReservaRepoPGImpl implements ReservaRepository {
     return ReservaObtenida;
   }
   
-  async buscarReservasPorEspacio(idEspacio: string): Promise<Reserve[]> {
-      const DataSrc: DataSource = await initializeDBConnector(dataSource);
-      const ReserveRepo = DataSrc.getRepository(Reserve);
+  async buscarReservasPorEspacioyFecha(idEspacio: string, fecha: string): Promise<Reserve[]> {
+      const ReserveRepo = await returnRepository(Reserve);
       const ReservasObtenidas: Reserve[] = await ReserveRepo.find({
         where: {
           espacioid: idEspacio,
+          fecha: fecha,
         },
       });
-  
-      return ReservasObtenidas;
+    return ReservasObtenidas;
   }
 
 }

@@ -108,6 +108,16 @@ export class TestController {
     return {resultado: resultado};
   }
 
+  @Post('/obtenerEspacios')
+  async obtenerEspacios(@Body() mensaje: any) {
+    let servicioReserva: ReservaService = new ReservaService(new ReservaRepoPGImpl());
+    const idEspacio: string = mensaje.id;
+    const fecha: string = mensaje.date;
+    let resultadoOperacion =  await servicioReserva.obtenerReservasEspacio(idEspacio,fecha);
+    return {listaReservas: resultadoOperacion};
+
+  }
+
 
 }
 

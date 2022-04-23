@@ -1,5 +1,5 @@
 import { PoolConfig, Pool } from 'pg';
-import { DataSource } from 'typeorm';
+import { DataSource, Repository } from 'typeorm';
 import dataSource from '../../Config/ormconfig_db'
 
 var Puerto = 25432;
@@ -19,7 +19,7 @@ export async function initializeDBConnector(datasrc: DataSource){
   return datasrc;
 }
 
-export async function returnRepository(target: any) {
+export async function returnRepository(target: any): Promise<Repository<any>> {
   const DataSrc: DataSource = await initializeDBConnector(dataSource);
   const repository = DataSrc.getRepository(target);
   return repository;

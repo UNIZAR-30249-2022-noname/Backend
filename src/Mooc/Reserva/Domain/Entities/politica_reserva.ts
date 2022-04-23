@@ -14,7 +14,7 @@ function Assert(condition: boolean, message: string) {
 export abstract class PoliticaReserva {
 
   /**
-   * Pre: Una reserva solo es realizable si la hora de fin es superior a la hora de inicio, y
+   * Pre: Una reserva solo es realizable si la hora de fin es superior a la hora de inicio,
    * si la reserva es de una única hora de duración, y si el intervalo de reserva está entre 8<=h<=21.
    * Post: devuelve verdad si la reserva cumple las condiciones de reserva y si no existe una reserva 
    * en una fecha y hora ya reservadas.
