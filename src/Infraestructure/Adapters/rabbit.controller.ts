@@ -56,7 +56,7 @@ export class AMQPController{
     let resultadoOperacion: Reserve = await this.servicioReservas.guardarReserva(reservaprops,idEspacio);
     console.log(resultadoOperacion)
     const idReserva: number = resultadoOperacion != null ? resultadoOperacion.id : -1;
-    return {id: idReserva, CorrelationId: mensajeRecibido.id };
+    return {resultado: idReserva, CorrelationId: mensajeRecibido.id };
   }
 
   @MessagePattern('cancelar-reserva')
@@ -67,7 +67,7 @@ export class AMQPController{
     const mensajeRecibido = JSON.parse(context.getMessage().content);
     const idReserva: string = mensajeRecibido.body.id;
     let resultadoOperacion =  this.servicioReservas.eliminarReserva(idReserva);
-    return {resultadoOperacion: resultadoOperacion, CorrelationId: mensajeRecibido.id};
+    return {resultado: resultadoOperacion, CorrelationId: mensajeRecibido.id};
   }
 
   /*
@@ -97,7 +97,7 @@ export class AMQPController{
     const hour: number | null = mensajeRecibido.body.hour.hour ===  0 ? null : mensajeRecibido.body.hour.hour;
     const resultado = await this.servicioEspacios.filtrarEspacios(espacioprops,fecha,hour)
     console.warn(resultado.length)
-    return {spaces: resultado, CorrelationId: mensajeRecibido.id}
+    return {resultado: resultado, CorrelationId: mensajeRecibido.id}
   }
 
 
@@ -108,7 +108,7 @@ export class AMQPController{
   ) {
     // TODO: FALTA CONVERTIR EL BINARIO DE RABBIT A CSV Y PASARSELO A importarEspacios. ACTUALMENTE COGE AUTOMÁTICAMENTE EL TB_ESPACIOS.csv
     const resultadoOperacionInsertar = await this.servicioEspacios.importarEspacios();
-    return resultadoOperacionInsertar;
+    return {resultado: resultadoOperacionInsertar};
   }
 
   /*******************************/
@@ -132,7 +132,7 @@ export class AMQPController{
     let resultadoOperacion: number = await this.servicioIncidencias.crearIncidencia(incidenciaprops);
     console.log(resultadoOperacion);
 
-    return resultadoOperacion;
+    return {resultado: resultadoOperacion, CorrelationId: mensajeRecibido.id};
   }
 
   @MessagePattern('modificar-estado-incidencia')
@@ -146,7 +146,7 @@ export class AMQPController{
     let resultadoOperacion: number = await this.servicioIncidencias.modificarEstadoIncidencia(mensajeRecibido.body.key, mensajeRecibido.body.state);
     console.log(resultadoOperacion);
 
-    return resultadoOperacion;
+    return {resultado: resultadoOperacion, CorrelationId: mensajeRecibido.id};
   }
 
   @MessagePattern('eliminar-incidencia')
@@ -160,7 +160,7 @@ export class AMQPController{
     let resultadoOperacion: number = await this.servicioIncidencias.eliminarIncidencia(mensajeRecibido.body.key)
     console.log(resultadoOperacion);
 
-    return resultadoOperacion;
+    return {resultado: resultadoOperacion, CorrelationId: mensajeRecibido.id};
   }
 
   @MessagePattern('obtener-incidencias')
@@ -170,10 +170,11 @@ export class AMQPController{
   ) {
     console.log('Procesando Solicitud(obtener-incidencias)');
 
+    const mensajeRecibido = JSON.parse(context.getMessage().content);
     let resultadoOperacion: Incidencia[] = await this.servicioIncidencias.obtenerTodasIncidencias();
     console.log(resultadoOperacion);
 
-    return resultadoOperacion;
+    return {resultado: resultadoOperacion, CorrelationId: mensajeRecibido.id};
   }
 
   /***************************************/
@@ -185,6 +186,7 @@ export class AMQPController{
     @Ctx() context: RmqContext,
   ) {
     console.log('Procesando Solicitud(obtener-edificios)');
+    const mensajeRecibido = JSON.parse(context.getMessage().content);
 
     const Edificios = [
       {
@@ -201,6 +203,6 @@ export class AMQPController{
       }
     ]
     
-    return Edificios;
+    return {resultado: Edificios, CorrelationId: mensajeRecibido.id};
   }
 }
