@@ -78,8 +78,7 @@ export class EspacioRepoPGImpl implements EspacioRepository {
   }
 
   async buscarEspacioPorId(id: string): Promise<Space> {
-    const DataSrc: DataSource = await initializeDBConnector(dataSource);
-    const SpaceRepo = DataSrc.getRepository(Space);
+    const SpaceRepo = await returnRepository(Space);
     const EspacioObtenido: Space = await SpaceRepo.findOne({
       where: {
         id: id,

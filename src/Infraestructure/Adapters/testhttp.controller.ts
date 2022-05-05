@@ -111,10 +111,13 @@ export class TestController {
   @Post('/obtenerEspacios')
   async obtenerEspacios(@Body() mensaje: any) {
     let servicioReserva: ReservaService = new ReservaService(new ReservaRepoPGImpl());
+    let servicioEspacios: EspacioService = new EspacioService(new EspacioRepoPGImpl());
+
     const idEspacio: string = mensaje.id;
     const fecha: string = mensaje.date;
-    let resultadoOperacion =  await servicioReserva.obtenerReservasEspacio(idEspacio,fecha);
-    return {listaReservas: resultadoOperacion};
+    let InfoSlots =  await servicioReserva.obtenerReservasEspacio(idEspacio,fecha);
+    let SlotData = await servicioEspacios.buscarEspacioPorId(idEspacio);
+    return {resultado: {InfoSlots,SlotData}};
 
   }
 

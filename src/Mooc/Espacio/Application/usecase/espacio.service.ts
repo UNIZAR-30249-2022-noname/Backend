@@ -13,7 +13,7 @@ import { InsertResult } from 'typeorm';
 
 export interface servicioEspacioI {
   guardarEspacio(espacioProps: EspacioProps): Promise<Space>;
-  buscarEspacioPorId(id: String): Promise<Espacio[]>;
+  buscarEspacioPorId(idEspacio: string): Promise<Space>;
   listarReservas(idEspacio:String, fecha:String): Promise<Reserva[]>;
   importarEspacios(): Promise<Boolean>;
   filtrarEspacios(espacioprops: EspacioProps,fecha?: string, hora?: number):Promise<Space[]>;
@@ -50,16 +50,8 @@ export class EspacioService implements servicioEspacioI {
     return espacioGuardado;
   }
 
-  async buscarEspacioPorId(id: String): Promise<Espacio[]> {
-    /*try {
-      console.log('Llamada a buscarEspacioPorId');
-      return await this.Espaciorepository.buscarEspacioPorId(id);
-    } catch (error: any) {
-      console.log(error);
-      return error;
-    }
-  */
-  throw new Error('not implemented')
+  async buscarEspacioPorId(idEspacio: string): Promise<Space> {
+      return await this.espaciorepository.buscarEspacioPorId(idEspacio);
   }
 
   async importarEspacios(): Promise<Boolean> {

@@ -85,7 +85,7 @@ export class AMQPController{
 	 *    person    string
    *  ) para cada reserva 
    */
-  @MessagePattern('obtener-reservas-espacio')
+  @MessagePattern('obtener-informacion-espacio')
   async obtenerReservasEspacio( 
     @Payload() data: number[],
     @Ctx() context: RmqContext,)
@@ -93,8 +93,9 @@ export class AMQPController{
     const mensajeRecibido = JSON.parse(context.getMessage().content);
     const idEspacio: string = mensajeRecibido.body.id;
     const fecha: string = mensajeRecibido.body.date;
-    let resultadoOperacion =  this.servicioReservas.obtenerReservasEspacio(idEspacio,fecha);
-    return {listaReservas: resultadoOperacion, CorrelationId: mensajeRecibido.id};
+    let InfoSlots =  this.servicioReservas.obtenerReservasEspacio(idEspacio,fecha);
+    let SlotData = this.servicioEspacios.buscarEspacioPorId(idEspacio);
+    return {resultado: {InfoSlots,SlotData}, CorrelationId: mensajeRecibido.id};
   }
 
 
