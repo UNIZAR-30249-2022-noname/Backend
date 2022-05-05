@@ -5,11 +5,11 @@ import {
 import { Reserva} from '../Domain/Entities/reserva';
 import { Espacio } from '../../Espacio/Domain/Entities/espacio';
 import { ReservaRepository } from '../Domain/ReservaRepository';
-import { ShortDomainId } from 'types-ddd';
-import * as crypto from 'crypto';
 import { Injectable, Inject } from '@nestjs/common';
 import {Reserve} from '../Domain/Entities/reserva.entity';
 import { ReservaRepoPGImpl } from '../Infraestructure/reserva.repository';
+import { ReservaAssembler } from './reservaAssembler';
+import { ReservasOcupadasDTO } from './reservasOcupadasDTO';
 
 export interface servicioReservaI {
   guardarReserva(
@@ -17,12 +17,24 @@ export interface servicioReservaI {
     idEspacio: string,
   ): Promise<Reserve>;
   eliminarReserva(idReserva: string): Promise<Boolean>;
+  obtenerReservasEspacio(idEspacio: string,fecha: string): Promise<ReservasOcupadasDTO[]>
 }
 
 @Injectable()
 export class ReservaService implements servicioReservaI {
+  
   constructor(@Inject('ReservaRepository')
   private readonly reservarepository: ReservaRepository) {}
+
+
+  async obtenerReservasEspacio(idEspacio: string, fecha: string): Promise<ReservasOcupadasDTO[]> {
+    const listaReservas: Reserve[] = await this.reservarepository.buscarReservasPorEspacioyFecha(idEspacio,fecha);
+    console.log("lista reservas",listaReservas);
+    const datosReserva_rehidratados: DatosReserva[] = DatosReserva.rehidratarDatosReservaFromDB(listaReservas);
+    console.log("datos reservas rehidratadas",datosReserva_rehidratados);
+    const DTOListaReservas: ReservasOcupadasDTO[]  = ReservaAssembler.WriteDto(datosReserva_rehidratados);
+    return DTOListaReservas
+  }
 
   async guardarReserva(datosreserva: DatosReservaProps, idEspacio: string): Promise<Reserve> {
     try{

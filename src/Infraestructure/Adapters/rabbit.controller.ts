@@ -69,6 +69,36 @@ export class AMQPController{
     let resultadoOperacion =  this.servicioReservas.eliminarReserva(idReserva);
     return {resultado: resultadoOperacion, CorrelationId: mensajeRecibido.id};
   }
+  /**
+   * 
+   * @param context
+   * {
+   *  Name string `json:"id"` 
+	 *  Date string `json:"date"`
+   * }
+   * @param data 
+   * @returns
+   * 	Array =>
+   *  (
+   *    hora      int 
+	 *    busy      bool   
+	 *    person    string
+   *  ) para cada reserva 
+   */
+  @MessagePattern('obtener-informacion-espacio')
+  async obtenerReservasEspacio( 
+    @Payload() data: number[],
+    @Ctx() context: RmqContext,)
+  {
+    const mensajeRecibido = JSON.parse(context.getMessage().content);
+    const idEspacio: string = mensajeRecibido.body.id;
+    const fecha: string = mensajeRecibido.body.date;
+    let InfoSlots =  this.servicioReservas.obtenerReservasEspacio(idEspacio,fecha);
+    let SlotData = this.servicioEspacios.buscarEspacioPorId(idEspacio);
+    return {resultado: {InfoSlots,SlotData}, CorrelationId: mensajeRecibido.id};
+  }
+
+
 
   /*
   -----Recibimos del gateway------

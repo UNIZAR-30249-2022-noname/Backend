@@ -2,6 +2,7 @@ import { assert } from 'console';
 import { ValueObject } from 'types-ddd';
 import ReservaException from '../reservaexception';
 import { PoliticaReserva } from './politica_reserva';
+import { Reserve } from './reserva.entity';
 
 export interface DatosReservaProps {
   readonly horaInicio: number;
@@ -11,7 +12,6 @@ export interface DatosReservaProps {
 }
 
 export class DatosReserva{
-
 
   private constructor(private propsReserva: DatosReservaProps) { }
   /**
@@ -29,6 +29,17 @@ export class DatosReserva{
     } else {
       throw new ReservaException(ReservaException.WRONG_RESERVE_MSG);
     }
+  }
+  
+  public static rehidratarDatosReservaFromDB(reservasDTO: Reserve[]): DatosReserva[] {
+    var datosreserva: DatosReserva[] = reservasDTO.map( (reserva, indice) => {
+        return new DatosReserva({
+          horaInicio: Number(reserva.horainicio),
+          fecha: reserva.fecha,
+          Persona: reserva.persona,
+        })
+    })
+    return datosreserva;
   }
 
   public calcularHoraFin(duracion: number): number {
