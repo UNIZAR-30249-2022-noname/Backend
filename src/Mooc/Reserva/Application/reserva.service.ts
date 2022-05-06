@@ -29,10 +29,9 @@ export class ReservaService implements servicioReservaI {
 
   async obtenerReservasEspacio(idEspacio: string, fecha: string): Promise<ReservasOcupadasDTO[]> {
     const listaReservas: Reserve[] = await this.reservarepository.buscarReservasPorEspacioyFecha(idEspacio,fecha);
-    console.log("lista reservas",listaReservas);
     const datosReserva_rehidratados: DatosReserva[] = DatosReserva.rehidratarDatosReservaFromDB(listaReservas);
-    console.log("datos reservas rehidratadas",datosReserva_rehidratados);
     const DTOListaReservas: ReservasOcupadasDTO[]  = ReservaAssembler.WriteDto(datosReserva_rehidratados);
+    console.log("DTOListaReservas",DTOListaReservas);
     return DTOListaReservas
   }
 

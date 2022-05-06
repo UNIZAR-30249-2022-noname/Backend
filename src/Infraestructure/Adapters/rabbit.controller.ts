@@ -91,10 +91,11 @@ export class AMQPController{
     @Ctx() context: RmqContext,)
   {
     const mensajeRecibido = JSON.parse(context.getMessage().content);
+    console.log(mensajeRecibido)
     const idEspacio: string = mensajeRecibido.body.id;
     const fecha: string = mensajeRecibido.body.date;
-    let InfoSlots =  this.servicioReservas.obtenerReservasEspacio(idEspacio,fecha);
-    let SlotData = this.servicioEspacios.buscarEspacioPorId(idEspacio);
+    let InfoSlots =  await this.servicioReservas.obtenerReservasEspacio(idEspacio,fecha);
+    let SlotData = await this.servicioEspacios.buscarEspacioPorId(idEspacio);
     return {resultado: {InfoSlots,SlotData}, CorrelationId: mensajeRecibido.id};
   }
 
