@@ -1,3 +1,3 @@
 export class ReservasOcupadasDTO {
-    constructor(public hour: number, public ocupado: boolean = false, public persona: string) {}
+    constructor(public hour: number, public occupied: boolean = false, public person: string) {}
 }

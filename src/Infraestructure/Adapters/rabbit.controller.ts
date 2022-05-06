@@ -43,7 +43,7 @@ export class AMQPController{
     const mensajeRecibido = JSON.parse(context.getMessage().content);
     console.log('Procesando Solicitud(realizar-reserva)', mensajeRecibido);
     const horainicio: number = mensajeRecibido.body.scheduled[0].hour
-    const horafin:number = mensajeRecibido.body.scheduled[1].hour
+    const horafin:number = mensajeRecibido.body.scheduled[0].hour + 1
     const evento: string = mensajeRecibido.body.event
     const reservaprops: DatosReservaProps = {
       fecha: mensajeRecibido.body.day,
@@ -51,6 +51,7 @@ export class AMQPController{
       horaFin: horafin,
       Persona: mensajeRecibido.body.owner,
     };
+    console.log(reservaprops)
     const idEspacio: string = mensajeRecibido.body.space;
     //Devuelve lo que tenga que devolver en formato JSON.
     let resultadoOperacion: Reserve = await this.servicioReservas.guardarReserva(reservaprops,idEspacio);
@@ -91,7 +92,6 @@ export class AMQPController{
     @Ctx() context: RmqContext,)
   {
     const mensajeRecibido = JSON.parse(context.getMessage().content);
-    console.log(mensajeRecibido)
     const idEspacio: string = mensajeRecibido.body.id;
     const fecha: string = mensajeRecibido.body.date;
     let InfoSlots =  await this.servicioReservas.obtenerReservasEspacio(idEspacio,fecha);
