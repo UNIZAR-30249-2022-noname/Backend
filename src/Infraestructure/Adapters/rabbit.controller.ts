@@ -158,10 +158,13 @@ export class AMQPController{
       State: mensajeRecibido.body.state,
       Tags: mensajeRecibido.body.tags,
       IdSpace: mensajeRecibido.body.space
+      //IdSpace: "CRE.1200.00.040"
     };
 
     let resultadoOperacion: number = await this.servicioIncidencias.crearIncidencia(incidenciaprops);
     console.log(resultadoOperacion);
+
+    console.log({resultado: resultadoOperacion, CorrelationId: mensajeRecibido.id})
 
     return {resultado: resultadoOperacion, CorrelationId: mensajeRecibido.id};
   }

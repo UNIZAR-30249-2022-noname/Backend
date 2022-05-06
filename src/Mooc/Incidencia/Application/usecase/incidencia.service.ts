@@ -16,7 +16,7 @@ export class IncidenciaService implements servicioIncidenciaI {
     constructor(@Inject('IncidenciaRepository') private readonly incidenciarepository: IncidenciaRepository) {}
 
     async crearIncidencia(incidenciaProps: IncidenciaProps): Promise<number> {
-        const IncidenciaACrear: Incidencia = new Incidencia(null, incidenciaProps);
+        const IncidenciaACrear: Incidencia = new Incidencia("0", incidenciaProps);
         const incidenciaCreada: number = await this.incidenciarepository.guardar(IncidenciaACrear);
 
         return incidenciaCreada;

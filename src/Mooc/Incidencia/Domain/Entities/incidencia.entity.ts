@@ -10,13 +10,13 @@ export class Issue {
     @Column()
     titulo: string;
 
-    @Column()
+    @Column({ nullable: true })
     descripcion: string;
 
     @Column()
     estado: number;
 
-    @Column()
+    @Column({ nullable: true })
     etiquetas: string;  // puede que lo pasemos a otra tabla
 
     @Column()
