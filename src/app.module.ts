@@ -11,6 +11,8 @@ import { EspacioRepoPGImpl } from './Mooc/Espacio/Infraestructure/espacio.reposi
 import { EspacioService } from './Mooc/Espacio/Application/usecase/espacio.service';
 import { IncidenciaRepoPGImpl } from './Mooc/Incidencia/Infraestructure/incidencia.repository';
 import { IncidenciaService } from './Mooc/Incidencia/Application/usecase/incidencia.service';
+import { HorarioService } from './Mooc/Horario/Application/usecase/horario.service';
+import { HorarioRepoPGImpl } from './Mooc/Horario/Infraestructure/horario.repository';
 
 @Module({
   imports: [
@@ -57,6 +59,14 @@ import { IncidenciaService } from './Mooc/Incidencia/Application/usecase/inciden
     {
       provide: 'IncidenciaRepository',
       useClass: IncidenciaRepoPGImpl,
+    },
+    {
+      provide: 'servicioHorarioI',
+      useClass: HorarioService,
+    },
+    {
+      provide: 'HorarioRepository',
+      useClass: HorarioRepoPGImpl,
     }
   ],
 })

@@ -8,6 +8,8 @@ import { IncidenciaService } from '../../Mooc/Incidencia/Application/usecase/inc
 import { IncidenciaProps } from '../../Mooc/Incidencia/Domain/Entities/incidencia';
 import { IncidenciaRepoPGImpl } from '../../Mooc/Incidencia/Infraestructure/incidencia.repository';
 import { DatosReservaProps } from '../../Mooc/Reserva/Domain/Entities/datosreserva';
+import { HorarioService } from 'src/Mooc/Horario/Application/usecase/horario.service';
+import { HorarioRepoPGImpl } from 'src/Mooc/Horario/Infraestructure/horario.repository';
 
 @Controller('test')
 export class TestController {
@@ -22,6 +24,13 @@ export class TestController {
   async create() {
     let servicioEspacio: EspacioService = new EspacioService(new EspacioRepoPGImpl());
     const resultado = await servicioEspacio.importarEspacios();
+    return(resultado)
+  }
+
+  @Post('/subirCursos')
+  async subirCursos() {
+    let horarioEspacio: HorarioService = new HorarioService(new HorarioRepoPGImpl());
+    const resultado = await horarioEspacio.importarCursos();
     return(resultado)
   }
 

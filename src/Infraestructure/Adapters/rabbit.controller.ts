@@ -17,6 +17,7 @@ import {Reserve}  from '../../Mooc/Reserva/Domain/Entities/reserva.entity';
 import { servicioEspacioI } from '../../Mooc/Espacio/Application/usecase/espacio.service';
 import { servicioIncidenciaI } from '../../Mooc/Incidencia/Application/usecase/incidencia.service';
 import { Incidencia, IncidenciaProps } from '../../Mooc/Incidencia/Domain/Entities/incidencia';
+import { servicioHorarioI } from 'src/Mooc/Horario/Application/usecase/horario.service';
 
 @Controller()
 export class AMQPController{
@@ -25,7 +26,8 @@ export class AMQPController{
   constructor(
     @Inject('servicioReservaI') private readonly servicioReservas: servicioReservaI,
     @Inject('servicioEspacioI') private readonly servicioEspacios: servicioEspacioI,
-    @Inject('servicioIncidenciaI') private readonly servicioIncidencias: servicioIncidenciaI
+    @Inject('servicioIncidenciaI') private readonly servicioIncidencias: servicioIncidenciaI,
+    @Inject('servicioHorarioI') private readonly servicioHorarios: servicioHorarioI,
   ) {}
   
   /*******************************/
@@ -238,5 +240,18 @@ export class AMQPController{
     ]
     
     return {resultado: Edificios, CorrelationId: mensajeRecibido.id};
+  }
+
+  /*******************************/
+  /***********HORARIOS*********/
+  /*******************************/
+  @MessagePattern('importar-cursos')
+  async importarCursos(
+    @Payload() data: number[],
+    @Ctx() context: RmqContext,
+  ) {
+    // TODO: FALTA CONVERTIR EL BINARIO DE RABBIT A CSV Y PASARSELO A importarCursos. ACTUALMENTE COGE AUTOMÁTICAMENTE EL Listado_207.xlsx
+    const resultadoOperacionInsertar = await this.servicioHorarios.importarCursos();
+    return {resultado: resultadoOperacionInsertar};
   }
 }
