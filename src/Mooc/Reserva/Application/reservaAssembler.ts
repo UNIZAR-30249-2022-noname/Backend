@@ -17,6 +17,8 @@ export abstract class ReservaAssembler {
                     (datosReservaExisten !== undefined),
                     // Quién lo ha ocupado (persona).
                     (datosReservaExisten !== undefined) ? datosReservaExisten.getProps().Persona : "" ,
+                    //Evento de la reserva.
+                    (datosReservaExisten !== undefined) ? datosReservaExisten.getProps().evento : "" 
                 )
             }
         );

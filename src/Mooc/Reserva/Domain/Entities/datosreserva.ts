@@ -8,7 +8,8 @@ export interface DatosReservaProps {
   readonly horaInicio: number;
   horaFin?: number;
   readonly fecha: string;
-  readonly Persona: string;
+  readonly Persona: string
+  readonly evento: string;
 }
 
 export class DatosReserva{
@@ -37,6 +38,7 @@ export class DatosReserva{
           horaInicio: Number(reserva.horainicio),
           fecha: reserva.fecha,
           Persona: reserva.persona,
+          evento: reserva.evento,
         })
     })
     return datosreserva;
