@@ -3,7 +3,7 @@ import {
   ReservaService,
 } from '../../Mooc/Reserva/Application/reserva.service';
 import { DatosReservaProps } from '../../Mooc/Reserva/Domain/Entities/datosreserva';
-import { Espacio, EspacioProps} from '../../Mooc/Espacio/Domain/Entities/espacio';
+import { Espacio, EspacioProps } from '../../Mooc/Espacio/Domain/Entities/espacio';
 import * as crypto from 'crypto';
 import { Controller, Inject } from '@nestjs/common';
 import {
@@ -13,23 +13,24 @@ import {
   Payload,
   Ctx,
 } from '@nestjs/microservices';
-import {Reserve}  from '../../Mooc/Reserva/Domain/Entities/reserva.entity';
+import { Reserve } from '../../Mooc/Reserva/Domain/Entities/reserva.entity';
 import { servicioEspacioI } from '../../Mooc/Espacio/Application/usecase/espacio.service';
 import { servicioIncidenciaI } from '../../Mooc/Incidencia/Application/usecase/incidencia.service';
 import { Incidencia, IncidenciaProps } from '../../Mooc/Incidencia/Domain/Entities/incidencia';
 import { servicioHorarioI } from 'src/Mooc/Horario/Application/usecase/horario.service';
+import { Entrada, EntradaProps } from 'src/Mooc/Horario/Domain/Entities/entrada';
 
 @Controller()
-export class AMQPController{
-  
+export class AMQPController {
+
   //Constructor inyeccion de dependencias de todos los servicios de aplicación que sean necesarios.
   constructor(
     @Inject('servicioReservaI') private readonly servicioReservas: servicioReservaI,
     @Inject('servicioEspacioI') private readonly servicioEspacios: servicioEspacioI,
     @Inject('servicioIncidenciaI') private readonly servicioIncidencias: servicioIncidenciaI,
     @Inject('servicioHorarioI') private readonly servicioHorarios: servicioHorarioI,
-  ) {}
-  
+  ) { }
+
   /*******************************/
   /***********RESERVAS************/
   /*******************************/
@@ -40,12 +41,12 @@ export class AMQPController{
     @Payload() data: number[],
     @Ctx() context: RmqContext,
   ) {
-    
+
     //Convierte el mensaje en un Objeton JSON.
     const mensajeRecibido = JSON.parse(context.getMessage().content);
     console.log('Procesando Solicitud(realizar-reserva)', mensajeRecibido);
     const horainicio: number = mensajeRecibido.body.scheduled[0].hour
-    const horafin:number = mensajeRecibido.body.scheduled[0].hour + 1
+    const horafin: number = mensajeRecibido.body.scheduled[0].hour + 1
     const evento: string = mensajeRecibido.body.event
     const reservaprops: DatosReservaProps = {
       fecha: mensajeRecibido.body.day,
@@ -56,49 +57,47 @@ export class AMQPController{
     console.log(reservaprops)
     const idEspacio: string = mensajeRecibido.body.space;
     //Devuelve lo que tenga que devolver en formato JSON.
-    let resultadoOperacion: Reserve = await this.servicioReservas.guardarReserva(reservaprops,idEspacio);
+    let resultadoOperacion: Reserve = await this.servicioReservas.guardarReserva(reservaprops, idEspacio);
     console.log(resultadoOperacion)
     const idReserva: number = resultadoOperacion != null ? resultadoOperacion.id : -1;
-    return {resultado: idReserva, CorrelationId: mensajeRecibido.id };
+    return { resultado: idReserva, CorrelationId: mensajeRecibido.id };
   }
 
   @MessagePattern('cancelar-reserva')
-  async cancelarReserva( 
+  async cancelarReserva(
     @Payload() data: number[],
-    @Ctx() context: RmqContext,)
-  {
+    @Ctx() context: RmqContext,) {
     const mensajeRecibido = JSON.parse(context.getMessage().content);
     const idReserva: string = mensajeRecibido.body.id;
-    let resultadoOperacion =  this.servicioReservas.eliminarReserva(idReserva);
-    return {resultado: resultadoOperacion, CorrelationId: mensajeRecibido.id};
+    let resultadoOperacion = this.servicioReservas.eliminarReserva(idReserva);
+    return { resultado: resultadoOperacion, CorrelationId: mensajeRecibido.id };
   }
   /**
    * 
    * @param context
    * {
    *  Name string `json:"id"` 
-	 *  Date string `json:"date"`
+   *  Date string `json:"date"`
    * }
    * @param data 
    * @returns
    * 	Array =>
    *  (
    *    hora      int 
-	 *    busy      bool   
-	 *    person    string
+   *    busy      bool   
+   *    person    string
    *  ) para cada reserva 
    */
   @MessagePattern('obtener-informacion-espacio')
-  async obtenerReservasEspacio( 
+  async obtenerReservasEspacio(
     @Payload() data: number[],
-    @Ctx() context: RmqContext,)
-  {
+    @Ctx() context: RmqContext,) {
     const mensajeRecibido = JSON.parse(context.getMessage().content);
     const idEspacio: string = mensajeRecibido.body.id;
     const fecha: string = mensajeRecibido.body.date;
-    let InfoSlots =  await this.servicioReservas.obtenerReservasEspacio(idEspacio,fecha);
+    let InfoSlots = await this.servicioReservas.obtenerReservasEspacio(idEspacio, fecha);
     let SlotData = await this.servicioEspacios.buscarEspacioPorId(idEspacio);
-    return {resultado: {InfoSlots,SlotData}, CorrelationId: mensajeRecibido.id};
+    return { resultado: { InfoSlots, SlotData }, CorrelationId: mensajeRecibido.id };
   }
 
 
@@ -106,10 +105,10 @@ export class AMQPController{
   /*
   -----Recibimos del gateway------
   Capacity int    `json:"capacity"`
-	Day      string `json:"day"`
-	Hour     Hour   `json:"hour"`
-	Floor    string `json:"floor"`
-	Building string `json:"building"`
+  Day      string `json:"day"`
+  Hour     Hour   `json:"hour"`
+  Floor    string `json:"floor"`
+  Building string `json:"building"`
   */
   @MessagePattern('filtrar-espacios')
   async buscarReservaPorEspacio(
@@ -127,10 +126,10 @@ export class AMQPController{
     }
     //Extraemos parámetros
     const fecha: string | null = mensajeRecibido.body.day === '' ? null : mensajeRecibido.body.day;
-    const hour: number | null = mensajeRecibido.body.hour.hour ===  0 ? null : mensajeRecibido.body.hour.hour;
-    const resultado = await this.servicioEspacios.filtrarEspacios(espacioprops,fecha,hour)
+    const hour: number | null = mensajeRecibido.body.hour.hour === 0 ? null : mensajeRecibido.body.hour.hour;
+    const resultado = await this.servicioEspacios.filtrarEspacios(espacioprops, fecha, hour)
     console.warn(resultado.length)
-    return {resultado: resultado, CorrelationId: mensajeRecibido.id}
+    return { resultado: resultado, CorrelationId: mensajeRecibido.id }
   }
 
 
@@ -140,8 +139,8 @@ export class AMQPController{
     @Ctx() context: RmqContext,
   ) {
     // TODO: FALTA CONVERTIR EL BINARIO DE RABBIT A CSV Y PASARSELO A importarEspacios. ACTUALMENTE COGE AUTOMÁTICAMENTE EL TB_ESPACIOS.csv
-    const resultadoOperacionInsertar = await this.servicioEspacios.importarEspacios();
-    return {resultado: resultadoOperacionInsertar};
+    const resultado = await this.servicioEspacios.importarEspacios();
+    return { resultado: resultado };
   }
 
   /*******************************/
@@ -163,12 +162,12 @@ export class AMQPController{
       //IdSpace: "CRE.1200.00.040"
     };
 
-    let resultadoOperacion: number = await this.servicioIncidencias.crearIncidencia(incidenciaprops);
-    console.log(resultadoOperacion);
+    let resultado: number = await this.servicioIncidencias.crearIncidencia(incidenciaprops);
+    console.log(resultado);
 
-    console.log({resultado: resultadoOperacion, CorrelationId: mensajeRecibido.id})
+    console.log({ resultado: resultado, CorrelationId: mensajeRecibido.id })
 
-    return {resultado: resultadoOperacion, CorrelationId: mensajeRecibido.id};
+    return { resultado: resultado, CorrelationId: mensajeRecibido.id };
   }
 
   @MessagePattern('modificar-estado-incidencia')
@@ -179,10 +178,10 @@ export class AMQPController{
     const mensajeRecibido = JSON.parse(context.getMessage().content);
     console.log('Procesando Solicitud(modificar-estado-incidencia)', mensajeRecibido);
 
-    let resultadoOperacion: number = await this.servicioIncidencias.modificarEstadoIncidencia(mensajeRecibido.body.key, mensajeRecibido.body.state);
-    console.log(resultadoOperacion);
+    let resultado: number = await this.servicioIncidencias.modificarEstadoIncidencia(mensajeRecibido.body.key, mensajeRecibido.body.state);
+    console.log(resultado);
 
-    return {resultado: resultadoOperacion, CorrelationId: mensajeRecibido.id};
+    return { resultado: resultado, CorrelationId: mensajeRecibido.id };
   }
 
   @MessagePattern('eliminar-incidencia')
@@ -193,10 +192,10 @@ export class AMQPController{
     const mensajeRecibido = JSON.parse(context.getMessage().content);
     console.log('Procesando Solicitud(eliminar-incidencia)', mensajeRecibido);
 
-    let resultadoOperacion: number = await this.servicioIncidencias.eliminarIncidencia(mensajeRecibido.body.key)
-    console.log(resultadoOperacion);
+    let resultado: number = await this.servicioIncidencias.eliminarIncidencia(mensajeRecibido.body.key)
+    console.log(resultado);
 
-    return {resultado: resultadoOperacion, CorrelationId: mensajeRecibido.id};
+    return { resultado: resultado, CorrelationId: mensajeRecibido.id };
   }
 
   @MessagePattern('obtener-incidencias')
@@ -207,10 +206,10 @@ export class AMQPController{
     console.log('Procesando Solicitud(obtener-incidencias)');
 
     const mensajeRecibido = JSON.parse(context.getMessage().content);
-    let resultadoOperacion: Incidencia[] = await this.servicioIncidencias.obtenerTodasIncidencias();
-    console.log(resultadoOperacion);
+    let resultado: Incidencia[] = await this.servicioIncidencias.obtenerTodasIncidencias();
+    console.log(resultado);
 
-    return {resultado: resultadoOperacion, CorrelationId: mensajeRecibido.id};
+    return { resultado: resultado, CorrelationId: mensajeRecibido.id };
   }
 
   /***************************************/
@@ -238,8 +237,8 @@ export class AMQPController{
         plantas: ["Sótano", "Baja", "Primera", "Segunda", "Tercera"]
       }
     ]
-    
-    return {resultado: Edificios, CorrelationId: mensajeRecibido.id};
+
+    return { resultado: Edificios, CorrelationId: mensajeRecibido.id };
   }
 
   /*******************************/
@@ -251,7 +250,53 @@ export class AMQPController{
     @Ctx() context: RmqContext,
   ) {
     // TODO: FALTA CONVERTIR EL BINARIO DE RABBIT A CSV Y PASARSELO A importarCursos. ACTUALMENTE COGE AUTOMÁTICAMENTE EL Listado_207.xlsx
-    const resultadoOperacionInsertar = await this.servicioHorarios.importarCursos();
-    return {resultado: resultadoOperacionInsertar};
+    const resultado = await this.servicioHorarios.importarCursos();
+    return { resultado: resultado };
+  }
+
+  @MessagePattern('actualizar-calendario')
+  async actualizarHorario(
+    @Payload() data: number[],
+    @Ctx() context: RmqContext,
+  ) {
+    const mensajeRecibido = JSON.parse(context.getMessage().content);
+    console.log('Procesando Solicitud(actualizar-calendario)', mensajeRecibido);
+    const entradasProps: EntradaProps[] = mensajeRecibido.body.Entry.map(function (entry: EntradaProps) {
+      const entradaProps: EntradaProps = {
+        Degree: mensajeRecibido.body.DegreeSet.Degree,
+        Year: mensajeRecibido.body.DegreeSet.Year,
+        Group: mensajeRecibido.body.DegreeSet.Group,
+        Init: entry.Init,
+        End: entry.End,
+        Subject: entry.Subject,
+        Room: entry.Room,
+        Week: entry.Week,
+        Weekday: entry.Weekday
+      }
+      return entradaProps;
+    });
+
+    let resultado: string = await this.servicioHorarios.actualizarHorario(mensajeRecibido.body.DegreeSet.Degree, mensajeRecibido.body.DegreeSet.Year, mensajeRecibido.body.DegreeSet.Group, entradasProps);
+    console.log(resultado);
+
+    console.log({ resultado: resultado, CorrelationId: mensajeRecibido.id })
+
+    return { resultado: resultado, CorrelationId: mensajeRecibido.id };
+  }
+
+  @MessagePattern('obtener-entradas')
+  async obtenerEntradas(
+    @Payload() data: number[],
+    @Ctx() context: RmqContext,
+  ) {
+    const mensajeRecibido = JSON.parse(context.getMessage().content);
+    console.log('Procesando Solicitud(obtener-entradas)', mensajeRecibido);
+
+    let resultado: Entrada[] = await this.servicioHorarios.obtenerEntradas(mensajeRecibido.body.DegreeSet.Degree, mensajeRecibido.body.DegreeSet.Year, mensajeRecibido.body.DegreeSet.Group);
+    console.log(resultado);
+
+    console.log({ resultado: resultado, CorrelationId: mensajeRecibido.id })
+
+    return { resultado: resultado, CorrelationId: mensajeRecibido.id };
   }
 }

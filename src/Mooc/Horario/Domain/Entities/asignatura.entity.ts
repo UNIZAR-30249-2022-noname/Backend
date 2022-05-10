@@ -1,6 +1,7 @@
-import {Entity, Column, PrimaryGeneratedColumn, ManyToOne, JoinColumn} from 'typeorm';
+import {Entity, Column, PrimaryGeneratedColumn, ManyToOne, JoinColumn, OneToMany} from 'typeorm';
 import { Degree } from './titulacion.entity';
 import { DatosAsignatura } from './datosasignatura';
+import { Entry } from './entrada.entity';
 
 @Entity()
 export class Subject {
@@ -43,9 +44,13 @@ export class Subject {
     @Column({ type: "numeric", precision: 6, scale: 3})
     horasestpracticas: number;
 
+    @OneToMany(() => Entry, (entrada) => entrada.idasignatura)
+    entradas: Entry[]
+
     @ManyToOne(() => Degree, (titulacion) => titulacion.asignaturas)
     @JoinColumn({ 
-        name: 'codplan'
+        name: 'codplan',
+        referencedColumnName: 'codplan'
     })
     titulacion: Degree
 

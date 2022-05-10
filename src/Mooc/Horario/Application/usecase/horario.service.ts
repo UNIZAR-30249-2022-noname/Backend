@@ -8,11 +8,15 @@ import { HorarioRepository } from '../../Domain/HorarioRepository';
 import path from 'path';
 import { DatosAsignatura, DatosAsignaturaProps } from '../../Domain/Entities/datosasignatura';
 import { DatosTitulacion, DatosTitulacionProps } from '../../Domain/Entities/datostitulacion';
+import { Entrada, EntradaProps } from '../../Domain/Entities/entrada';
+import { Entry } from '../../Domain/Entities/entrada.entity';
 const XLSX = require('xlsx');
 const lineReader = require('line-reader');
 
 export interface servicioHorarioI {
     importarCursos(): Promise<Boolean>;
+    actualizarHorario(plan: string, curso: number, grupo: string, entradaProps: EntradaProps[]): Promise<string>;
+    obtenerEntradas(plan: string, curso: number, grupo: string): Promise<Entrada[]>;
 }
 
 @Injectable()
@@ -89,5 +93,37 @@ export class HorarioService implements servicioHorarioI {
         }*/
 
         return InsertarCursosPromise;
+    }
+
+    async actualizarHorario(plan: string, curso: number, grupo: string, entradasProps: EntradaProps[]): Promise<string> {
+        const entradas: Entrada[] = entradasProps.map(function (entradaProps) {
+            const entrada: Entrada = new Entrada("0", entradaProps);
+            return entrada;
+        });
+
+        const horarioActualizado: string = await this.horariorepository.actualizarHorario(plan, curso, grupo, entradas);
+
+        return horarioActualizado;
+    }
+
+    async obtenerEntradas(plan: string, curso: number, grupo: string): Promise<Entrada[]> {
+        const entriesObtenidas: Entry[] = await this.horariorepository.obtenerEntradas(plan, curso, grupo);
+
+        const entradasObtenidas: Entrada[] = entriesObtenidas.map(function (entryObtenida) {
+            var entradaProps: EntradaProps = {
+                Degree: entryObtenida.plan,
+                Year: entryObtenida.curso,
+                Group: entryObtenida.grupo,
+                Init: entryObtenida.inicio,
+                End: entryObtenida.fin,
+                Subject: entryObtenida.idasignatura,
+                Room: entryObtenida.idaula,
+                Week: entryObtenida.semana,
+                Weekday: entryObtenida.dia
+            };
+            return new Entrada(entryObtenida.id.toString(), entradaProps)
+        });
+
+        return entradasObtenidas;
     }
 }

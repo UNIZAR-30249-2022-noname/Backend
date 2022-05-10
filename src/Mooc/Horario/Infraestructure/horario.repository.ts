@@ -1,4 +1,4 @@
-import { DataSource, InsertResult } from "typeorm";
+import { DataSource, DeleteResult, InsertResult } from "typeorm";
 import { initializeDBConnector, returnRepository } from '../../../Infraestructure/Adapters/pg-connection';
 import dataSource from '../../../Config/ormconfig_db';
 import { DatosAsignatura } from "../Domain/Entities/datosasignatura";
@@ -6,6 +6,8 @@ import { DatosTitulacion } from "../Domain/Entities/datostitulacion";
 import { HorarioRepository } from "../Domain/HorarioRepository";
 import { Subject } from "../Domain/Entities/asignatura.entity";
 import { Degree } from "../Domain/Entities/titulacion.entity";
+import { Entrada } from "../Domain/Entities/entrada";
+import { Entry } from "../Domain/Entities/entrada.entity";
 
 enum HorarioQueries {
     QUERY_TRUNCAR_CURSOS = 'TRUNCATE degree, subject RESTART IDENTITY CASCADE',
@@ -70,5 +72,32 @@ export class HorarioRepoPGImpl implements HorarioRepository {
         console.log(asignaturasInsertadas)
 
         return true;
+    }
+
+    async actualizarHorario(plan: string, curso: number, grupo: string, entradas: Entrada[]): Promise<string> {
+        const DataSrc: DataSource = await initializeDBConnector(dataSource);
+        const EntryRepo = DataSrc.getRepository(Entry);
+
+        // primero eliminamos el estado actual del horario correspondiente a la titulación, curso y grupo recibidos.
+        const horarioEliminado: DeleteResult = await EntryRepo.delete({plan: plan, curso: curso, grupo: grupo});
+
+        // una vez eliminado, insertamos el nuevo estado del horario
+        const entriesDTO: Entry[] = entradas.map(function (entrada) {
+            const entryDTO: Entry = new Entry();
+            entryDTO.fillEntradaWithDomainEntity(entrada);
+            return entryDTO;
+        });
+        const horarioActualizado: InsertResult = await EntryRepo.insert(entriesDTO);
+
+        return new Date().toLocaleString('en-GB', { timeZone: 'Europe/Madrid' });
+    }
+
+    async obtenerEntradas(plan: string, curso: number, grupo: string): Promise<Entry[]> {
+        const DataSrc: DataSource = await initializeDBConnector(dataSource);
+        const EntryRepo = DataSrc.getRepository(Entry);
+
+        const horarioActualizado: Entry[] = await EntryRepo.findBy({plan: plan, curso: curso, grupo: grupo});
+
+        return horarioActualizado;
     }
 }

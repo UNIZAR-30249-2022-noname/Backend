@@ -1,13 +1,14 @@
 import {Entity, Column, PrimaryGeneratedColumn, OneToMany, PrimaryColumn} from 'typeorm';
 import { Subject } from './asignatura.entity';
 import { DatosTitulacion } from './datostitulacion';
+import { Entry } from './entrada.entity';
 
 @Entity()
 export class Degree {
-    @PrimaryColumn({ type: "integer"})
+    @PrimaryColumn({unique: true, type: "integer"})
     codplan: number;
     
-    @Column({ type: "varchar", length: 100})
+    @Column({unique: true, type: "varchar", length: 100})
     nombre: string;
 
     @Column({ type: "integer"})
@@ -22,6 +23,8 @@ export class Degree {
     @OneToMany(() => Subject, (asignatura) => asignatura.codplan)
     asignaturas: Subject[]
 
+    @OneToMany(() => Entry, (entrada) => entrada.titulacion)
+    entradas: Entry[]
    
     constructor() { }
 
