@@ -5,10 +5,8 @@ import {Reserve}  from '../Domain/Entities/reserva.entity';
 import { DatosReserva, DatosReservaProps } from '../Domain/Entities/datosreserva';
 import dataSource from '../../../Config/ormconfig_db';
 import { DataSource, DeleteResult, UpdateResult } from 'typeorm';
-import * as crypto from 'crypto';
 import {initializeDBConnector, returnRepository} from '../../../Infraestructure/Adapters/pg-connection'
 import { Espacio, EspacioProps } from '../../Espacio/Domain/Entities/espacio';
-import { ShortDomainId } from 'types-ddd';
 
 
 enum ReservaQueries {
@@ -85,11 +83,3 @@ export class ReservaRepoPGImpl implements ReservaRepository {
   }
 
 }
-/*
-const Datos_Reserva: DatosReserva =
-        DatosReserva.createDatosReserva(datosReserva);
-    const ReserveRepo = dataSource.getRepository(Reserve)
-    const reserva: Reserve = new Reserve(Datos_Reserva);
-    await ReserveRepo.save(reserva);
-    const lreservas: Reserve[] = await ReserveRepo.find();
-    return lreservas*/

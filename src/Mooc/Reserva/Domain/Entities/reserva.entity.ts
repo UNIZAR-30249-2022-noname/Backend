@@ -24,7 +24,7 @@ export class Reserve {
     @Column({ type: "varchar", length: 50})
     espacioid: string;
 
-    @Column({type: "varchar", length: 500,nullable: true})
+    @Column({type: "varchar", length: 150,nullable: true})
     evento: string;
 
     @ManyToOne(() => Space, (espacio) => espacio.reservas)

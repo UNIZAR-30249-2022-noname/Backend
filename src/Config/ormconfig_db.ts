@@ -8,7 +8,7 @@ const dataSource = new DataSource({
   "username": "proyecto",
   "password": "proyectovm",
   "database": "proyectodb",
-  "entities": ["dist/**/*.entity.js"],
+  "entities": ["src/**/*.entity.ts","dist/**/*.entity.js"],
   "ssl": true,
   "extra": {
     "ssl": {
