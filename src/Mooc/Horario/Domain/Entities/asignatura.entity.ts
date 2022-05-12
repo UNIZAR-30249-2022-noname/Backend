@@ -11,7 +11,7 @@ export class Subject {
     @Column()
     codasig: number;
 
-    @Column()
+    @Column({unique: true})
     nombre: string;
 
     @Column()
@@ -44,7 +44,7 @@ export class Subject {
     @Column({ type: "numeric", precision: 6, scale: 3})
     horasestpracticas: number;
 
-    @OneToMany(() => Entry, (entrada) => entrada.idasignatura)
+    @OneToMany(() => Entry, (entrada) => entrada.nombreasignatura)
     entradas: Entry[]
 
     @ManyToOne(() => Degree, (titulacion) => titulacion.asignaturas)

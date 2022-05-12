@@ -11,6 +11,7 @@ import { Entry } from "../Domain/Entities/entrada.entity";
 
 enum HorarioQueries {
     QUERY_TRUNCAR_CURSOS = 'TRUNCATE degree, subject RESTART IDENTITY CASCADE',
+    QUERY_OBTENER_HORAS_DISPONIBLES = 'SELECT nombre, tipo, SUM(duracion) AS duracion, horasestteoria, horasestproblemas, horasestpracticas FROM (SELECT * FROM entry WHERE plan=$1 AND curso=$2 AND grupo=$3) AS entry RIGHT JOIN subject ON entry.nombreasignatura=subject.nombre WHERE subject.plan=$1 AND subject.curso=$2 GROUP BY nombreasignatura,nombre,tipo,horasestteoria,horasestproblemas,horasestpracticas'
 }
 
 export class HorarioRepoPGImpl implements HorarioRepository {
@@ -79,12 +80,12 @@ export class HorarioRepoPGImpl implements HorarioRepository {
         const EntryRepo = DataSrc.getRepository(Entry);
 
         // primero eliminamos el estado actual del horario correspondiente a la titulación, curso y grupo recibidos.
-        const horarioEliminado: DeleteResult = await EntryRepo.delete({plan: plan, curso: curso, grupo: grupo});
+        const horarioEliminado: DeleteResult = await EntryRepo.delete({ plan: plan, curso: curso, grupo: grupo });
 
         // una vez eliminado, insertamos el nuevo estado del horario
         const entriesDTO: Entry[] = entradas.map(function (entrada) {
             const entryDTO: Entry = new Entry();
-            entryDTO.fillEntradaWithDomainEntity(entrada);
+            entryDTO.fillEntradaWithDomainEntity(entrada, calcularDuracion(entrada.getDatosEntradaProps().Init, entrada.getDatosEntradaProps().End));
             return entryDTO;
         });
         const horarioActualizado: InsertResult = await EntryRepo.insert(entriesDTO);
@@ -96,8 +97,48 @@ export class HorarioRepoPGImpl implements HorarioRepository {
         const DataSrc: DataSource = await initializeDBConnector(dataSource);
         const EntryRepo = DataSrc.getRepository(Entry);
 
-        const horarioActualizado: Entry[] = await EntryRepo.findBy({plan: plan, curso: curso, grupo: grupo});
+        const horarioActualizado: Entry[] = await EntryRepo.findBy({ plan: plan, curso: curso, grupo: grupo });
 
         return horarioActualizado;
     }
+
+    async obtenerHorasDisponibles(plan: string, curso: number, grupo: string): Promise<any[]> {
+        const DataSrc: DataSource = await initializeDBConnector(dataSource);
+        const tipoHorasPlantilla = ["horasestteoria", "horasestproblemas", "horasestpracticas"]
+
+        const resultadoHorasDisponibles = await DataSrc.query(HorarioQueries.QUERY_OBTENER_HORAS_DISPONIBLES, [plan, curso, grupo]);
+        console.log(resultadoHorasDisponibles)
+        const resultado: any[] = [];
+        resultadoHorasDisponibles.map(function (horasDisponibles: any) {
+            for (var i = 0; i < tipoHorasPlantilla.length; i++) {
+                const duracionHoras: number = (horasDisponibles.duracion === null || horasDisponibles.tipo != i+1) ? 0 : parseInt(horasDisponibles.duracion) / 60;
+                const duracionMinutos: number = (horasDisponibles.duracion === null || horasDisponibles.tipo != i+1) ? 0 : parseInt(horasDisponibles.duracion) / 60 % 1 * 60;
+                //const maxHoras: number = parseInt(horasDisponibles[tipoHorasPlantilla[horasDisponibles.tipo - 1]].split(".")[0]);
+                //const maxMins: number = parseInt(horasDisponibles[tipoHorasPlantilla[horasDisponibles.tipo - 1]].split(".")[1]) * 60;
+                const maxHoras: number = parseInt(horasDisponibles[tipoHorasPlantilla[i]].split(".")[0]);
+                const maxMins: number = parseInt(horasDisponibles[tipoHorasPlantilla[i]].split(".")[1]) * 60;
+                const AvailableHours = {
+                    Subject: {
+                        Kind: i+1,
+                        Name: horasDisponibles.nombre,
+                    },
+                    RemainingHours: Math.floor(maxHoras - duracionHoras),
+                    RemainingMin: Math.abs(maxMins - duracionMinutos),
+                    MaxHours: maxHoras,
+                    MaxMin: maxMins
+                }
+                resultado.push(AvailableHours);
+            }
+        });
+        console.log(resultado.length)
+
+        return resultado;
+    }
+}
+
+function calcularDuracion(inicio: string, fin: string): number {
+    const minutosInicio: number = parseInt(inicio.split(":")[0]) * 60 + parseInt(inicio.split(":")[1]);
+    const minutosFin: number = parseInt(fin.split(":")[0]) * 60 + parseInt(fin.split(":")[1]);
+
+    return minutosFin - minutosInicio;
 }

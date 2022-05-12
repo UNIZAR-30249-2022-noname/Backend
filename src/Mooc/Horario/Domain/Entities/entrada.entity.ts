@@ -25,10 +25,16 @@ export class Entry {
     fin: string;
 
     @Column()
-    idasignatura: number;
+    duracion: number;
 
     @Column()
-    idaula: number;
+    nombreasignatura: string;
+
+    @Column()
+    tipo: number;
+
+    @Column()
+    nombreaula: string;
 
     @Column()
     semana: string;
@@ -45,18 +51,21 @@ export class Entry {
 
     @ManyToOne(() => Subject, (asignatura) => asignatura.entradas)
     @JoinColumn({ 
-        name: 'idasignatura'
+        name: 'nombreasignatura',
+        referencedColumnName: 'nombre'
     })
     asignatura: Subject
 
-    public fillEntradaWithDomainEntity(entrada: Entrada){
+    public fillEntradaWithDomainEntity(entrada: Entrada, duracion: number){
         this.plan = entrada.getDatosEntradaProps().Degree;
         this.curso = entrada.getDatosEntradaProps().Year;
         this.grupo = entrada.getDatosEntradaProps().Group;
         this.inicio = entrada.getDatosEntradaProps().Init;
         this.fin = entrada.getDatosEntradaProps().End;
-        this.idasignatura = entrada.getDatosEntradaProps().Subject;
-        this.idaula = entrada.getDatosEntradaProps().Room;
+        this.duracion = duracion;
+        this.nombreasignatura = entrada.getDatosEntradaProps().Subject;
+        this.tipo = entrada.getDatosEntradaProps().Kind;
+        this.nombreaula = entrada.getDatosEntradaProps().Room;
         this.semana = entrada.getDatosEntradaProps().Week;
         this.dia = entrada.getDatosEntradaProps().Weekday;
     }

@@ -9,4 +9,5 @@ export interface HorarioRepository {
   importarTitulaciones(titulaciones: DatosTitulacion[]): Promise<Boolean>;
   actualizarHorario(plan: string, curso: number, grupo: string, entradas: Entrada[]): Promise<string>;
   obtenerEntradas(plan: string, curso: number, grupo: string): Promise<Entry[]>;
+  obtenerHorasDisponibles(plan: string, curso: number, grupo: string): Promise<any[]>;
 }

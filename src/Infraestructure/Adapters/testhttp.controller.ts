@@ -150,6 +150,16 @@ export class TestController {
 
     return { resultado: { resultadoActualizarHorario } };
   }
+
+  @Get('/obtenerHorasDisponibles')
+  async obtenerHorasDisponibles(@Body() mensaje: any) {
+
+    let servicioHorario: HorarioService = new HorarioService(new HorarioRepoPGImpl());
+
+    let resultado = await servicioHorario.obtenerHorasDisponibles(DegreeSet.Degree, DegreeSet.Year, DegreeSet.Group);
+
+    return { resultado: { resultado } };
+  }
 }
 
 const DegreeSet = {
@@ -165,8 +175,9 @@ const entradasPropsTest: EntradaProps[] = [
     Group: "mañanas",
     Init: "8:00",
     End: "9:00",
-    Subject: 309,
-    Room: 1,
+    Subject: "Programación 1",
+    Kind: 1,
+    Room: "Aula 1",
     Week: "Semana 1",
     Weekday: 1
   },
@@ -176,8 +187,9 @@ const entradasPropsTest: EntradaProps[] = [
     Group: "mañanas",
     Init: "9:00",
     End: "10:00",
-    Subject: 310,
-    Room: 2,
+    Subject: "Arquitectura y organización de computadores 1",
+    Kind: 2,
+    Room: "Aula 2",
     Week: "Semana 1",
     Weekday: 1
   },
@@ -187,8 +199,21 @@ const entradasPropsTest: EntradaProps[] = [
     Group: "mañanas",
     Init: "10:00",
     End: "11:00",
-    Subject: 311,
-    Room: 3,
+    Subject: "Física y electrónica",
+    Kind: 3,
+    Room: "Aula 3",
+    Week: "Semana 1",
+    Weekday: 1
+  },
+  {
+    Degree: "Graduado en Ingeniería Informática",
+    Year: 1,
+    Group: "mañanas",
+    Init: "11:00",
+    End: "13:30",
+    Subject: "Programación 1",
+    Kind: 1,
+    Room: "Aula 4",
     Week: "Semana 1",
     Weekday: 1
   }

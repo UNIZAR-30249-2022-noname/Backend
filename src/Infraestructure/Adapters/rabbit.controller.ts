@@ -269,6 +269,7 @@ export class AMQPController {
         Init: entry.Init,
         End: entry.End,
         Subject: entry.Subject,
+        Kind: entry.Kind,
         Room: entry.Room,
         Week: entry.Week,
         Weekday: entry.Weekday
@@ -293,6 +294,22 @@ export class AMQPController {
     console.log('Procesando Solicitud(obtener-entradas)', mensajeRecibido);
 
     let resultado: Entrada[] = await this.servicioHorarios.obtenerEntradas(mensajeRecibido.body.DegreeSet.Degree, mensajeRecibido.body.DegreeSet.Year, mensajeRecibido.body.DegreeSet.Group);
+    console.log(resultado);
+
+    console.log({ resultado: resultado, CorrelationId: mensajeRecibido.id })
+
+    return { resultado: resultado, CorrelationId: mensajeRecibido.id };
+  }
+
+  @MessagePattern('obtener-horas-disponibles')
+  async obtenerHorasDisponibles(
+    @Payload() data: number[],
+    @Ctx() context: RmqContext,
+  ) {
+    const mensajeRecibido = JSON.parse(context.getMessage().content);
+    console.log('Procesando Solicitud(obtener-horas-disponibles)', mensajeRecibido);
+
+    let resultado: any[] = await this.servicioHorarios.obtenerHorasDisponibles(mensajeRecibido.body.DegreeSet.Degree, mensajeRecibido.body.DegreeSet.Year, mensajeRecibido.body.DegreeSet.Group);
     console.log(resultado);
 
     console.log({ resultado: resultado, CorrelationId: mensajeRecibido.id })

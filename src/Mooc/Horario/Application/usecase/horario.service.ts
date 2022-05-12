@@ -17,6 +17,7 @@ export interface servicioHorarioI {
     importarCursos(): Promise<Boolean>;
     actualizarHorario(plan: string, curso: number, grupo: string, entradaProps: EntradaProps[]): Promise<string>;
     obtenerEntradas(plan: string, curso: number, grupo: string): Promise<Entrada[]>;
+    obtenerHorasDisponibles(plan: string, curso: number, grupo: string): Promise<any[]>;
 }
 
 @Injectable()
@@ -116,8 +117,9 @@ export class HorarioService implements servicioHorarioI {
                 Group: entryObtenida.grupo,
                 Init: entryObtenida.inicio,
                 End: entryObtenida.fin,
-                Subject: entryObtenida.idasignatura,
-                Room: entryObtenida.idaula,
+                Subject: entryObtenida.nombreasignatura,
+                Kind: entryObtenida.tipo,
+                Room: entryObtenida.nombreaula,
                 Week: entryObtenida.semana,
                 Weekday: entryObtenida.dia
             };
@@ -125,5 +127,9 @@ export class HorarioService implements servicioHorarioI {
         });
 
         return entradasObtenidas;
+    }
+
+    async obtenerHorasDisponibles(plan: string, curso: number, grupo: string): Promise<any[]> {
+        return await this.horariorepository.obtenerHorasDisponibles(plan, curso, grupo);
     }
 }

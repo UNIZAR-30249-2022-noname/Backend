@@ -6,8 +6,9 @@ export interface EntradaProps{
   Group: string;
   Init: string;
   End: string;
-  Subject: number;
-  Room: number;
+  Subject: string;
+  Kind: number;
+  Room: string;
   Week: string;
   Weekday: number;
 }
