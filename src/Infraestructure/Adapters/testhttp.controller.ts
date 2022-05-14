@@ -160,6 +160,16 @@ export class TestController {
 
     return { resultado: { resultado } };
   }
+
+  @Get('/obtenerTitulaciones')
+  async obtenerTitulaciones(@Body() mensaje: any) {
+
+    let servicioHorario: HorarioService = new HorarioService(new HorarioRepoPGImpl());
+
+    let resultado = await servicioHorario.obtenerTitulaciones();
+
+    return { resultado: { resultado } };
+  }
 }
 
 const DegreeSet = {

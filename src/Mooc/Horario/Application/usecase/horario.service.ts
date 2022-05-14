@@ -10,6 +10,7 @@ import { DatosAsignatura, DatosAsignaturaProps } from '../../Domain/Entities/dat
 import { DatosTitulacion, DatosTitulacionProps } from '../../Domain/Entities/datostitulacion';
 import { Entrada, EntradaProps } from '../../Domain/Entities/entrada';
 import { Entry } from '../../Domain/Entities/entrada.entity';
+import { Degree } from '../../Domain/Entities/titulacion.entity';
 const XLSX = require('xlsx');
 const lineReader = require('line-reader');
 
@@ -18,6 +19,7 @@ export interface servicioHorarioI {
     actualizarHorario(plan: string, curso: number, grupo: string, entradaProps: EntradaProps[]): Promise<string>;
     obtenerEntradas(plan: string, curso: number, grupo: string): Promise<Entrada[]>;
     obtenerHorasDisponibles(plan: string, curso: number, grupo: string): Promise<any[]>;
+    obtenerTitulaciones(): Promise<any[]>;
 }
 
 @Injectable()
@@ -60,9 +62,9 @@ export class HorarioService implements servicioHorarioI {
                         var titulacionprops: DatosTitulacionProps = {
                             codplan: parseInt(fieldsArray[11]),
                             nombre: fieldsArray[12],
-                            numcursos: 4,
+                            numcursos: parseInt(fieldsArray[17]),
                             numperiodos: 2,
-                            numgrupos: parseInt(fieldsArray[23])
+                            numgrupos: [parseInt(fieldsArray[23])]
                         };
                         titulaciones.push(await DatosTitulacion.createDatosTitulacion(titulacionprops));
                     }
@@ -70,7 +72,9 @@ export class HorarioService implements servicioHorarioI {
                 }, async (err: any) => {
                     if (err) throw err;
                     try {
-                        const resultadoOperacion = await this.horariorepository.importarCursos(asignaturas, titulaciones);
+                        const titulacionesParseadas: DatosTitulacion[] = await parseTitulaciones(titulaciones); 
+                        console.log(titulacionesParseadas);
+                        const resultadoOperacion = await this.horariorepository.importarCursos(asignaturas, titulacionesParseadas);
                         resolve(resultadoOperacion)
                     } catch (error) {
                         reject(error)
@@ -132,4 +136,52 @@ export class HorarioService implements servicioHorarioI {
     async obtenerHorasDisponibles(plan: string, curso: number, grupo: string): Promise<any[]> {
         return await this.horariorepository.obtenerHorasDisponibles(plan, curso, grupo);
     }
+
+    async obtenerTitulaciones(): Promise<any[]> {
+        const listaTitulaciones: Degree[] = await this.horariorepository.obtenerTitulaciones();
+        const resultado: any[] = [];
+        listaTitulaciones.map(function (titulacion: Degree) {
+            const years: any[] = [];
+            const numGruposCurso: string[] = titulacion.numgrupos.split(",");
+            for (var curso = 1; curso <= titulacion.numcursos; curso ++) {
+                const groups: string[] = [];
+                for (var grupo = 1; grupo <= parseInt(numGruposCurso[curso-1]); grupo ++) {
+                    groups.push(grupo.toString());
+                }
+                years.push({name: curso, groups: groups});
+            }
+            resultado.push({name: titulacion.nombre, years: years});
+        });
+        console.log(resultado)
+
+        return resultado;
+    }
+}
+
+async function parseTitulaciones(titulaciones: DatosTitulacion[]): Promise<DatosTitulacion[]> {
+    const titulacionesParseadas: DatosTitulacion[] = [];
+    var nomTitulacion: string =  "";
+    for (var i = 0; i < titulaciones.length; i++) {
+        if (titulaciones[i].getProps().nombre != nomTitulacion) {
+            nomTitulacion = titulaciones[i].getProps().nombre;
+            const titulacionesMismoNombre: DatosTitulacion[] = titulaciones.filter(titulacion => titulacion.getProps().nombre === nomTitulacion);
+            const numCursos: number = Math.max(...titulacionesMismoNombre.map(titulacionMismoNombre => titulacionMismoNombre.getProps().numcursos));
+            const numGrupos: number[] = [];
+            for (var j = 1; j <= numCursos; j++) {
+                const titulacionesMismoCurso: DatosTitulacion[] = titulacionesMismoNombre.filter(titulacionMismoNombre => titulacionMismoNombre.getProps().numcursos === j);
+                const numGruposCurso = Math.max(...titulacionesMismoCurso.map(titulacionMismoCurso => titulacionMismoCurso.getProps().numgrupos[0]));
+                numGrupos.push(numGruposCurso);
+            }
+            var titulacionprops: DatosTitulacionProps = {
+                codplan: titulaciones[i].getProps().codplan,
+                nombre: titulaciones[i].getProps().nombre,
+                numcursos: numCursos,
+                numperiodos: 2,
+                numgrupos: numGrupos
+            };
+            titulacionesParseadas.push(await DatosTitulacion.createDatosTitulacion(titulacionprops));
+        }
+    }
+
+    return titulacionesParseadas;
 }

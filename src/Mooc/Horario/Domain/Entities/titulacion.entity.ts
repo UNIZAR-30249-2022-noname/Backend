@@ -17,8 +17,8 @@ export class Degree {
     @Column({ type: "integer"})
     numperiodos: number;
 
-    @Column({ type: "integer"})
-    numgrupos: number;
+    @Column({ type: "varchar"})
+    numgrupos: string;
 
     @OneToMany(() => Subject, (asignatura) => asignatura.codplan)
     asignaturas: Subject[]
@@ -33,7 +33,7 @@ export class Degree {
         this.nombre = titulacion.getProps().nombre;
         this.numcursos = titulacion.getProps().numcursos;
         this.numperiodos = titulacion.getProps().numperiodos;
-        this.numgrupos = titulacion.getProps().numgrupos;
+        this.numgrupos = titulacion.getProps().numgrupos.toString();
     }
 
 }

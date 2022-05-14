@@ -97,9 +97,9 @@ export class HorarioRepoPGImpl implements HorarioRepository {
         const DataSrc: DataSource = await initializeDBConnector(dataSource);
         const EntryRepo = DataSrc.getRepository(Entry);
 
-        const horarioActualizado: Entry[] = await EntryRepo.findBy({ plan: plan, curso: curso, grupo: grupo });
+        const resultado: Entry[] = await EntryRepo.findBy({ plan: plan, curso: curso, grupo: grupo });
 
-        return horarioActualizado;
+        return resultado;
     }
 
     async obtenerHorasDisponibles(plan: string, curso: number, grupo: string): Promise<any[]> {
@@ -133,6 +133,14 @@ export class HorarioRepoPGImpl implements HorarioRepository {
         console.log(resultado.length)
 
         return resultado;
+    }
+
+    async obtenerTitulaciones(): Promise<Degree[]> {
+        const DataSrc: DataSource = await initializeDBConnector(dataSource);
+        const DegreeRepo = DataSrc.getRepository(Degree);
+        const listaTitulaciones: Degree[] = await DegreeRepo.find({order: {codplan: "ASC"}});
+
+        return listaTitulaciones;
     }
 }
 

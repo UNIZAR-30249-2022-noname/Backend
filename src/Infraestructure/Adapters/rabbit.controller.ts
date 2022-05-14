@@ -316,4 +316,20 @@ export class AMQPController {
 
     return { resultado: resultado, CorrelationId: mensajeRecibido.id };
   }
+
+  @MessagePattern('listar-titulaciones')
+  async obtenerTitulaciones(
+    @Payload() data: number[],
+    @Ctx() context: RmqContext,
+  ) {
+    const mensajeRecibido = JSON.parse(context.getMessage().content);
+    console.log('Procesando Solicitud(listar-titulaciones)', mensajeRecibido);
+
+    let resultado: any[] = await this.servicioHorarios.obtenerTitulaciones();
+    console.log(resultado);
+
+    console.log({ resultado: resultado, CorrelationId: mensajeRecibido.id })
+
+    return { resultado: resultado, CorrelationId: mensajeRecibido.id };
+  }
 }

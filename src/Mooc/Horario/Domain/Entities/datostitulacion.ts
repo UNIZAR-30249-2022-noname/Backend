@@ -3,7 +3,7 @@ export interface DatosTitulacionProps {
     readonly nombre: string;
     readonly numcursos: number;
     readonly numperiodos: number;
-    readonly numgrupos: number;
+    readonly numgrupos: number[];
   }
   
   export class DatosTitulacion {

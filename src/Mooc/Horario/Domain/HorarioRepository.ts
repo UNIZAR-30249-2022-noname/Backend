@@ -3,6 +3,7 @@ import { DatosAsignatura } from './Entities/datosasignatura';
 import { DatosTitulacion } from './Entities/datostitulacion';
 import { Entrada } from './Entities/entrada';
 import { Entry } from './Entities/entrada.entity';
+import { Degree } from './Entities/titulacion.entity';
 
 export interface HorarioRepository {
   importarCursos(asignaturas: DatosAsignatura[], titulaciones: DatosTitulacion[]): Promise<Boolean>;
@@ -10,4 +11,5 @@ export interface HorarioRepository {
   actualizarHorario(plan: string, curso: number, grupo: string, entradas: Entrada[]): Promise<string>;
   obtenerEntradas(plan: string, curso: number, grupo: string): Promise<Entry[]>;
   obtenerHorasDisponibles(plan: string, curso: number, grupo: string): Promise<any[]>;
+  obtenerTitulaciones(): Promise<Degree[]>;
 }
