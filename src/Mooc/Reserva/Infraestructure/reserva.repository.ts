@@ -1,12 +1,13 @@
 import { Reserva } from '../Domain/Entities/reserva';
 import { ReservaRepository } from '../Domain/ReservaRepository';
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import {Reserve}  from '../Domain/Entities/reserva.entity';
 import { DatosReserva, DatosReservaProps } from '../Domain/Entities/datosreserva';
 import dataSource from '../../../Config/ormconfig_db';
-import { DataSource, DeleteResult, UpdateResult } from 'typeorm';
-import {initializeDBConnector, returnRepository} from '../../../Infraestructure/Adapters/pg-connection'
+import { DataSource, DeleteResult, UpdateResult,Repository} from 'typeorm';
+import {initializeDBConnector, returnRepository, returnRepositoryTest} from '../../../Infraestructure/Adapters/pg-connection'
 import { Espacio, EspacioProps } from '../../Espacio/Domain/Entities/espacio';
+import { Equal} from 'typeorm';
 
 
 enum ReservaQueries {
@@ -19,18 +20,28 @@ enum ReservaQueries {
     QUERY_ELIMINAR_RESERVA = 'DELETE FROM reservas WHERE id=$1',
   }
   
-
+@Injectable()
 export class ReservaRepoPGImpl implements ReservaRepository {
+
+  public repositorioReservas: Repository<Reserve>;
+
+  constructor(@Inject('DataSrc') private datasrcI: DataSource) {
+    returnRepositoryTest(Reserve,this.datasrcI)
+     .then( 
+       repo => {
+         this.repositorioReservas = repo;
+      });
+      
+  }
+
   //Guarda una objeto reserva, devuelve verdad si ha podido insertar la reserva en la base de datos.
   async guardar(reserva: Reserva): Promise<Reserve> {
-    //Inicializar el repositorio para le entidad Reserve
-    const DataSrc: DataSource = await initializeDBConnector(dataSource);
-    const ReserveRepo = DataSrc.getRepository(Reserve)
+    //Creamos DTO de persistencia de datos
     const reserveDTO: Reserve = new Reserve();
     //Agregamos los atributos a nuestro DTO procedentes de la reserva
     reserveDTO.fillReserveWithDomainEntity(reserva);
-    await ReserveRepo.save(reserveDTO);
-    const reservaHecha: Reserve = await ReserveRepo.findOne({
+    await this.repositorioReservas.save(reserveDTO);
+    const reservaHecha: Reserve = await this.repositorioReservas.findOne({
       where: {
         id: reserveDTO.id,
       },
@@ -52,8 +63,8 @@ export class ReservaRepoPGImpl implements ReservaRepository {
   }
   async eliminar(id: number): Promise<boolean> {
     //Elimina una reserva dada la su identificador
-    const ReserveRepo = await returnRepository(Reserve);
-    const ReservaEliminada: DeleteResult = await ReserveRepo.delete(id);
+    //const ReserveRepo = await returnRepository(Reserve);
+    const ReservaEliminada: DeleteResult = await this.repositorioReservas.delete(id);
     console.log(ReservaEliminada);
     //Devuelve verdad si y solo si se ha eliminado al menos una reserva de la base de datos
     return ReservaEliminada.affected > 0 ? true : false;
@@ -72,8 +83,8 @@ export class ReservaRepoPGImpl implements ReservaRepository {
   }
   
   async buscarReservasPorEspacioyFecha(idEspacio: string, fecha: string): Promise<Reserve[]> {
-      const ReserveRepo = await returnRepository(Reserve);
-      const ReservasObtenidas: Reserve[] = await ReserveRepo.find({
+      //const ReserveRepo = await returnRepository(Reserve);
+      const ReservasObtenidas: Reserve[] = await this.repositorioReservas.find({
         where: {
           espacioid: idEspacio,
           fecha: fecha,
@@ -81,5 +92,16 @@ export class ReservaRepoPGImpl implements ReservaRepository {
       });
     return ReservasObtenidas;
   }
+
+   buscarReservaPorFechayHora(hora: string, fecha: string): Promise<Reserve> {
+    
+    const resultado = this.repositorioReservas.findOneBy({ 
+      horainicio:  Equal(hora),
+      fecha: Equal(fecha)
+    })
+    return resultado
+  }
+
+  
 
 }

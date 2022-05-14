@@ -5,6 +5,9 @@ import { Reserva } from "src/Mooc/Reserva/Domain/Entities/reserva";
 
 @Injectable()
 export class MockReservaRepository implements ReservaRepository {
+  buscarReservaPorFechayHora(hora: string, fecha: string): Promise<Reserve> {
+    throw new Error("Method not implemented.");
+  }
 
   guardar(reserva: Reserva): Promise<Reserve> {
     throw new Error("Method not implemented.");

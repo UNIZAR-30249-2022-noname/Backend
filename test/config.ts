@@ -5,9 +5,9 @@ import { IncidenciaService } from '../src/Mooc/Incidencia/Application/usecase/in
 import { EspacioRepoPGImpl } from '../src/Mooc/Espacio/Infraestructure/espacio.repository';
 import { IncidenciaRepoPGImpl } from '../src/Mooc/Incidencia/Infraestructure/incidencia.repository';
 import { ReservaRepoPGImpl } from '../src/Mooc/Reserva/Infraestructure/reserva.repository';
+import dataSource from '../src/Config/ormconfig';
 
 var providers: any = undefined;
-console.log(process.env.MOCKED)
 switch (process.env.MOCKED) {
     case "mocked-test":
         providers = [
@@ -46,6 +46,10 @@ switch (process.env.MOCKED) {
             {
               provide: 'ReservaRepository',
               useClass: ReservaRepoPGImpl,
+            },
+            {
+              provide: 'DataSrc',
+              useValue: dataSource
             },
             {
               provide: 'servicioEspacioI',

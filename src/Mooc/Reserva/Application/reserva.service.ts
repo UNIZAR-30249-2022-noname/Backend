@@ -39,7 +39,7 @@ export class ReservaService implements servicioReservaI {
     try{
       //Creamos los datos de la reserva correspondiente que nos realizan.
       let Datos_Reserva: DatosReserva = await
-          DatosReserva.createDatosReserva(datosreserva);
+          DatosReserva.createDatosReserva(datosreserva,this.reservarepository);
       //Instanciamos la reserva si se cumplen los invariantes de una reserva
       const ReservaARealizar: Reserva = new Reserva(null,Datos_Reserva,idEspacio)
       //Llamamos al repositorio

@@ -1,6 +1,5 @@
 import { DataSource } from "typeorm";
 
-
 const dataSource = new DataSource({
   "type": 'postgres',
   "host": process.env.production ? 'postgis' : 'localhost',

@@ -1,4 +1,3 @@
-import { PoolConfig, Pool } from 'pg';
 import { DataSource, Repository } from 'typeorm';
 import dataSource from '../../Config/ormconfig_db'
 
@@ -14,9 +13,15 @@ console.log("Conectando con la base de datos: %s:%d",Host,Puerto);
 
 export async function initializeDBConnector(datasrc: DataSource){
   if (!datasrc.isInitialized){
-    datasrc = await dataSource.initialize();
+    datasrc = await datasrc.initialize();
   }
   return datasrc;
+}
+
+export async function returnRepositoryTest(target: any,dataSrc: DataSource): Promise<Repository<any>> {
+  const DataSrc: DataSource = await initializeDBConnector(dataSrc);
+  const repository = DataSrc.getRepository(target);
+  return repository;
 }
 
 export async function returnRepository(target: any): Promise<Repository<any>> {

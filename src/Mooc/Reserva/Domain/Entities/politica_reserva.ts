@@ -1,6 +1,6 @@
-import { Equal, LessThan, MoreThan, MoreThanOrEqual } from 'typeorm';
 import { returnRepository } from '../../../../Infraestructure/Adapters/pg-connection';
 import ReservaException from '../reservaexception';
+import { ReservaRepository } from '../ReservaRepository';
 import { DatosReservaProps } from './datosreserva';
 import { Reserve } from './reserva.entity';
 
@@ -19,16 +19,12 @@ export abstract class PoliticaReserva {
    * Post: devuelve verdad si la reserva cumple las condiciones de reserva y si no existe una reserva 
    * en una fecha y hora ya reservadas.
    */
-  public static async seCumple(props: DatosReservaProps): Promise<boolean> {
+  public static async seCumple(props: DatosReservaProps,repo: ReservaRepository): Promise<boolean> {
     //Comprobar Precondición.
     Assert( rangoHorasCorrecto(props) && horaInicioEsMayorQueHoraFin(props) && duraUnaHora(props), ReservaException.WRONG_RESERVE_MSG);
     // Llamar al repositorio y obtener los datos correspondientes a la reserva a partir de props.
-    const repositorioReserva = await returnRepository(Reserve);
     // Comprobar si existe una solapación contra otro horario entre horaIni y horaFin en esa fecha.
-    const resultado = await repositorioReserva.findOneBy({ 
-      horainicio:  Equal(props.horaInicio),
-      fecha: Equal(props.fecha)
-    })
+    const resultado = await repo.buscarReservaPorFechayHora(String(props.horaInicio),props.fecha)
     // Si no existe una solapación (resultado = null) devolver verdadero, si existe devolver falso.
     return (resultado == null)
   }

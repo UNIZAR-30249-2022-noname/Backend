@@ -11,6 +11,8 @@ import { EspacioRepoPGImpl } from './Mooc/Espacio/Infraestructure/espacio.reposi
 import { EspacioService } from './Mooc/Espacio/Application/usecase/espacio.service';
 import { IncidenciaRepoPGImpl } from './Mooc/Incidencia/Infraestructure/incidencia.repository';
 import { IncidenciaService } from './Mooc/Incidencia/Application/usecase/incidencia.service';
+import dataSource from './Config/ormconfig_db';
+
 
 @Module({
   imports: [
@@ -41,6 +43,10 @@ import { IncidenciaService } from './Mooc/Incidencia/Application/usecase/inciden
     {
       provide: 'ReservaRepository',
       useClass: ReservaRepoPGImpl,
+    },
+    {
+      provide: 'DataSrc',
+      useValue: dataSource
     },
     {
       provide: 'servicioEspacioI',

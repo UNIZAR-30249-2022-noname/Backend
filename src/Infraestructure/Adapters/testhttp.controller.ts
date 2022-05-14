@@ -1,5 +1,5 @@
-import { Controller, Get, Query, Post, Body, Put, Param, Delete, Req } from '@nestjs/common';
-import { ReservaService } from '../../Mooc/Reserva/Application/reserva.service';
+import { Controller, Get, Query, Post, Body, Put, Param, Delete, Req, Inject } from '@nestjs/common';
+import { ReservaService, servicioReservaI } from '../../Mooc/Reserva/Application/reserva.service';
 import { ReservaRepoPGImpl } from '../../Mooc/Reserva/Infraestructure/reserva.repository';
 import { EspacioService } from '../../Mooc/Espacio/Application/usecase/espacio.service';
 import { Espacio, EspacioProps} from '../../Mooc/Espacio/Domain/Entities/espacio';
@@ -9,8 +9,13 @@ import { IncidenciaProps } from '../../Mooc/Incidencia/Domain/Entities/incidenci
 import { IncidenciaRepoPGImpl } from '../../Mooc/Incidencia/Infraestructure/incidencia.repository';
 import { DatosReservaProps } from '../../Mooc/Reserva/Domain/Entities/datosreserva';
 
+
 @Controller('test')
 export class TestController {
+
+  constructor(
+    @Inject('servicioReservaI') private readonly servicioReservas: servicioReservaI
+    ){}
 
   @Get('/prueba')
   test(){
@@ -30,13 +35,7 @@ export class TestController {
   async crearIncidencia(@Body() body: IncidenciaProps) {
     console.log(body);
     let servicioIncidencia: IncidenciaService = new IncidenciaService(new IncidenciaRepoPGImpl());
-    /*const incidenciaProps: IncidenciaProps = {
-      Title: "Incidencia 1",
-      Description: "Descripción incidencia 1",
-      State: 1,
-      Tags: "Etiqueta1,Etiqueta2,Etiqueta3",
-      IdSpace: "CRE.1065.00.020",
-    }*/
+
     const resultado = await servicioIncidencia.crearIncidencia(body);
     
     return(resultado);
@@ -65,17 +64,16 @@ export class TestController {
 
   @Post('/eliminarReserva')
   async eliminarReserva(@Body() mensaje: any) {
-    let servicioReserva: ReservaService = new ReservaService(new ReservaRepoPGImpl());
-    const resultado = await servicioReserva.eliminarReserva(mensaje.id);
+
+    const resultado = await this.servicioReservas.eliminarReserva(mensaje.id);
     return {resultado: resultado}
   }
 
   @Post('/reserve')
   async crearReserva(@Body() mensaje: any) {
-    let servicioReserva: ReservaService = new ReservaService(new ReservaRepoPGImpl());
+    console.log(mensaje)
     const horainicio: number = mensaje.hour
     const horafin:number = mensaje.hourfin
-    const evento: string = mensaje.event
     const reservaprops: DatosReservaProps = {
       fecha: mensaje.date,
       horaInicio: horainicio,
@@ -85,12 +83,12 @@ export class TestController {
     };
     const idEspacio: string = mensaje.space;
 
-    const resultado = await servicioReserva.guardarReserva(reservaprops, idEspacio);
+    const resultado = await this.servicioReservas.guardarReserva(reservaprops, idEspacio);
     const idReserva: number = resultado != null ? resultado.id : -1;
     return {id: idReserva};
   }
 
-  @Post('/filtrarEspacios')
+@Post('/filtrarEspacios')
   async filtrarEspacios(@Body() mensaje: any) {
     let servicioEspacio: EspacioService = new EspacioService(new EspacioRepoPGImpl());
 
@@ -106,17 +104,16 @@ export class TestController {
     //console.log(fecha,hour)
     //console.log(espacioprops)
     const resultado = await servicioEspacio.filtrarEspacios(espacioprops,fecha,hour)
-    return {resultado: resultado};
+    return {resultado: resultado,longitud: resultado.length};
   }
 
   @Post('/obtenerEspacios')
   async obtenerEspacios(@Body() mensaje: any) {
-    let servicioReserva: ReservaService = new ReservaService(new ReservaRepoPGImpl());
     let servicioEspacios: EspacioService = new EspacioService(new EspacioRepoPGImpl());
 
     const idEspacio: string = mensaje.id;
     const fecha: string = mensaje.date;
-    let InfoSlots =  await servicioReserva.obtenerReservasEspacio(idEspacio,fecha);
+    let InfoSlots =  await this.servicioReservas.obtenerReservasEspacio(idEspacio,fecha);
     let SlotData = await servicioEspacios.buscarEspacioPorId(idEspacio);
     return {resultado: {InfoSlots,SlotData}};
 
