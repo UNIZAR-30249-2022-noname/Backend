@@ -138,8 +138,9 @@ export class AMQPController {
     @Payload() data: number[],
     @Ctx() context: RmqContext,
   ) {
-    // TODO: FALTA CONVERTIR EL BINARIO DE RABBIT A CSV Y PASARSELO A importarEspacios. ACTUALMENTE COGE AUTOMÁTICAMENTE EL TB_ESPACIOS.csv
-    const resultado = await this.servicioEspacios.importarEspacios();
+    const mensajeRecibido = JSON.parse(context.getMessage().content);
+    console.log('Procesando Solicitud(importar-espacios)', mensajeRecibido);
+    const resultado = await this.servicioEspacios.importarEspacios(mensajeRecibido.body);
     return { resultado: resultado };
   }
 

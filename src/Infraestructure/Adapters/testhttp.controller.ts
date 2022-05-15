@@ -24,7 +24,7 @@ export class TestController {
   @Post('/subirEspacios')
   async create() {
     let servicioEspacio: EspacioService = new EspacioService(new EspacioRepoPGImpl());
-    const resultado = await servicioEspacio.importarEspacios();
+    const resultado = await servicioEspacio.importarEspaciosAuto();
     return (resultado)
   }
 

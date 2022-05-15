@@ -15,7 +15,8 @@ export interface servicioEspacioI {
   guardarEspacio(espacioProps: EspacioProps): Promise<Space>;
   buscarEspacioPorId(idEspacio: string): Promise<Space>;
   listarReservas(idEspacio: String, fecha: String): Promise<Reserva[]>;
-  importarEspacios(): Promise<Boolean>;
+  importarEspacios(csvContent: string): Promise<Boolean>;
+  importarEspaciosAuto(): Promise<Boolean>;
   filtrarEspacios(espacioprops: EspacioProps, fecha?: string, hora?: number): Promise<Space[]>;
 }
 
@@ -54,14 +55,78 @@ export class EspacioService implements servicioEspacioI {
     return await this.espaciorepository.buscarEspacioPorId(idEspacio);
   }
 
-  async importarEspacios(): Promise<Boolean> {
+  async importarEspacios(csvContent: string): Promise<Boolean> {
+    //console.log(csvContent.split("\n")[0]);
+    var results: any[] = [];
+    //Creamos un csv a partir del string obtenido de rabbit
+    try {
+      fs.writeFileSync('./src/Mooc/Espacio/Application/usecase/TB_ESPACIOS.csv', csvContent);
+    } catch (err: any) {
+      console.log('Error writing spaces csv' + err.message)
+    }
+    //Creamos una promise que se encarga de insertar todos los campos del fichero CSV en la base de Datos
+    const InsertarEspaciosPromise =
+      new Promise<InsertResult>(async (resolve, reject) => {
+        fs.createReadStream('./src/Mooc/Espacio/Application/usecase/TB_ESPACIOS.csv')
+          .on('error', err => {
+            reject(err)
+          })
+          .pipe(csv())
+          .on('data', (data) => results.push(data))
+          .on('end', async () => {
+            const espacios: Espacio[] = results.map(function (espacio) {
+              return Espacio.crearEspacioPersonalizado(espacio);
+            });
+            try {
+              const resultadoOperacion = await this.espaciorepository.importarEspacios(espacios);
+              resolve(resultadoOperacion)
+            } catch (error) {
+              reject(error)
+            }
+          });
+        /*results = csvContent.split("\n").filter(csvLinea => csvLinea.split(",").length >= 44);
+          const espacios: Espacio[] = results.map(function (result) {
+            const linea: string = result.split(",");
+            const espacio = {
+              ID_ESPACIO: linea[0],
+              ID_CENTRO: linea[3],
+              NMRO_PLAZAS: parseInt(linea[44]),
+              TIPO_DE_USO: linea[6]
+            };
+            //console.log(espacio);
+            return Espacio.crearEspacioPersonalizado(espacio);
+          });
+          try {
+            const resultadoOperacion = await this.espaciorepository.importarEspacios(espacios);
+            resolve(resultadoOperacion)
+          } catch (error) {
+            reject(error)
+          }*/
+      });
 
+    try {
+      return (await InsertarEspaciosPromise).identifiers.length > 0;
+    } catch (error: any) {
+      switch (error.code) {
+        case '23505':
+          console.log("Los espacios ya se encuentran almacenados en la base de datos.")
+          break;
+        default:
+          console.error("Error al insertar espacios en la Base de datos, mensaje de error: ", error.message);
+          break;
+      }
+      return false
+    }
+
+  }
+
+  async importarEspaciosAuto(): Promise<Boolean> {
     const results: any[] = [];
     // TODO: Hacer esto transacional.
     //Creamos una promise que se encarga de insertar todos los campos del fichero CSV en la base de Datos
     const InsertarEspaciosPromise =
       new Promise<InsertResult>((resolve, reject) => {
-        fs.createReadStream('./src/Mooc/Espacio/Application/usecase/TB_ESPACIOS.csv')
+        fs.createReadStream('./src/Mooc/Espacio/Application/usecase/TB_ESPACIOS_NO_BORRAR.csv')
           .on('error', err => {
             reject(err)
           })
