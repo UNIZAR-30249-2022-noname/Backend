@@ -2,27 +2,37 @@ import { Controller, Get, Query, Post, Body, Put, Param, Delete, Req } from '@ne
 import { ReservaService } from '../../Mooc/Reserva/Application/reserva.service';
 import { ReservaRepoPGImpl } from '../../Mooc/Reserva/Infraestructure/reserva.repository';
 import { EspacioService } from '../../Mooc/Espacio/Application/usecase/espacio.service';
-import { Espacio, EspacioProps} from '../../Mooc/Espacio/Domain/Entities/espacio';
+import { Espacio, EspacioProps } from '../../Mooc/Espacio/Domain/Entities/espacio';
 import { EspacioRepoPGImpl } from '../../Mooc/Espacio/Infraestructure/espacio.repository';
 import { IncidenciaService } from '../../Mooc/Incidencia/Application/usecase/incidencia.service';
 import { IncidenciaProps } from '../../Mooc/Incidencia/Domain/Entities/incidencia';
 import { IncidenciaRepoPGImpl } from '../../Mooc/Incidencia/Infraestructure/incidencia.repository';
 import { DatosReservaProps } from '../../Mooc/Reserva/Domain/Entities/datosreserva';
+import { HorarioService } from '../../Mooc/Horario/Application/usecase/horario.service';
+import { HorarioRepoPGImpl } from '../../Mooc/Horario/Infraestructure/horario.repository';
+import { EntradaProps } from '../../Mooc/Horario/Domain/Entities/entrada';
 
 @Controller('test')
 export class TestController {
 
   @Get('/prueba')
-  test(){
+  test() {
     return "Hello World"
   }
-  
+
 
   @Post('/subirEspacios')
   async create() {
     let servicioEspacio: EspacioService = new EspacioService(new EspacioRepoPGImpl());
-    const resultado = await servicioEspacio.importarEspacios();
-    return(resultado)
+    const resultado = await servicioEspacio.importarEspaciosAuto();
+    return (resultado)
+  }
+
+  @Post('/subirCursos')
+  async subirCursos() {
+    let horarioEspacio: HorarioService = new HorarioService(new HorarioRepoPGImpl());
+    const resultado = await horarioEspacio.importarCursos();
+    return (resultado)
   }
 
   //PARA ENVIAR EL BODY DESDE POSTMAN HAY QUE UTILIZAR X-WWW-FORM-URLENCODED (RAW BODY NO FUNCIONA)
@@ -38,8 +48,8 @@ export class TestController {
       IdSpace: "CRE.1065.00.020",
     }*/
     const resultado = await servicioIncidencia.crearIncidencia(body);
-    
-    return(resultado);
+
+    return (resultado);
   }
 
   @Post('/modificarEstadoIncidencia')
@@ -48,9 +58,9 @@ export class TestController {
     let servicioIncidencia: IncidenciaService = new IncidenciaService(new IncidenciaRepoPGImpl());
     const incidenciasObtenidas = await servicioIncidencia.obtenerTodasIncidencias();
     console.log(incidenciasObtenidas);
-    const resultado = await servicioIncidencia.modificarEstadoIncidencia(parseInt(incidenciasObtenidas[incidenciasObtenidas.length-1].id.toString()),body.State);
-    
-    return(resultado);
+    const resultado = await servicioIncidencia.modificarEstadoIncidencia(parseInt(incidenciasObtenidas[incidenciasObtenidas.length - 1].id.toString()), body.State);
+
+    return (resultado);
   }
 
   @Delete('/eliminarIncidencia')
@@ -58,15 +68,16 @@ export class TestController {
     let servicioIncidencia: IncidenciaService = new IncidenciaService(new IncidenciaRepoPGImpl());
     const incidenciasObtenidas = await servicioIncidencia.obtenerTodasIncidencias();
     console.log(incidenciasObtenidas);
-    const resultado = await servicioIncidencia.eliminarIncidencia(parseInt(incidenciasObtenidas[incidenciasObtenidas.length-1].id.toString()));
-    
-    return(resultado);
+    const resultado = await servicioIncidencia.eliminarIncidencia(parseInt(incidenciasObtenidas[incidenciasObtenidas.length - 1].id.toString()));
+
+    return (resultado);
   }
 
   @Post('/eliminarReserva')
   async eliminarReserva(@Body() mensaje: any) {
     let servicioReserva: ReservaService = new ReservaService(new ReservaRepoPGImpl());
     const resultado = await servicioReserva.eliminarReserva(mensaje.id);
+
     return {resultado: resultado}
   }
 
@@ -74,7 +85,7 @@ export class TestController {
   async crearReserva(@Body() mensaje: any) {
     let servicioReserva: ReservaService = new ReservaService(new ReservaRepoPGImpl());
     const horainicio: number = mensaje.hour
-    const horafin:number = mensaje.hourfin
+    const horafin: number = mensaje.hourfin
     const evento: string = mensaje.event
     const reservaprops: DatosReservaProps = {
       fecha: mensaje.date,
@@ -87,7 +98,7 @@ export class TestController {
 
     const resultado = await servicioReserva.guardarReserva(reservaprops, idEspacio);
     const idReserva: number = resultado != null ? resultado.id : -1;
-    return {id: idReserva};
+    return { id: idReserva };
   }
 
   @Post('/filtrarEspacios')
@@ -105,8 +116,8 @@ export class TestController {
     const hour: number | null = mensaje.hour == undefined ? null : mensaje.hour;
     //console.log(fecha,hour)
     //console.log(espacioprops)
-    const resultado = await servicioEspacio.filtrarEspacios(espacioprops,fecha,hour)
-    return {resultado: resultado};
+    const resultado = await servicioEspacio.filtrarEspacios(espacioprops, fecha, hour)
+    return { resultado: resultado };
   }
 
   @Post('/obtenerEspacios')
@@ -116,12 +127,107 @@ export class TestController {
 
     const idEspacio: string = mensaje.id;
     const fecha: string = mensaje.date;
-    let InfoSlots =  await servicioReserva.obtenerReservasEspacio(idEspacio,fecha);
+    let InfoSlots = await servicioReserva.obtenerReservasEspacio(idEspacio, fecha);
     let SlotData = await servicioEspacios.buscarEspacioPorId(idEspacio);
-    return {resultado: {InfoSlots,SlotData}};
+    return { resultado: { InfoSlots, SlotData } };
 
   }
 
+  @Post('/actualizarHorario')
+  async actualizarHorario(@Body() mensaje: any) {
 
+    let servicioHorario: HorarioService = new HorarioService(new HorarioRepoPGImpl());
+
+    let resultadoActualizarHorario = await servicioHorario.actualizarHorario(DegreeSet.Degree, DegreeSet.Year, DegreeSet.Group, entradasPropsTest);
+
+    return { resultado: { resultadoActualizarHorario } };
+  }
+
+  @Get('/obtenerEntradas')
+  async obtenerEntradas(@Body() mensaje: any) {
+
+    let servicioHorario: HorarioService = new HorarioService(new HorarioRepoPGImpl());
+
+    let resultadoActualizarHorario = await servicioHorario.obtenerEntradas(DegreeSet.Degree, DegreeSet.Year, DegreeSet.Group);
+
+    return { resultado: { resultadoActualizarHorario } };
+  }
+
+  @Get('/obtenerHorasDisponibles')
+  async obtenerHorasDisponibles(@Body() mensaje: any) {
+
+    let servicioHorario: HorarioService = new HorarioService(new HorarioRepoPGImpl());
+
+    let resultado = await servicioHorario.obtenerHorasDisponibles(DegreeSet.Degree, DegreeSet.Year, DegreeSet.Group);
+
+    return { resultado: { resultado } };
+  }
+
+  @Get('/obtenerTitulaciones')
+  async obtenerTitulaciones(@Body() mensaje: any) {
+
+    let servicioHorario: HorarioService = new HorarioService(new HorarioRepoPGImpl());
+
+    let resultado = await servicioHorario.obtenerTitulaciones();
+
+    return { resultado: { resultado } };
+  }
 }
+
+const DegreeSet = {
+  Degree: "Graduado en Ingeniería Informática",
+  Year: 1,
+  Group: "mañanas",
+}
+
+const entradasPropsTest: EntradaProps[] = [
+  {
+    Degree: "Graduado en Ingeniería Informática",
+    Year: 1,
+    Group: "mañanas",
+    Init: "8:00",
+    End: "9:00",
+    Subject: "Programación 1",
+    Kind: 1,
+    Room: "Aula 1",
+    Week: "Semana 1",
+    Weekday: 1
+  },
+  {
+    Degree: "Graduado en Ingeniería Informática",
+    Year: 1,
+    Group: "mañanas",
+    Init: "9:00",
+    End: "10:00",
+    Subject: "Arquitectura y organización de computadores 1",
+    Kind: 2,
+    Room: "Aula 2",
+    Week: "Semana 1",
+    Weekday: 1
+  },
+  {
+    Degree: "Graduado en Ingeniería Informática",
+    Year: 1,
+    Group: "mañanas",
+    Init: "10:00",
+    End: "11:00",
+    Subject: "Física y electrónica",
+    Kind: 3,
+    Room: "Aula 3",
+    Week: "Semana 1",
+    Weekday: 1
+  },
+  {
+    Degree: "Graduado en Ingeniería Informática",
+    Year: 1,
+    Group: "mañanas",
+    Init: "11:00",
+    End: "13:30",
+    Subject: "Programación 1",
+    Kind: 1,
+    Room: "Aula 4",
+    Week: "Semana 1",
+    Weekday: 1
+  }
+]
 
