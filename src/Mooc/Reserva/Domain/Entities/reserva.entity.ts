@@ -24,6 +24,9 @@ export class Reserve {
     @Column({ type: "varchar", length: 50})
     espacioid: string;
 
+    @Column({type: "varchar", length: 150,nullable: true})
+    evento: string;
+
     @ManyToOne(() => Space, (espacio) => espacio.reservas)
     @JoinColumn({ 
         name: 'espacioid'
@@ -39,6 +42,7 @@ export class Reserve {
         this.horafin = reserva.getDatosReservaProps().horaFin.toString();
         this.persona = reserva.getDatosReservaProps().Persona;
         this.espacioid = reserva.getEspacio();
+        this.evento = reserva.getDatosReservaProps().evento;
     }
 
 }

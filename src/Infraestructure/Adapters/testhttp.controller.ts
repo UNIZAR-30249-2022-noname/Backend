@@ -77,7 +77,8 @@ export class TestController {
   async eliminarReserva(@Body() mensaje: any) {
     let servicioReserva: ReservaService = new ReservaService(new ReservaRepoPGImpl());
     const resultado = await servicioReserva.eliminarReserva(mensaje.id);
-    return (resultado)
+
+    return {resultado: resultado}
   }
 
   @Post('/reserve')
@@ -91,6 +92,7 @@ export class TestController {
       horaInicio: horainicio,
       horaFin: horafin,
       Persona: mensaje.person,
+      evento: mensaje.evento
     };
     const idEspacio: string = mensaje.space;
 

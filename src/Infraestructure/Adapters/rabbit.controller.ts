@@ -46,19 +46,19 @@ export class AMQPController {
     const mensajeRecibido = JSON.parse(context.getMessage().content);
     console.log('Procesando Solicitud(realizar-reserva)', mensajeRecibido);
     const horainicio: number = mensajeRecibido.body.scheduled[0].hour
-    const horafin: number = mensajeRecibido.body.scheduled[0].hour + 1
-    const evento: string = mensajeRecibido.body.event
+    const horafin:number = mensajeRecibido.body.scheduled[0].hour + 1
+    //Instanciamos reservasprops.
     const reservaprops: DatosReservaProps = {
       fecha: mensajeRecibido.body.day,
       horaInicio: horainicio,
       horaFin: horafin,
       Persona: mensajeRecibido.body.owner,
+      evento: mensajeRecibido.body.event,
     };
     console.log(reservaprops)
     const idEspacio: string = mensajeRecibido.body.space;
     //Devuelve lo que tenga que devolver en formato JSON.
-    let resultadoOperacion: Reserve = await this.servicioReservas.guardarReserva(reservaprops, idEspacio);
-    console.log(resultadoOperacion)
+    let resultadoOperacion: Reserve = await this.servicioReservas.guardarReserva(reservaprops,idEspacio);
     const idReserva: number = resultadoOperacion != null ? resultadoOperacion.id : -1;
     return { resultado: idReserva, CorrelationId: mensajeRecibido.id };
   }
@@ -69,8 +69,8 @@ export class AMQPController {
     @Ctx() context: RmqContext,) {
     const mensajeRecibido = JSON.parse(context.getMessage().content);
     const idReserva: string = mensajeRecibido.body.id;
-    let resultadoOperacion = this.servicioReservas.eliminarReserva(idReserva);
-    return { resultado: resultadoOperacion, CorrelationId: mensajeRecibido.id };
+    let resultadoOperacion =  await this.servicioReservas.eliminarReserva(idReserva);
+    return {resultado: resultadoOperacion, CorrelationId: mensajeRecibido.id};
   }
   /**
    * 
