@@ -8,9 +8,9 @@ import { IncidenciaService } from '../../Mooc/Incidencia/Application/usecase/inc
 import { IncidenciaProps } from '../../Mooc/Incidencia/Domain/Entities/incidencia';
 import { IncidenciaRepoPGImpl } from '../../Mooc/Incidencia/Infraestructure/incidencia.repository';
 import { DatosReservaProps } from '../../Mooc/Reserva/Domain/Entities/datosreserva';
-import { HorarioService } from 'src/Mooc/Horario/Application/usecase/horario.service';
-import { HorarioRepoPGImpl } from 'src/Mooc/Horario/Infraestructure/horario.repository';
-import { EntradaProps } from 'src/Mooc/Horario/Domain/Entities/entrada';
+import { HorarioService } from '../../Mooc/Horario/Application/usecase/horario.service';
+import { HorarioRepoPGImpl } from '../../Mooc/Horario/Infraestructure/horario.repository';
+import { EntradaProps } from '../../Mooc/Horario/Domain/Entities/entrada';
 
 @Controller('test')
 export class TestController {
