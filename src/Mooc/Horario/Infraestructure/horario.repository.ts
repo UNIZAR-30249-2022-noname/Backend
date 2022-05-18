@@ -8,9 +8,12 @@ import { Subject } from "../Domain/Entities/asignatura.entity";
 import { Degree } from "../Domain/Entities/titulacion.entity";
 import { Entrada } from "../Domain/Entities/entrada";
 import { Entry } from "../Domain/Entities/entrada.entity";
+import { DatosAula } from "../Domain/Entities/datosaula";
+import { Room } from "../Domain/Entities/aula.entity";
 
 enum HorarioQueries {
     QUERY_TRUNCAR_CURSOS = 'TRUNCATE degree, subject RESTART IDENTITY CASCADE',
+    QUERY_TRUNCAR_AULAS = 'TRUNCATE room RESTART IDENTITY CASCADE',
     QUERY_OBTENER_HORAS_DISPONIBLES = 'SELECT nombre, tipo, SUM(duracion) AS duracion, horasestteoria, horasestproblemas, horasestpracticas FROM (SELECT * FROM entry WHERE plan=$1 AND curso=$2 AND grupo=$3) AS entry RIGHT JOIN subject ON entry.nombreasignatura=subject.nombre WHERE subject.plan=$1 AND subject.curso=$2 GROUP BY nombreasignatura,nombre,tipo,horasestteoria,horasestproblemas,horasestpracticas'
 }
 
@@ -71,6 +74,31 @@ export class HorarioRepoPGImpl implements HorarioRepository {
 
         const asignaturasInsertadas = await SubjectRepo.count();
         console.log(asignaturasInsertadas)
+
+        return true;
+    }
+
+    async importarAulas(aulas: DatosAula[]): Promise<Boolean> {
+        const DataSrc: DataSource = await initializeDBConnector(dataSource);
+        //console.log(aulas[0])
+
+        // truncamos la tabla de aulas
+        await DataSrc.query(HorarioQueries.QUERY_TRUNCAR_AULAS);
+
+        // insertar aulas
+        const RoomRepo = DataSrc.getRepository(Room);
+        aulas.map(async function (aula) {
+            const roomDTO: Room = new Room();
+            roomDTO.fillAulaWithDomainEntity(aula);
+            try {
+                await RoomRepo.insert(roomDTO);
+            } catch (error) {
+                
+            }
+        });
+
+        const aulasInsertadas = await RoomRepo.count();
+        console.log(aulasInsertadas)
 
         return true;
     }
