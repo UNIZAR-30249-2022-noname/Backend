@@ -54,6 +54,13 @@ export class TestController {
     const resultado = await this.servicioEspacios.importarEspaciosAuto();
     return resultado;
   }
+  
+  @Post('/subirAulas')
+  async subirAulas() {
+    let horarioEspacio: HorarioService = new HorarioService(new HorarioRepoPGImpl());
+    const resultado = await horarioEspacio.importarAulas();
+    return (resultado)
+  }
 
   //PARA ENVIAR EL BODY DESDE POSTMAN HAY QUE UTILIZAR X-WWW-FORM-URLENCODED (RAW BODY NO FUNCIONA)
   @Post('/crearIncidencia')

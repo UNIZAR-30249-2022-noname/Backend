@@ -3,6 +3,7 @@ import { Degree } from './titulacion.entity';
 import { DatosAsignatura } from './datosasignatura';
 import { Subject } from './asignatura.entity';
 import { Entrada } from './entrada';
+import { Room } from './aula.entity';
 
 @Entity()
 export class Entry {
@@ -55,6 +56,13 @@ export class Entry {
         referencedColumnName: 'nombre'
     })
     asignatura: Subject
+
+    @ManyToOne(() => Room, (aula) => aula.entradas)
+    @JoinColumn({ 
+        name: 'nombreaula',
+        referencedColumnName: 'nombre'
+    })
+    aula: Room
 
     public fillEntradaWithDomainEntity(entrada: Entrada, duracion: number){
         this.plan = entrada.getDatosEntradaProps().Degree;

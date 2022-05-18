@@ -13,9 +13,11 @@ import { Entry } from '../../Domain/Entities/entrada.entity';
 import { Degree } from '../../Domain/Entities/titulacion.entity';
 import XLSX from 'xlsx';
 import lineReader from 'line-reader';
+import { DatosAula, DatosAulaProps } from '../../Domain/Entities/datosaula';
 
 export interface servicioHorarioI {
     importarCursos(): Promise<Boolean>;
+    importarAulas(): Promise<Boolean>;
     actualizarHorario(plan: string, curso: number, grupo: string, entradaProps: EntradaProps[]): Promise<string>;
     obtenerEntradas(plan: string, curso: number, grupo: string): Promise<Entrada[]>;
     obtenerHorasDisponibles(plan: string, curso: number, grupo: string): Promise<any[]>;
@@ -72,8 +74,8 @@ export class HorarioService implements servicioHorarioI {
                 }, async (err: any) => {
                     if (err) throw err;
                     try {
-                        const titulacionesParseadas: DatosTitulacion[] = await parseTitulaciones(titulaciones); 
-                        console.log(titulacionesParseadas);
+                        const titulacionesParseadas: DatosTitulacion[] = await parseTitulaciones(titulaciones);
+                        //console.log(titulacionesParseadas);
                         const resultadoOperacion = await this.horariorepository.importarCursos(asignaturas, titulacionesParseadas);
                         resolve(resultadoOperacion)
                     } catch (error) {
@@ -98,6 +100,44 @@ export class HorarioService implements servicioHorarioI {
         }*/
 
         return InsertarCursosPromise;
+    }
+
+    async importarAulas(): Promise<Boolean> {
+
+        const InsertarAulasPromise =
+            new Promise<Boolean>((resolve, reject) => {
+                // Transformamos el fichero .xlsx en .csv
+                const excel = XLSX.readFile('./src/Mooc/Horario/Application/usecase/aulas.xlsx');
+                XLSX.writeFile(excel, './src/Mooc/Horario/Application/usecase/aulas.csv', { bookType: "csv"});
+
+                // Leemos el fichero línea por línea
+                var i = 0
+                var aulas: DatosAula[] = [];
+                lineReader.eachLine('./src/Mooc/Horario/Application/usecase/aulas.csv', async function (line: string) {
+                    if (i > 0) {
+                        var fieldsArray = line.split(';')
+                        var aulaprops: DatosAulaProps = {
+                            id: parseInt(fieldsArray[0]),
+                            acronimo: fieldsArray[1],
+                            nombre: fieldsArray[2].replace(/"/g, ''),
+                            capacidad: isNaN(parseInt(fieldsArray[3])) ? null : parseInt(fieldsArray[3]),
+                            edificio: parseInt(fieldsArray[4])
+                        };
+                        aulas.push(await DatosAula.createDatosAula(aulaprops));
+                    }
+                    i++
+                }, async (err: any) => {
+                    if (err) throw err;
+                    try {
+                        const resultadoOperacion = await this.horariorepository.importarAulas(aulas);
+                        resolve(resultadoOperacion)
+                    } catch (error) {
+                        reject(error)
+                    }
+                });
+            });
+
+        return InsertarAulasPromise;
     }
 
     async actualizarHorario(plan: string, curso: number, grupo: string, entradasProps: EntradaProps[]): Promise<string> {
@@ -143,14 +183,14 @@ export class HorarioService implements servicioHorarioI {
         listaTitulaciones.map(function (titulacion: Degree) {
             const years: any[] = [];
             const numGruposCurso: string[] = titulacion.numgrupos.split(",");
-            for (var curso = 1; curso <= titulacion.numcursos; curso ++) {
+            for (var curso = 1; curso <= titulacion.numcursos; curso++) {
                 const groups: string[] = [];
-                for (var grupo = 1; grupo <= parseInt(numGruposCurso[curso-1]); grupo ++) {
+                for (var grupo = 1; grupo <= parseInt(numGruposCurso[curso - 1]); grupo++) {
                     groups.push(grupo.toString());
                 }
-                years.push({name: curso, groups: groups});
+                years.push({ name: curso, groups: groups });
             }
-            resultado.push({name: titulacion.nombre, years: years});
+            resultado.push({ name: titulacion.nombre, years: years });
         });
         console.log(resultado)
 
@@ -160,7 +200,7 @@ export class HorarioService implements servicioHorarioI {
 
 async function parseTitulaciones(titulaciones: DatosTitulacion[]): Promise<DatosTitulacion[]> {
     const titulacionesParseadas: DatosTitulacion[] = [];
-    var nomTitulacion: string =  "";
+    var nomTitulacion: string = "";
     for (var i = 0; i < titulaciones.length; i++) {
         if (titulaciones[i].getProps().nombre != nomTitulacion) {
             nomTitulacion = titulaciones[i].getProps().nombre;

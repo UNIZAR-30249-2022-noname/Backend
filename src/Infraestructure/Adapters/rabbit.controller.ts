@@ -270,6 +270,16 @@ export class AMQPController {
     return { resultado: resultado };
   }
 
+  @MessagePattern('importar-aulas')
+  async importarAulas(
+    @Payload() data: number[],
+    @Ctx() context: RmqContext,
+  ) {
+    // TODO: FALTA CONVERTIR EL BINARIO DE RABBIT A CSV Y PASARSELO A importarCursos. ACTUALMENTE COGE AUTOMÁTICAMENTE EL aulas.xlsx
+    const resultado = await this.servicioHorarios.importarAulas();
+    return { resultado: resultado };
+  }
+
   @MessagePattern('actualizar-calendario')
   async actualizarHorario(
     @Payload() data: number[],
