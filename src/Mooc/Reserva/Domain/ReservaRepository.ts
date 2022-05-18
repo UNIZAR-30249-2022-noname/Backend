@@ -1,6 +1,6 @@
 import { DatosReservaProps } from './Entities/datosreserva';
 import { Reserva } from './Entities/reserva';
-import  {Reserve}  from './Entities/reserva.entity';
+import { Reserve } from './Entities/reserva.entity';
 
 export interface ReservaRepository {
   guardar(reserva: Reserva): Promise<Reserve>;
@@ -12,6 +12,9 @@ export interface ReservaRepository {
   ): Promise<boolean>;
   eliminar(id: number): Promise<boolean>;
   buscarReservaPorId(id: number): Promise<Reserve>;
-  buscarReservasPorEspacioyFecha(idEspacio: string,fecha: string): Promise<Reserve[]>;
+  buscarReservasPorEspacioyFecha(
+    idEspacio: string,
+    fecha: string,
+  ): Promise<Reserve[]>;
   buscarReservaPorFechayHora(hora: string, fecha: string): Promise<Reserve>;
 }

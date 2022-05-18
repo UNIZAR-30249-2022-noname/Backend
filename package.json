@@ -14,10 +14,9 @@
     "start:debug": "nest start --debug --watch",
     "start:prod": "node dist/src/main",
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
-    "test": "jest",
-    "mocked-test": "jest --forceExit --setupFiles=./test-conf.ts",
-    "test:watch": "jest --watch",
-    "test:cov": "jest --coverage",
+    "test": "jest --forceExit",
+    "test-mocked": "jest --forceExit --setupFiles=./test/test-conf.ts",
+    "test:watch": "jest --watch --setupFiles=./test/test-conf.ts",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
     "test:clear-cache": "jest --clear-cache",
@@ -80,14 +79,15 @@
       "json",
       "ts"
     ],
-    "rootDir": "test",
+    "collectCoverage": true,
     "testRegex": ".*\\.spec\\.ts$",
     "transform": {
       "^.+\\.(t|j)s$": "ts-jest"
     },
     "collectCoverageFrom": [
-      "**/*.(t|j)s"
+      "**/*.ts"
     ],
+    "roots": ["<rootDir>/test"],
     "coverageDirectory": "../coverage",
     "testEnvironment": "node"
   }

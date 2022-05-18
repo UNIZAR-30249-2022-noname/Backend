@@ -13,7 +13,6 @@ import { IncidenciaRepoPGImpl } from './Mooc/Incidencia/Infraestructure/incidenc
 import { IncidenciaService } from './Mooc/Incidencia/Application/usecase/incidencia.service';
 import dataSource from './Config/ormconfig_db';
 
-
 @Module({
   imports: [
     ClientsModule.register([
@@ -31,8 +30,7 @@ import dataSource from './Config/ormconfig_db';
           },
         },
       },
-    ],
-    ),
+    ]),
   ],
   controllers: [AMQPController],
   providers: [
@@ -46,7 +44,7 @@ import dataSource from './Config/ormconfig_db';
     },
     {
       provide: 'DataSrc',
-      useValue: dataSource
+      useValue: dataSource,
     },
     {
       provide: 'servicioEspacioI',
@@ -63,7 +61,7 @@ import dataSource from './Config/ormconfig_db';
     {
       provide: 'IncidenciaRepository',
       useClass: IncidenciaRepoPGImpl,
-    }
+    },
   ],
 })
 export class AppModule {}

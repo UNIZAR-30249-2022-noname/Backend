@@ -1,9 +1,12 @@
 import { DatosReserva, DatosReservaProps } from './datosreserva';
 import { BEntity } from '../../../../BaseEntity/BEntity';
 
-export class Reserva extends BEntity{
- 
-  constructor(id: string, private Datosreserva: DatosReserva, private idEspacio: string) { 
+export class Reserva extends BEntity {
+  constructor(
+    id: string,
+    private Datosreserva: DatosReserva,
+    private idEspacio: string,
+  ) {
     super(id);
   }
 
@@ -15,8 +18,7 @@ export class Reserva extends BEntity{
     return this.Datosreserva.calcularHoraFin(duracion);
   }
 
-  getEspacio(): string{
+  getEspacio(): string {
     return this.idEspacio;
   }
-
 }

@@ -1,8 +1,12 @@
 import { Module } from '@nestjs/common';
+import { EspacioService } from '../Mooc/Espacio/Application/usecase/espacio.service';
 import dataSource from '../Config/ormconfig_db';
 import { ReservaService } from '../Mooc/Reserva/Application/reserva.service';
 import { ReservaRepoPGImpl } from '../Mooc/Reserva/Infraestructure/reserva.repository';
 import { TestController } from './Adapters/testhttp.controller';
+import { EspacioRepoPGImpl } from '../Mooc/Espacio/Infraestructure/espacio.repository';
+import { IncidenciaService } from '../Mooc/Incidencia/Application/usecase/incidencia.service';
+import { IncidenciaRepoPGImpl } from '../Mooc/Incidencia/Infraestructure/incidencia.repository';
 
 @Module({
   controllers: [TestController],
@@ -16,9 +20,25 @@ import { TestController } from './Adapters/testhttp.controller';
       useClass: ReservaRepoPGImpl,
     },
     {
-      provide: 'DataSrc',
-      useValue: dataSource
+      provide: 'servicioEspacioI',
+      useClass: EspacioService,
     },
-  ]
+    {
+      provide: 'EspacioRepository',
+      useClass: EspacioRepoPGImpl,
+    },
+    {
+      provide: 'DataSrc',
+      useValue: dataSource,
+    },
+    {
+      provide: 'servicioIncidenciaI',
+      useClass: IncidenciaService,
+    },
+    {
+      provide: 'IncidenciaRepository',
+      useClass: IncidenciaRepoPGImpl,
+    },
+  ],
 })
-export class TestHttpModule{}
+export class TestHttpModule {}
