@@ -2,7 +2,7 @@ name: Node.js CI
 
 on:
   push:
-    branches: [ main, evento]
+    branches: [ main]
   pull_request:
     branches: [ main ]
 
@@ -17,4 +17,4 @@ jobs:
         node-version: 16.13.0
     - run: npm install
     - run: npm run build --if-present
-    - run: npm test-mocked
+    - run: npm test
