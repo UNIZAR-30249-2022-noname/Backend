@@ -13,6 +13,7 @@ import { IncidenciaRepoPGImpl } from './Mooc/Incidencia/Infraestructure/incidenc
 import { IncidenciaService } from './Mooc/Incidencia/Application/usecase/incidencia.service';
 import { HorarioService } from './Mooc/Horario/Application/usecase/horario.service';
 import { HorarioRepoPGImpl } from './Mooc/Horario/Infraestructure/horario.repository';
+import dataSource from './Config/ormconfig_db';
 
 @Module({
   imports: [
@@ -31,8 +32,7 @@ import { HorarioRepoPGImpl } from './Mooc/Horario/Infraestructure/horario.reposi
           },
         },
       },
-    ],
-    ),
+    ]),
   ],
   controllers: [AMQPController],
   providers: [
@@ -43,6 +43,10 @@ import { HorarioRepoPGImpl } from './Mooc/Horario/Infraestructure/horario.reposi
     {
       provide: 'ReservaRepository',
       useClass: ReservaRepoPGImpl,
+    },
+    {
+      provide: 'DataSrc',
+      useValue: dataSource,
     },
     {
       provide: 'servicioEspacioI',

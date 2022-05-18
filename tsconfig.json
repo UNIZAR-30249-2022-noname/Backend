@@ -17,6 +17,7 @@
     "esModuleInterop": true,
     "strictNullChecks": false,
     "strictBindCallApply": false,
+    "allowJs": true,
     "forceConsistentCasingInFileNames": false,
     "noFallthroughCasesInSwitch": false
   }

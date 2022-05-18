@@ -11,8 +11,8 @@ import { DatosTitulacion, DatosTitulacionProps } from '../../Domain/Entities/dat
 import { Entrada, EntradaProps } from '../../Domain/Entities/entrada';
 import { Entry } from '../../Domain/Entities/entrada.entity';
 import { Degree } from '../../Domain/Entities/titulacion.entity';
-const XLSX = require('xlsx');
-const lineReader = require('line-reader');
+import XLSX from 'xlsx';
+import lineReader from 'line-reader';
 
 export interface servicioHorarioI {
     importarCursos(): Promise<Boolean>;
@@ -33,7 +33,7 @@ export class HorarioService implements servicioHorarioI {
             new Promise<Boolean>((resolve, reject) => {
                 // Transformamos el fichero .xlsx en .csv
                 const excel = XLSX.readFile('./src/Mooc/Horario/Application/usecase/Listado207 2021-2022_sin TFE_sin_practicas_sin PC.xlsx');
-                XLSX.writeFile(excel, './src/Mooc/Horario/Application/usecase/Listado207.csv', { bookType: "csv", FS: ';' });
+                XLSX.writeFile(excel, './src/Mooc/Horario/Application/usecase/Listado207.csv', { bookType: "csv"});
 
                 // Leemos el fichero línea por línea
                 var i = 0
