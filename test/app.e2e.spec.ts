@@ -304,7 +304,7 @@ describe('AMQPController (e2e)', () => {
             description: "El proyecto no funciona.",
             state: 0,
             tags: ["reparacion"],
-            space:'CRE.1200.01.030',
+            space: 'CRE.1200.01.030',
           },
         };
 
@@ -346,7 +346,7 @@ describe('AMQPController (e2e)', () => {
             description: "El proyecto no funciona.",
             state: 0,
             tags: ["reparacion"],
-            space:'CRE.1200.00.040',
+            space: 'CRE.1200.00.040',
           },
         };
 
@@ -379,10 +379,10 @@ describe('AMQPController (e2e)', () => {
         expect(issue_encontrada.issue_estado).toBe(1)
         //Borramos la incidencia de la base de datos.
         querybuilder
-        .delete()
-        .from(Issue)
-        .where('id = :id', { id: resultadoJSON.resultado })
-        .execute();
+          .delete()
+          .from(Issue)
+          .where('id = :id', { id: resultadoJSON.resultado })
+          .execute();
 
       },
       25000,
@@ -390,7 +390,7 @@ describe('AMQPController (e2e)', () => {
 
     it_cond(
       'Obtener un listado de todas las incidencias.',
-      async() => {
+      async () => {
 
         const argsIncidencias = {
           body: {
@@ -398,7 +398,7 @@ describe('AMQPController (e2e)', () => {
             description: "El enchufe no funciona.",
             state: 0,
             tags: ["reparacion"],
-            space:'CRE.1200.00.040',
+            space: 'CRE.1200.00.040',
           },
         };
 
@@ -419,7 +419,21 @@ describe('AMQPController (e2e)', () => {
           testapp,
           new RmqContext(argsObtenerIncidencias),
         );
-        expect(resultadoincidencias.resultado.length).toBeGreaterThan(0);
+        const querybuilder = dataSource.createQueryBuilder(Issue, 'issue');
+        //Borramos la incidencia de la base de datos antes de que se acaben los tests.
+        await querybuilder
+          .delete()
+          .from(Issue)
+          .where('id = :id', { id: resultadoJSON.resultado })
+          .execute();
+        expect(resultadoincidencias.resultado.find(issue => parseInt(issue.key) === resultadoJSON.resultado)).toEqual({
+          key: resultadoJSON.resultado.toString(),
+          title: "Enchufe roto",
+          description: "El enchufe no funciona.",
+          state: 0,
+          tags: ["reparacion"],
+          space: 'CRE.1200.00.040',
+        });
       },
       25000,
     );
@@ -442,14 +456,14 @@ function obtenerEsp(testapp: AMQPController, contextRabbit: RmqContext) {
   return testapp.obtenerReservasEspacio(null, contextRabbit);
 }
 
-function realizarIssue(testapp: AMQPController, contextRabbit: RmqContext){
+function realizarIssue(testapp: AMQPController, contextRabbit: RmqContext) {
   return testapp.crearIncidencia(null, contextRabbit);
 }
 
-function modificarIssue(testapp: AMQPController, contextRabbit: RmqContext){
+function modificarIssue(testapp: AMQPController, contextRabbit: RmqContext) {
   return testapp.modificarEstadoIncidencia(null, contextRabbit);
 }
 
-function obtenerIssues(testapp: AMQPController, contextRabbit: RmqContext){
+function obtenerIssues(testapp: AMQPController, contextRabbit: RmqContext) {
   return testapp.obtenerIncidencias(null, contextRabbit);
 }
