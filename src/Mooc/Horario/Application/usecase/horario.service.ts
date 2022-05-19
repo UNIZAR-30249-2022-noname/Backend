@@ -35,7 +35,14 @@ export class HorarioService implements servicioHorarioI {
             new Promise<Boolean>((resolve, reject) => {
                 // Transformamos el fichero .xlsx en .csv
                 const excel = XLSX.readFile('./src/Mooc/Horario/Application/usecase/Listado207 2021-2022_sin TFE_sin_practicas_sin PC.xlsx');
-                XLSX.writeFile(excel, './src/Mooc/Horario/Application/usecase/Listado207.csv', { bookType: "csv"});
+                const csvContent = XLSX.utils.sheet_to_csv(excel.Sheets[excel.SheetNames[0]], {FS: ";"})
+
+                try {
+                    fs.writeFileSync('./src/Mooc/Horario/Application/usecase/Listado207.csv', csvContent);
+                  } catch (err: any) {
+                    console.log('Error writing courses csv' + err.message)
+                  }
+                //XLSX.writeFile(excel, './src/Mooc/Horario/Application/usecase/Listado207.csv', { bookType: "csv"});
 
                 // Leemos el fichero línea por línea
                 var i = 0
@@ -108,7 +115,15 @@ export class HorarioService implements servicioHorarioI {
             new Promise<Boolean>((resolve, reject) => {
                 // Transformamos el fichero .xlsx en .csv
                 const excel = XLSX.readFile('./src/Mooc/Horario/Application/usecase/aulas.xlsx');
-                XLSX.writeFile(excel, './src/Mooc/Horario/Application/usecase/aulas.csv', { bookType: "csv"});
+
+                const csvContent = XLSX.utils.sheet_to_csv(excel.Sheets[excel.SheetNames[0]], {FS: ";"})
+
+                try {
+                    fs.writeFileSync('./src/Mooc/Horario/Application/usecase/aulas.csv', csvContent);
+                  } catch (err: any) {
+                    console.log('Error writing rooms csv' + err.message)
+                  }
+                //XLSX.writeFile(excel, './src/Mooc/Horario/Application/usecase/aulas.csv', { bookType: "csv"});
 
                 // Leemos el fichero línea por línea
                 var i = 0

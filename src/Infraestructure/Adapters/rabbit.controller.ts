@@ -187,7 +187,7 @@ export class AMQPController {
       mensajeRecibido,
     );
 
-    let resultado: number = await this.servicioIncidencias.modificarEstadoIncidencia(mensajeRecibido.body.key, mensajeRecibido.body.state);
+    let resultado: number = await this.servicioIncidencias.modificarEstadoIncidencia(parseInt(mensajeRecibido.body.key), mensajeRecibido.body.state);
     console.log(resultado);
     return { resultado: resultado, CorrelationId: mensajeRecibido.id };
   }
@@ -200,7 +200,7 @@ export class AMQPController {
     const mensajeRecibido = JSON.parse(context.getMessage().content);
     console.log('Procesando Solicitud(eliminar-incidencia)', mensajeRecibido);
 
-    let resultado: number = await this.servicioIncidencias.eliminarIncidencia(mensajeRecibido.body.key)
+    let resultado: number = await this.servicioIncidencias.eliminarIncidencia(parseInt(mensajeRecibido.body.key))
     console.log(resultado);
 
     return { resultado: resultado, CorrelationId: mensajeRecibido.id };
@@ -214,7 +214,7 @@ export class AMQPController {
     console.log('Procesando Solicitud(obtener-incidencias)');
 
     const mensajeRecibido = JSON.parse(context.getMessage().content);
-    let resultado: Incidencia[] = await this.servicioIncidencias.obtenerTodasIncidencias();
+    let resultado: any[] = await this.servicioIncidencias.obtenerTodasIncidencias();
     console.log(resultado);
 
     return { resultado: resultado, CorrelationId: mensajeRecibido.id };

@@ -387,6 +387,42 @@ describe('AMQPController (e2e)', () => {
       },
       25000,
     );
+
+    it_cond(
+      'Obtener un listado de todas las incidencias.',
+      async() => {
+
+        const argsIncidencias = {
+          body: {
+            title: "Enchufe roto",
+            description: "El enchufe no funciona.",
+            state: 0,
+            tags: ["reparacion"],
+            space:'CRE.1200.00.040',
+          },
+        };
+
+        const argsCrearIncidencia: Args = RabbitContextArgs.construirArgs(
+          JSON.stringify(argsIncidencias),
+          null,
+          'crear-incidencia',
+        );
+        //Esperamos que se inicialicen todos los repositorios
+        await sleep(1000);
+        const resultadoJSON = await realizarIssue(testapp, new RmqContext(argsCrearIncidencia));
+        const argsObtenerIncidencias: Args = RabbitContextArgs.construirArgs(
+          JSON.stringify({}),
+          null,
+          'obtener-incidencias',
+        );
+        const resultadoincidencias = await obtenerIssues(
+          testapp,
+          new RmqContext(argsObtenerIncidencias),
+        );
+        expect(resultadoincidencias.resultado.length).toBeGreaterThan(0);
+      },
+      25000,
+    );
   }); // Fin tests de incidencias
 });
 
@@ -412,4 +448,8 @@ function realizarIssue(testapp: AMQPController, contextRabbit: RmqContext){
 
 function modificarIssue(testapp: AMQPController, contextRabbit: RmqContext){
   return testapp.modificarEstadoIncidencia(null, contextRabbit);
+}
+
+function obtenerIssues(testapp: AMQPController, contextRabbit: RmqContext){
+  return testapp.obtenerIncidencias(null, contextRabbit);
 }

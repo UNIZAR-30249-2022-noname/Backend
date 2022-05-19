@@ -14,7 +14,9 @@ import { Room } from "../Domain/Entities/aula.entity";
 enum HorarioQueries {
     QUERY_TRUNCAR_CURSOS = 'TRUNCATE degree, subject RESTART IDENTITY CASCADE',
     QUERY_TRUNCAR_AULAS = 'TRUNCATE room RESTART IDENTITY CASCADE',
-    QUERY_OBTENER_HORAS_DISPONIBLES = 'SELECT nombre, tipo, SUM(duracion) AS duracion, horasestteoria, horasestproblemas, horasestpracticas FROM (SELECT * FROM entry WHERE plan=$1 AND curso=$2 AND grupo=$3) AS entry RIGHT JOIN subject ON entry.nombreasignatura=subject.nombre WHERE subject.plan=$1 AND subject.curso=$2 GROUP BY nombreasignatura,nombre,tipo,horasestteoria,horasestproblemas,horasestpracticas'
+    QUERY_OBTENER_HORAS_DISPONIBLES = 'SELECT nombre, tipo, SUM(duracion) AS duracion, horasestteoria, horasestproblemas, horasestpracticas FROM (SELECT * FROM entry WHERE plan=$1 AND curso=$2 AND grupo=$3) AS entry RIGHT JOIN subject ON entry.nombreasignatura=subject.nombre WHERE subject.plan=$1 AND subject.curso=$2 GROUP BY nombreasignatura,nombre,tipo,horasestteoria,horasestproblemas,horasestpracticas',
+    QUERY_CONTAR_TITULACIONES = 'SELECT COUNT(*) FROM degree',
+    QUERY_CONTAR_ASIGNATURAS = 'SELECT COUNT(*) FROM subject'
 }
 
 export class HorarioRepoPGImpl implements HorarioRepository {
@@ -40,20 +42,21 @@ export class HorarioRepoPGImpl implements HorarioRepository {
 
         // insertar titulaciones
         const DegreeRepo = DataSrc.getRepository(Degree);
-        titulaciones.map(async function (titulacion) {
+        const result = titulaciones.map(async function (titulacion) {
             const degreeDTO: Degree = new Degree();
             degreeDTO.fillTitulacionWithDomainEntity(titulacion);
             try {
-                await DegreeRepo.insert(degreeDTO);
+                return await DegreeRepo.insert(degreeDTO);
             } catch (error) {
 
             }
         });
 
+        await Promise.all(result)
         const titulacionesInsertadas = await DegreeRepo.count();
         console.log(titulacionesInsertadas)
 
-        return true;
+        return titulacionesInsertadas > 0;
     }
 
     async importarAsignaturas(asignaturas: DatosAsignatura[]): Promise<Boolean> {
@@ -62,20 +65,21 @@ export class HorarioRepoPGImpl implements HorarioRepository {
 
         // insertar asignaturas
         const SubjectRepo = DataSrc.getRepository(Subject);
-        asignaturas.map(async function (asignatura) {
+        const result = asignaturas.map(async function (asignatura) {
             const subjectDTO: Subject = new Subject();
             subjectDTO.fillAsignaturaWithDomainEntity(asignatura);
             try {
-                await SubjectRepo.insert(subjectDTO);
+                return await SubjectRepo.insert(subjectDTO);
             } catch (error) {
 
             }
         });
 
+        await Promise.all(result)
         const asignaturasInsertadas = await SubjectRepo.count();
         console.log(asignaturasInsertadas)
 
-        return true;
+        return asignaturasInsertadas > 0;
     }
 
     async importarAulas(aulas: DatosAula[]): Promise<Boolean> {
@@ -87,20 +91,21 @@ export class HorarioRepoPGImpl implements HorarioRepository {
 
         // insertar aulas
         const RoomRepo = DataSrc.getRepository(Room);
-        aulas.map(async function (aula) {
+        const result = aulas.map(async function (aula) {
             const roomDTO: Room = new Room();
             roomDTO.fillAulaWithDomainEntity(aula);
             try {
-                await RoomRepo.insert(roomDTO);
+                return await RoomRepo.insert(roomDTO);
             } catch (error) {
                 
             }
         });
 
+        await Promise.all(result)
         const aulasInsertadas = await RoomRepo.count();
         console.log(aulasInsertadas)
 
-        return true;
+        return aulasInsertadas > 0;
     }
 
     async actualizarHorario(plan: string, curso: number, grupo: string, entradas: Entrada[]): Promise<string> {

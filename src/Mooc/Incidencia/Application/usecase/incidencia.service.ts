@@ -7,7 +7,7 @@ export interface servicioIncidenciaI {
   crearIncidencia(incidenciaProps: IncidenciaProps): Promise<number>;
   modificarEstadoIncidencia(id: number, state: number): Promise<number>;
   eliminarIncidencia(id: number): Promise<number>;
-  obtenerTodasIncidencias(): Promise<Incidencia[]>;
+  obtenerTodasIncidencias(): Promise<any[]>;
 }
 
 @Injectable()
@@ -40,20 +40,21 @@ export class IncidenciaService implements servicioIncidenciaI {
     return IncidenciaEliminada;
   }
 
-  async obtenerTodasIncidencias(): Promise<Incidencia[]> {
+  async obtenerTodasIncidencias(): Promise<any[]> {
     const IssuesObtenidas: Issue[] =
       await this.incidenciarepository.obtenerTodas();
-    const IncidenciasObtenidas: Incidencia[] = IssuesObtenidas.map(function (
+    const IncidenciasObtenidas: any[] = IssuesObtenidas.map(function (
       IssueObtenida,
     ) {
-      const incidenciaprops: IncidenciaProps = {
-        Title: IssueObtenida.titulo,
-        Description: IssueObtenida.descripcion,
-        State: IssueObtenida.estado,
-        Tags: IssueObtenida.etiquetas.split(','),
-        IdSpace: IssueObtenida.espacioid,
+      const incidencia = {
+        key: IssueObtenida.id.toString(),
+        title: IssueObtenida.titulo,
+        description: IssueObtenida.descripcion,
+        state: IssueObtenida.estado,
+        tags: IssueObtenida.etiquetas.split(','),
+        space: IssueObtenida.espacioid,
       };
-      return new Incidencia(IssueObtenida.id.toString(), incidenciaprops);
+      return incidencia;
     });
 
     return IncidenciasObtenidas;
