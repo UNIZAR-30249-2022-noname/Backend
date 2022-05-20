@@ -3,7 +3,7 @@ import { Degree } from './titulacion.entity';
 import { DatosAsignatura } from './datosasignatura';
 import { Subject } from './asignatura.entity';
 import { Entrada } from './entrada';
-import { Space } from 'src/Mooc/Espacio/Domain/Entities/espacio.entity';
+import { Space } from '../../../Espacio/Domain/Entities/espacio.entity';
 
 @Entity()
 export class Entry {
