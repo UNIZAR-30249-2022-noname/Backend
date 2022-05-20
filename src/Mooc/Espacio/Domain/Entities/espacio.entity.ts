@@ -8,6 +8,7 @@ import {
 } from 'typeorm';
 import { Reserve } from '../../../Reserva/Domain/Entities/reserva.entity';
 import { Espacio } from './espacio';
+import { Entry } from 'src/Mooc/Horario/Domain/Entities/entrada.entity';
 
 @Entity()
 export class Space {
@@ -34,6 +35,9 @@ export class Space {
 
   @OneToMany(() => Issue, (issue) => issue.espacio)
   incidencias: Issue[];
+
+  @OneToMany(() => Entry, (entry) => entry.espacio)
+  entradas: Entry[];
 
   constructor() {}
 

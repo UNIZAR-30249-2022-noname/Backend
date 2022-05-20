@@ -1,4 +1,4 @@
-import { DataSource, DeleteResult, InsertResult } from "typeorm";
+import { DataSource, DeleteResult, InsertResult, UpdateResult } from "typeorm";
 import { initializeDBConnector, returnRepository } from '../../../Infraestructure/Adapters/pg-connection';
 import dataSource from '../../../Config/ormconfig_db';
 import { DatosAsignatura } from "../Domain/Entities/datosasignatura";
@@ -8,12 +8,9 @@ import { Subject } from "../Domain/Entities/asignatura.entity";
 import { Degree } from "../Domain/Entities/titulacion.entity";
 import { Entrada } from "../Domain/Entities/entrada";
 import { Entry } from "../Domain/Entities/entrada.entity";
-import { DatosAula } from "../Domain/Entities/datosaula";
-import { Room } from "../Domain/Entities/aula.entity";
 
 enum HorarioQueries {
     QUERY_TRUNCAR_CURSOS = 'TRUNCATE degree, subject RESTART IDENTITY CASCADE',
-    QUERY_TRUNCAR_AULAS = 'TRUNCATE room RESTART IDENTITY CASCADE',
     QUERY_OBTENER_HORAS_DISPONIBLES = 'SELECT nombre, tipo, SUM(duracion) AS duracion, horasestteoria, horasestproblemas, horasestpracticas FROM (SELECT * FROM entry WHERE plan=$1 AND curso=$2 AND grupo=$3) AS entry RIGHT JOIN subject ON entry.nombreasignatura=subject.nombre WHERE subject.plan=$1 AND subject.curso=$2 GROUP BY nombreasignatura,nombre,tipo,horasestteoria,horasestproblemas,horasestpracticas',
     QUERY_CONTAR_TITULACIONES = 'SELECT COUNT(*) FROM degree',
     QUERY_CONTAR_ASIGNATURAS = 'SELECT COUNT(*) FROM subject'
@@ -82,37 +79,15 @@ export class HorarioRepoPGImpl implements HorarioRepository {
         return asignaturasInsertadas > 0;
     }
 
-    async importarAulas(aulas: DatosAula[]): Promise<Boolean> {
-        const DataSrc: DataSource = await initializeDBConnector(dataSource);
-        //console.log(aulas[0])
-
-        // truncamos la tabla de aulas
-        await DataSrc.query(HorarioQueries.QUERY_TRUNCAR_AULAS);
-
-        // insertar aulas
-        const RoomRepo = DataSrc.getRepository(Room);
-        const result = aulas.map(async function (aula) {
-            const roomDTO: Room = new Room();
-            roomDTO.fillAulaWithDomainEntity(aula);
-            try {
-                return await RoomRepo.insert(roomDTO);
-            } catch (error) {
-                
-            }
-        });
-
-        await Promise.all(result)
-        const aulasInsertadas = await RoomRepo.count();
-        console.log(aulasInsertadas)
-
-        return aulasInsertadas > 0;
-    }
-
     async actualizarHorario(plan: string, curso: number, grupo: string, entradas: Entrada[]): Promise<string> {
         const DataSrc: DataSource = await initializeDBConnector(dataSource);
         const EntryRepo = DataSrc.getRepository(Entry);
 
-        // primero eliminamos el estado actual del horario correspondiente a la titulación, curso y grupo recibidos.
+        // Primero obtenemos la última fecha en la que se actualizó el horario correspondiente a la titulación, curso y grupo recibidos
+        const fechaUltimaActualizacion: Entry = await EntryRepo.findOne({ select:['fecha'], where:{ plan: plan,curso: curso, grupo: grupo }});
+        console.log(fechaUltimaActualizacion === null ? "No existe fecha de última actualización" : fechaUltimaActualizacion.fecha)
+
+        // A continuacón eliminamos el estado actual del horario correspondiente a la titulación, curso y grupo recibidos
         const horarioEliminado: DeleteResult = await EntryRepo.delete({ plan: plan, curso: curso, grupo: grupo });
 
         // una vez eliminado, insertamos el nuevo estado del horario
@@ -123,7 +98,7 @@ export class HorarioRepoPGImpl implements HorarioRepository {
         });
         const horarioActualizado: InsertResult = await EntryRepo.insert(entriesDTO);
 
-        return new Date().toLocaleString('en-GB', { timeZone: 'Europe/Madrid' });
+        return fechaUltimaActualizacion === null ? "No existe fecha de última actualización" : fechaUltimaActualizacion.fecha;
     }
 
     async obtenerEntradas(plan: string, curso: number, grupo: string): Promise<Entry[]> {

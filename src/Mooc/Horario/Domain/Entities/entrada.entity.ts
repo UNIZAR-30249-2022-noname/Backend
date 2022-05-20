@@ -3,7 +3,7 @@ import { Degree } from './titulacion.entity';
 import { DatosAsignatura } from './datosasignatura';
 import { Subject } from './asignatura.entity';
 import { Entrada } from './entrada';
-import { Room } from './aula.entity';
+import { Space } from 'src/Mooc/Espacio/Domain/Entities/espacio.entity';
 
 @Entity()
 export class Entry {
@@ -35,13 +35,16 @@ export class Entry {
     tipo: number;
 
     @Column()
-    nombreaula: string;
+    idaula: string;
 
     @Column()
     semana: string;
 
     @Column()
     dia: number;
+
+    @Column({default: new Date().toLocaleString('en-GB', { timeZone: 'Europe/Madrid' })})
+    fecha: string;
 
     @ManyToOne(() => Degree, (titulacion) => titulacion.entradas)
     @JoinColumn({ 
@@ -50,19 +53,12 @@ export class Entry {
     })
     titulacion: Degree
 
-    @ManyToOne(() => Subject, (asignatura) => asignatura.entradas)
+    @ManyToOne(() => Space, (espacio) => espacio.entradas)
     @JoinColumn({ 
-        name: 'nombreasignatura',
-        referencedColumnName: 'nombre'
+        name: 'idaula',
+        referencedColumnName: 'id'
     })
-    asignatura: Subject
-
-    @ManyToOne(() => Room, (aula) => aula.entradas)
-    @JoinColumn({ 
-        name: 'nombreaula',
-        referencedColumnName: 'nombre'
-    })
-    aula: Room
+    espacio: Subject
 
     public fillEntradaWithDomainEntity(entrada: Entrada, duracion: number){
         this.plan = entrada.getDatosEntradaProps().Degree;
@@ -73,7 +69,7 @@ export class Entry {
         this.duracion = duracion;
         this.nombreasignatura = entrada.getDatosEntradaProps().Subject;
         this.tipo = entrada.getDatosEntradaProps().Kind;
-        this.nombreaula = entrada.getDatosEntradaProps().Room;
+        this.idaula = entrada.getDatosEntradaProps().Room;
         this.semana = entrada.getDatosEntradaProps().Week;
         this.dia = entrada.getDatosEntradaProps().Weekday;
     }

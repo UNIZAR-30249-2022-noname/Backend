@@ -13,11 +13,9 @@ import { Entry } from '../../Domain/Entities/entrada.entity';
 import { Degree } from '../../Domain/Entities/titulacion.entity';
 import XLSX from 'xlsx';
 import lineReader from 'line-reader';
-import { DatosAula, DatosAulaProps } from '../../Domain/Entities/datosaula';
 
 export interface servicioHorarioI {
     importarCursos(): Promise<Boolean>;
-    importarAulas(): Promise<Boolean>;
     actualizarHorario(plan: string, curso: number, grupo: string, entradaProps: EntradaProps[]): Promise<string>;
     obtenerEntradas(plan: string, curso: number, grupo: string): Promise<Entrada[]>;
     obtenerHorasDisponibles(plan: string, curso: number, grupo: string): Promise<any[]>;
@@ -109,52 +107,6 @@ export class HorarioService implements servicioHorarioI {
         return InsertarCursosPromise;
     }
 
-    async importarAulas(): Promise<Boolean> {
-
-        const InsertarAulasPromise =
-            new Promise<Boolean>((resolve, reject) => {
-                // Transformamos el fichero .xlsx en .csv
-                const excel = XLSX.readFile('./src/Mooc/Horario/Application/usecase/aulas.xlsx');
-
-                const csvContent = XLSX.utils.sheet_to_csv(excel.Sheets[excel.SheetNames[0]], {FS: ";"})
-
-                try {
-                    fs.writeFileSync('./src/Mooc/Horario/Application/usecase/aulas.csv', csvContent);
-                  } catch (err: any) {
-                    console.log('Error writing rooms csv' + err.message)
-                  }
-                //XLSX.writeFile(excel, './src/Mooc/Horario/Application/usecase/aulas.csv', { bookType: "csv"});
-
-                // Leemos el fichero línea por línea
-                var i = 0
-                var aulas: DatosAula[] = [];
-                lineReader.eachLine('./src/Mooc/Horario/Application/usecase/aulas.csv', async function (line: string) {
-                    if (i > 0) {
-                        var fieldsArray = line.split(';')
-                        var aulaprops: DatosAulaProps = {
-                            id: parseInt(fieldsArray[0]),
-                            acronimo: fieldsArray[1],
-                            nombre: fieldsArray[2].replace(/"/g, ''),
-                            capacidad: isNaN(parseInt(fieldsArray[3])) ? null : parseInt(fieldsArray[3]),
-                            edificio: parseInt(fieldsArray[4])
-                        };
-                        aulas.push(await DatosAula.createDatosAula(aulaprops));
-                    }
-                    i++
-                }, async (err: any) => {
-                    if (err) throw err;
-                    try {
-                        const resultadoOperacion = await this.horariorepository.importarAulas(aulas);
-                        resolve(resultadoOperacion)
-                    } catch (error) {
-                        reject(error)
-                    }
-                });
-            });
-
-        return InsertarAulasPromise;
-    }
-
     async actualizarHorario(plan: string, curso: number, grupo: string, entradasProps: EntradaProps[]): Promise<string> {
         const entradas: Entrada[] = entradasProps.map(function (entradaProps) {
             const entrada: Entrada = new Entrada("0", entradaProps);
@@ -178,7 +130,7 @@ export class HorarioService implements servicioHorarioI {
                 End: entryObtenida.fin,
                 Subject: entryObtenida.nombreasignatura,
                 Kind: entryObtenida.tipo,
-                Room: entryObtenida.nombreaula,
+                Room: entryObtenida.idaula,
                 Week: entryObtenida.semana,
                 Weekday: entryObtenida.dia
             };

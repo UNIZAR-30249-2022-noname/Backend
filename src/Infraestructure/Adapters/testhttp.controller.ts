@@ -54,13 +54,6 @@ export class TestController {
     const resultado = await this.servicioEspacios.importarEspaciosAuto();
     return resultado;
   }
-  
-  @Post('/subirAulas')
-  async subirAulas() {
-    let horarioEspacio: HorarioService = new HorarioService(new HorarioRepoPGImpl());
-    const resultado = await horarioEspacio.importarAulas();
-    return (resultado)
-  }
 
   //PARA ENVIAR EL BODY DESDE POSTMAN HAY QUE UTILIZAR X-WWW-FORM-URLENCODED (RAW BODY NO FUNCIONA)
   @Post('/crearIncidencia')
@@ -218,7 +211,7 @@ const entradasPropsTest: EntradaProps[] = [
     End: "9:00",
     Subject: "Programación 1",
     Kind: 1,
-    Room: "Aula 1",
+    Room: "CRE.1200.00.040",
     Week: "Semana 1",
     Weekday: 1
   },
@@ -230,7 +223,7 @@ const entradasPropsTest: EntradaProps[] = [
     End: "10:00",
     Subject: "Arquitectura y organización de computadores 1",
     Kind: 2,
-    Room: "Aula 2",
+    Room: "CRE.1200.00.040",
     Week: "Semana 1",
     Weekday: 1
   },
@@ -242,7 +235,7 @@ const entradasPropsTest: EntradaProps[] = [
     End: "11:00",
     Subject: "Física y electrónica",
     Kind: 3,
-    Room: "Aula 3",
+    Room: "CRE.1200.00.040",
     Week: "Semana 1",
     Weekday: 1
   },
@@ -254,7 +247,7 @@ const entradasPropsTest: EntradaProps[] = [
     End: "13:30",
     Subject: "Programación 1",
     Kind: 1,
-    Room: "Aula 4",
+    Room: "CRE.1200.00.040",
     Week: "Semana 1",
     Weekday: 1
   }

@@ -270,16 +270,6 @@ export class AMQPController {
     return { resultado: resultado };
   }
 
-  @MessagePattern('importar-aulas')
-  async importarAulas(
-    @Payload() data: number[],
-    @Ctx() context: RmqContext,
-  ) {
-    // TODO: FALTA CONVERTIR EL BINARIO DE RABBIT A CSV Y PASARSELO A importarCursos. ACTUALMENTE COGE AUTOMÁTICAMENTE EL aulas.xlsx
-    const resultado = await this.servicioHorarios.importarAulas();
-    return { resultado: resultado };
-  }
-
   @MessagePattern('actualizar-calendario')
   async actualizarHorario(
     @Payload() data: number[],
@@ -287,13 +277,13 @@ export class AMQPController {
   ) {
     const mensajeRecibido = JSON.parse(context.getMessage().content);
     console.log('Procesando Solicitud(actualizar-calendario)', mensajeRecibido);
-    const entradasProps: EntradaProps[] = mensajeRecibido.body.Entry.map(function (entry: EntradaProps) {
+    const entradasProps: EntradaProps[] = mensajeRecibido.body.Entry.map(function (entry: any) {
       const entradaProps: EntradaProps = {
         Degree: mensajeRecibido.body.DegreeSet.Degree,
         Year: mensajeRecibido.body.DegreeSet.Year,
         Group: mensajeRecibido.body.DegreeSet.Group,
-        Init: entry.Init,
-        End: entry.End,
+        Init: entry.Init.hour.toString() + ':' + entry.Init.min.toString(),
+        End: entry.End.hour.toString() + ':' + entry.End.min.toString(),
         Subject: entry.Subject,
         Kind: entry.Kind,
         Room: entry.Room,
