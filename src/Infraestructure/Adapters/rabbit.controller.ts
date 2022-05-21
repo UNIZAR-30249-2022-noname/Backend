@@ -287,8 +287,8 @@ export class AMQPController {
         Group: mensajeRecibido.body.DegreeSet.Group,
         Init: entry.Init.hour.toString() + ':' + entry.Init.min.toString(),
         End: entry.End.hour.toString() + ':' + entry.End.min.toString(),
-        Subject: entry.Subject,
-        Kind: entry.Kind,
+        Subject: entry.Subject.Name,
+        Kind: entry.Subject.Kind,
         Room: entry.Room,
         Week: entry.Week,
         Weekday: entry.Weekday
