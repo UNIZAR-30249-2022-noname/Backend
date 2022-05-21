@@ -220,6 +220,16 @@ export class AMQPController {
     return { resultado: resultado, CorrelationId: mensajeRecibido.id };
   }
 
+  @MessagePattern('descargar-incidencias')
+  async descargarPDFIncidencias(@Payload() data: number[], @Ctx() context: RmqContext,){
+
+    const mensajeRecibido = JSON.parse(context.getMessage().content);
+    const resultado = await this.servicioIncidencias.descargarPDFIncidencias('Ada Byron');
+    return { resultado: resultado, CorrelationId: mensajeRecibido.id };
+
+  }
+
+
   /***************************************/
   /***********EDIFICIOS Y PLANTAS*********/
   /***************************************/

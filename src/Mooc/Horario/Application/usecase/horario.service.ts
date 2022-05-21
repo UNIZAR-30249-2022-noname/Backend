@@ -109,7 +109,6 @@ export class HorarioService implements servicioHorarioI {
                 // Transformamos el fichero .xlsx en .csv
                 const excel = XLSX.readFile('./src/Mooc/Horario/Application/usecase/aulas.xlsx');
                 XLSX.writeFile(excel, './src/Mooc/Horario/Application/usecase/aulas.csv', { bookType: "csv"});
-
                 // Leemos el fichero línea por línea
                 var i = 0
                 var aulas: DatosAula[] = [];

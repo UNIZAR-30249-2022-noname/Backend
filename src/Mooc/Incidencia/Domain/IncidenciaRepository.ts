@@ -6,4 +6,5 @@ export interface IncidenciaRepository {
   actualizarEstado(id: number, state: number): Promise<number>;
   eliminar(id: number): Promise<number>;
   obtenerTodas(): Promise<Issue[]>;
+  obtenerIncidenciasPorEdificio(edificio: string): Promise<Issue[]>;
 }
