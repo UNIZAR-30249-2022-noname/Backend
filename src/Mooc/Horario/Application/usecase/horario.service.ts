@@ -17,7 +17,7 @@ import lineReader from 'line-reader';
 export interface servicioHorarioI {
     importarCursos(): Promise<Boolean>;
     actualizarHorario(plan: string, curso: number, grupo: string, entradaProps: EntradaProps[]): Promise<string>;
-    obtenerEntradas(plan: string, curso: number, grupo: string): Promise<Entrada[]>;
+    obtenerEntradas(plan: string, curso: number, grupo: string): Promise<any[]>;
     obtenerHorasDisponibles(plan: string, curso: number, grupo: string): Promise<any[]>;
     obtenerTitulaciones(): Promise<any[]>;
 }
@@ -118,23 +118,24 @@ export class HorarioService implements servicioHorarioI {
         return horarioActualizado;
     }
 
-    async obtenerEntradas(plan: string, curso: number, grupo: string): Promise<Entrada[]> {
+    async obtenerEntradas(plan: string, curso: number, grupo: string): Promise<any[]> {
         const entriesObtenidas: Entry[] = await this.horariorepository.obtenerEntradas(plan, curso, grupo);
 
-        const entradasObtenidas: Entrada[] = entriesObtenidas.map(function (entryObtenida) {
-            var entradaProps: EntradaProps = {
+        const entradasObtenidas: any[] = entriesObtenidas.map(function (entryObtenida) {
+            const entradaProps = {
+                id: entryObtenida.id,
                 Degree: entryObtenida.plan,
                 Year: entryObtenida.curso,
                 Group: entryObtenida.grupo,
-                Init: entryObtenida.inicio,
-                End: entryObtenida.fin,
+                Init: { hour: parseInt(entryObtenida.inicio.split(':')[0]), min: parseInt(entryObtenida.inicio.split(':')[1]) },
+                End: { hour: parseInt(entryObtenida.fin.split(':')[0]), min: parseInt(entryObtenida.fin.split(':')[1]) },
                 Subject: entryObtenida.nombreasignatura,
                 Kind: entryObtenida.tipo,
                 Room: entryObtenida.idaula,
                 Week: entryObtenida.semana,
                 Weekday: entryObtenida.dia
             };
-            return new Entrada(entryObtenida.id.toString(), entradaProps)
+            return entradaProps;
         });
 
         return entradasObtenidas;

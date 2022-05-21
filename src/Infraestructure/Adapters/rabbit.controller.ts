@@ -309,7 +309,7 @@ export class AMQPController {
     const mensajeRecibido = JSON.parse(context.getMessage().content);
     console.log('Procesando Solicitud(obtener-entradas)', mensajeRecibido);
 
-    let resultado: Entrada[] = await this.servicioHorarios.obtenerEntradas(mensajeRecibido.body.DegreeSet.Degree, mensajeRecibido.body.DegreeSet.Year, mensajeRecibido.body.DegreeSet.Group);
+    let resultado: any[] = await this.servicioHorarios.obtenerEntradas(mensajeRecibido.body.DegreeSet.Degree, mensajeRecibido.body.DegreeSet.Year, mensajeRecibido.body.DegreeSet.Group);
     console.log(resultado);
 
     console.log({ resultado: resultado, CorrelationId: mensajeRecibido.id })
