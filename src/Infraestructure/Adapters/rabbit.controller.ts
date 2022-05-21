@@ -289,7 +289,7 @@ export class AMQPController {
         End: entry.End.hour.toString() + ':' + entry.End.min.toString(),
         Subject: entry.Subject.Name,
         Kind: entry.Subject.Kind,
-        Room: entry.Room,
+        Room: entry.Room.Name,
         Week: entry.Week,
         Weekday: entry.Weekday
       }
