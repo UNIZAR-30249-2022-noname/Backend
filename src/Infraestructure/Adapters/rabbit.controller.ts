@@ -277,6 +277,9 @@ export class AMQPController {
   ) {
     const mensajeRecibido = JSON.parse(context.getMessage().content);
     console.log('Procesando Solicitud(actualizar-calendario)', mensajeRecibido);
+    if(mensajeRecibido.body.Entry.length > 0) {
+      console.log(mensajeRecibido.body.Entry[0])
+    }
     const entradasProps: EntradaProps[] = mensajeRecibido.body.Entry.map(function (entry: any) {
       const entradaProps: EntradaProps = {
         Degree: mensajeRecibido.body.DegreeSet.Degree,
