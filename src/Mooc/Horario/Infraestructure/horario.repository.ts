@@ -1,5 +1,5 @@
-import { DataSource, DeleteResult, InsertResult, UpdateResult } from "typeorm";
-import { initializeDBConnector, returnRepository } from '../../../Infraestructure/Adapters/pg-connection';
+import { DataSource, DeleteResult, InsertResult, UpdateResult, Repository } from "typeorm";
+import { initializeDBConnector, returnRepositoryTest } from '../../../Infraestructure/Adapters/pg-connection';
 import dataSource from '../../../Config/ormconfig_db';
 import { DatosAsignatura } from "../Domain/Entities/datosasignatura";
 import { DatosTitulacion } from "../Domain/Entities/datostitulacion";
@@ -8,6 +8,7 @@ import { Subject } from "../Domain/Entities/asignatura.entity";
 import { Degree } from "../Domain/Entities/titulacion.entity";
 import { Entrada } from "../Domain/Entities/entrada";
 import { Entry } from "../Domain/Entities/entrada.entity";
+import { Inject, Injectable } from "@nestjs/common";
 
 enum HorarioQueries {
     QUERY_TRUNCAR_CURSOS = 'TRUNCATE degree, subject RESTART IDENTITY CASCADE',
@@ -18,10 +19,27 @@ enum HorarioQueries {
 
 export class HorarioRepoPGImpl implements HorarioRepository {
 
+    public repositorioEntradas: Repository<Entry>;
+    public repositorioAsignaturas: Repository<Subject>;
+    public repositorioTitulaciones: Repository<Degree>;
+
+    constructor(@Inject('DataSrc') private datasrcI: DataSource) {
+        returnRepositoryTest(Entry, this.datasrcI).then(
+            (repo) => {
+                this.repositorioEntradas = repo;
+            });
+        returnRepositoryTest(Subject, this.datasrcI).then(
+            (repo) => {
+                this.repositorioAsignaturas = repo;
+            });
+        returnRepositoryTest(Degree, this.datasrcI).then(
+            (repo) => {
+                this.repositorioTitulaciones = repo;
+            });
+    }
+
     async importarCursos(asignaturas: DatosAsignatura[], titulaciones: DatosTitulacion[]): Promise<Boolean> {
         const DataSrc: DataSource = await initializeDBConnector(dataSource);
-        const SubjectRepo = DataSrc.getRepository(Subject);
-        const DegreeRepo = DataSrc.getRepository(Degree);
 
         // truncamos las tablas de titulaciones y asignaturas
         await DataSrc.query(HorarioQueries.QUERY_TRUNCAR_CURSOS);
@@ -80,15 +98,13 @@ export class HorarioRepoPGImpl implements HorarioRepository {
     }
 
     async actualizarHorario(plan: string, curso: number, grupo: string, entradas: Entrada[]): Promise<string> {
-        const DataSrc: DataSource = await initializeDBConnector(dataSource);
-        const EntryRepo = DataSrc.getRepository(Entry);
 
         // Primero obtenemos la última fecha en la que se actualizó el horario correspondiente a la titulación, curso y grupo recibidos
-        const fechaUltimaActualizacion: Entry = await EntryRepo.findOne({ select:['fecha'], where:{ plan: plan,curso: curso, grupo: grupo }});
+        const fechaUltimaActualizacion: Entry = await this.repositorioEntradas.findOne({ select: ['fecha'], where: { plan: plan, curso: curso, grupo: grupo } });
         console.log(fechaUltimaActualizacion === null ? "No existe fecha de última actualización" : fechaUltimaActualizacion.fecha)
 
         // A continuacón eliminamos el estado actual del horario correspondiente a la titulación, curso y grupo recibidos
-        const horarioEliminado: DeleteResult = await EntryRepo.delete({ plan: plan, curso: curso, grupo: grupo });
+        const horarioEliminado: DeleteResult = await this.repositorioEntradas.delete({ plan: plan, curso: curso, grupo: grupo });
 
         // una vez eliminado, insertamos el nuevo estado del horario
         const entriesDTO: Entry[] = entradas.map(function (entrada) {
@@ -96,16 +112,14 @@ export class HorarioRepoPGImpl implements HorarioRepository {
             entryDTO.fillEntradaWithDomainEntity(entrada, calcularDuracion(entrada.getDatosEntradaProps().Init, entrada.getDatosEntradaProps().End));
             return entryDTO;
         });
-        const horarioActualizado: InsertResult = await EntryRepo.insert(entriesDTO);
+        const horarioActualizado: InsertResult = await this.repositorioEntradas.insert(entriesDTO);
 
         return fechaUltimaActualizacion === null ? "No existe fecha de última actualización" : fechaUltimaActualizacion.fecha;
     }
 
     async obtenerEntradas(plan: string, curso: number, grupo: string): Promise<Entry[]> {
-        const DataSrc: DataSource = await initializeDBConnector(dataSource);
-        const EntryRepo = DataSrc.getRepository(Entry);
 
-        const resultado: Entry[] = await EntryRepo.findBy({ plan: plan, curso: curso, grupo: grupo });
+        const resultado: Entry[] = await this.repositorioEntradas.findBy({ plan: plan, curso: curso, grupo: grupo });
 
         return resultado;
     }
@@ -119,15 +133,15 @@ export class HorarioRepoPGImpl implements HorarioRepository {
         const resultado: any[] = [];
         resultadoHorasDisponibles.map(function (horasDisponibles: any) {
             for (var i = 0; i < tipoHorasPlantilla.length; i++) {
-                const duracionHoras: number = (horasDisponibles.duracion === null || horasDisponibles.tipo != i+1) ? 0 : parseInt(horasDisponibles.duracion) / 60;
-                const duracionMinutos: number = (horasDisponibles.duracion === null || horasDisponibles.tipo != i+1) ? 0 : parseInt(horasDisponibles.duracion) / 60 % 1 * 60;
+                const duracionHoras: number = (horasDisponibles.duracion === null || horasDisponibles.tipo != i + 1) ? 0 : parseInt(horasDisponibles.duracion) / 60;
+                const duracionMinutos: number = (horasDisponibles.duracion === null || horasDisponibles.tipo != i + 1) ? 0 : parseInt(horasDisponibles.duracion) / 60 % 1 * 60;
                 //const maxHoras: number = parseInt(horasDisponibles[tipoHorasPlantilla[horasDisponibles.tipo - 1]].split(".")[0]);
                 //const maxMins: number = parseInt(horasDisponibles[tipoHorasPlantilla[horasDisponibles.tipo - 1]].split(".")[1]) * 60;
                 const maxHoras: number = parseInt(horasDisponibles[tipoHorasPlantilla[i]].split(".")[0]);
                 const maxMins: number = parseInt(horasDisponibles[tipoHorasPlantilla[i]].split(".")[1]) * 60;
                 const AvailableHours = {
                     Subject: {
-                        Kind: i+1,
+                        Kind: i + 1,
                         Name: horasDisponibles.nombre,
                     },
                     RemainingHours: Math.floor(maxHoras - duracionHoras),
@@ -144,9 +158,7 @@ export class HorarioRepoPGImpl implements HorarioRepository {
     }
 
     async obtenerTitulaciones(): Promise<Degree[]> {
-        const DataSrc: DataSource = await initializeDBConnector(dataSource);
-        const DegreeRepo = DataSrc.getRepository(Degree);
-        const listaTitulaciones: Degree[] = await DegreeRepo.find({order: {codplan: "ASC"}});
+        const listaTitulaciones: Degree[] = await this.repositorioTitulaciones.find({ order: { codplan: "ASC" } });
 
         return listaTitulaciones;
     }

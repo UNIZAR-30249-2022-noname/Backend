@@ -22,7 +22,7 @@ import { IncidenciaService, servicioIncidenciaI } from '../../Mooc/Incidencia/Ap
 import { IncidenciaProps } from '../../Mooc/Incidencia/Domain/Entities/incidencia';
 import { IncidenciaRepoPGImpl } from '../../Mooc/Incidencia/Infraestructure/incidencia.repository';
 import { DatosReservaProps } from '../../Mooc/Reserva/Domain/Entities/datosreserva';
-import { HorarioService } from '../../Mooc/Horario/Application/usecase/horario.service';
+import { HorarioService, servicioHorarioI } from '../../Mooc/Horario/Application/usecase/horario.service';
 import { HorarioRepoPGImpl } from '../../Mooc/Horario/Infraestructure/horario.repository';
 import { EntradaProps } from '../../Mooc/Horario/Domain/Entities/entrada';
 
@@ -35,6 +35,8 @@ export class TestController {
     private readonly servicioEspacios: servicioEspacioI,
     @Inject('servicioIncidenciaI')
     private readonly servicioIncidencias: servicioIncidenciaI,
+    @Inject('servicioHorarioI')
+    private readonly servicioHorarios: servicioHorarioI,
   ) {}
 
   @Get('/prueba')
@@ -44,8 +46,7 @@ export class TestController {
 
   @Post('/subirCursos')
   async subirCursos() {
-    let horarioEspacio: HorarioService = new HorarioService(new HorarioRepoPGImpl());
-    const resultado = await horarioEspacio.importarCursos();
+    const resultado = await this.servicioHorarios.importarCursos();
     return (resultado)
   }
 
@@ -158,9 +159,7 @@ export class TestController {
   @Post('/actualizarHorario')
   async actualizarHorario(@Body() mensaje: any) {
 
-    let servicioHorario: HorarioService = new HorarioService(new HorarioRepoPGImpl());
-
-    let resultadoActualizarHorario = await servicioHorario.actualizarHorario(DegreeSet.Degree, DegreeSet.Year, DegreeSet.Group, entradasPropsTest);
+    let resultadoActualizarHorario = await this.servicioHorarios.actualizarHorario(DegreeSet.Degree, DegreeSet.Year, DegreeSet.Group, entradasPropsTest);
 
     return { resultado: { resultadoActualizarHorario } };
   }
@@ -168,9 +167,7 @@ export class TestController {
   @Get('/obtenerEntradas')
   async obtenerEntradas(@Body() mensaje: any) {
 
-    let servicioHorario: HorarioService = new HorarioService(new HorarioRepoPGImpl());
-
-    let resultadoActualizarHorario = await servicioHorario.obtenerEntradas(DegreeSet.Degree, DegreeSet.Year, DegreeSet.Group);
+    let resultadoActualizarHorario = await this.servicioHorarios.obtenerEntradas(DegreeSet.Degree, DegreeSet.Year, DegreeSet.Group);
 
     return { resultado: { resultadoActualizarHorario } };
   }
@@ -178,9 +175,7 @@ export class TestController {
   @Get('/obtenerHorasDisponibles')
   async obtenerHorasDisponibles(@Body() mensaje: any) {
 
-    let servicioHorario: HorarioService = new HorarioService(new HorarioRepoPGImpl());
-
-    let resultado = await servicioHorario.obtenerHorasDisponibles(DegreeSet.Degree, DegreeSet.Year, DegreeSet.Group);
+    let resultado = await this.servicioHorarios.obtenerHorasDisponibles(DegreeSet.Degree, DegreeSet.Year, DegreeSet.Group);
 
     return { resultado: { resultado } };
   }
@@ -188,9 +183,7 @@ export class TestController {
   @Get('/obtenerTitulaciones')
   async obtenerTitulaciones(@Body() mensaje: any) {
 
-    let servicioHorario: HorarioService = new HorarioService(new HorarioRepoPGImpl());
-
-    let resultado = await servicioHorario.obtenerTitulaciones();
+    let resultado = await this.servicioHorarios.obtenerTitulaciones();
 
     return { resultado: { resultado } };
   }

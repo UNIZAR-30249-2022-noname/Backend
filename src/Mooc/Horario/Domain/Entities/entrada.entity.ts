@@ -72,5 +72,6 @@ export class Entry {
         this.idaula = entrada.getDatosEntradaProps().Room;
         this.semana = entrada.getDatosEntradaProps().Week;
         this.dia = entrada.getDatosEntradaProps().Weekday;
+        this.fecha = new Date().toLocaleString('en-GB', { timeZone: 'Europe/Madrid' });
     }
 }

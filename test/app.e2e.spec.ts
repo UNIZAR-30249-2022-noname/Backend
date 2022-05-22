@@ -8,9 +8,12 @@ import { RabbitContextArgs, Args } from './RabbitContextArgs';
 import providers from './config';
 import dataSource from '../src/Config/ormconfig';
 import { Reserve } from '../src/Mooc/Reserva/Domain/Entities/reserva.entity';
-import { expectedOuputT3 } from './test-data/data';
+import { expectedOuputT3, actualizarHorarioInput } from './test-data/data';
 import { it_cond } from './config';
 import { Issue } from '../src/Mooc/Incidencia/Domain/Entities/incidencia.entity';
+import { Entry } from '../src/Mooc/Horario/Domain/Entities/entrada.entity';
+import { Degree } from '../src/Mooc/Horario/Domain/Entities/titulacion.entity';
+import { Subject } from '../src/Mooc/Horario/Domain/Entities/asignatura.entity';
 
 function sleep(milliseconds: number) {
   return new Promise((resolve) => {
@@ -438,6 +441,151 @@ describe('AMQPController (e2e)', () => {
       25000,
     );
   }); // Fin tests de incidencias
+
+  describe('Tests-Horarios', () => {
+    it_cond(
+      'Listar titulaciones',
+      async () => {
+        const argsListarTitulaciones: Args = RabbitContextArgs.construirArgs(
+          JSON.stringify({}),
+          null,
+          'listar-titulaciones',
+        );
+
+        //Esperamos que se inicialicen todos los repositorios
+        await sleep(1000);
+        const resultadoJSON = await listarDegrees(testapp, new RmqContext(argsListarTitulaciones));
+
+        //Buscamos las titulaciones que hay en la base de datos
+        const querybuilder = dataSource.createQueryBuilder(Degree, 'degree');
+        const degrees_encontradas = await querybuilder
+          .orderBy("degree.codplan","ASC")
+          .printSql()
+          .getRawMany();
+        expect(degrees_encontradas.length).toEqual(resultadoJSON.resultado.length)
+        for (let i = 0; i < degrees_encontradas.length; i++) {
+          expect(degrees_encontradas[i].degree_nombre).toEqual(resultadoJSON.resultado[i].name)
+          expect(degrees_encontradas[i].degree_numcursos).toEqual(resultadoJSON.resultado[i].years.length)
+        }
+      },
+      25000,
+    );
+
+    it_cond(
+      'Obtener horas disponibles',
+      async () => {
+
+        const argsEntradas = {
+          body: {
+            DegreeSet: actualizarHorarioInput.body.DegreeSet
+          },
+        };
+
+        const argsObtenerEntradas: Args = RabbitContextArgs.construirArgs(
+          JSON.stringify(argsEntradas),
+          null,
+          'obtener-horas-disponibles',
+        );
+
+        //Esperamos que se inicialicen todos los repositorios
+        await sleep(1000);
+        const resultadoJSON = await obtenerAvailableHours(testapp, new RmqContext(argsObtenerEntradas));
+        //Buscamos las horas disponibles en la base de datos
+        const querybuilder = dataSource.createQueryBuilder(Subject, 'subject');
+        const asignaturas_encontradas = await querybuilder
+          .where('subject.plan = :plan AND subject.curso = :curso', { plan: actualizarHorarioInput.body.DegreeSet.Degree, curso: actualizarHorarioInput.body.DegreeSet.Year })
+          .printSql()
+          .getRawMany();
+        expect(asignaturas_encontradas.length*3).toEqual(resultadoJSON.resultado.length)
+      },
+      25000,
+    );
+
+    it_cond(
+      'Actualizar horario',
+      async () => {
+        const argsActualizarHorario: Args = RabbitContextArgs.construirArgs(
+          JSON.stringify(actualizarHorarioInput),
+          null,
+          'actualizar-calendario',
+        );
+
+        //Esperamos que se inicialicen todos los repositorios
+        await sleep(1000);
+        const resultadoJSON = await actualizarScheduler(testapp, new RmqContext(argsActualizarHorario));
+
+        //Buscamos las entradas del horario que acabamos de introducir en la base de datos
+        const querybuilder = dataSource.createQueryBuilder(Entry, 'entry');
+        const entries_encontradas = await querybuilder
+          .where('entry.plan = :plan AND entry.curso = :curso AND entry.grupo = :grupo', { plan: actualizarHorarioInput.body.DegreeSet.Degree, curso: actualizarHorarioInput.body.DegreeSet.Year, grupo: actualizarHorarioInput.body.DegreeSet.Group })
+          .printSql()
+          .getRawMany();
+        expect(entries_encontradas.length).toEqual(actualizarHorarioInput.body.Entry.length)
+        for (let i = 0; i < entries_encontradas.length; i++) {
+          expect(entries_encontradas[i].entry_plan).toEqual(actualizarHorarioInput.body.DegreeSet.Degree)
+          expect(entries_encontradas[i].entry_curso).toEqual(actualizarHorarioInput.body.DegreeSet.Year)
+          expect(entries_encontradas[i].entry_grupo).toEqual(actualizarHorarioInput.body.DegreeSet.Group)
+          expect(entries_encontradas[i].entry_inicio).toEqual(actualizarHorarioInput.body.Entry[i].Init.hour.toString() + ':' + actualizarHorarioInput.body.Entry[i].Init.min.toString())
+          expect(entries_encontradas[i].entry_fin).toEqual(actualizarHorarioInput.body.Entry[i].End.hour.toString() + ':' + actualizarHorarioInput.body.Entry[i].End.min.toString())
+          expect(entries_encontradas[i].entry_nombreasignatura).toEqual(actualizarHorarioInput.body.Entry[i].Subject.Name)
+          expect(entries_encontradas[i].entry_tipo).toEqual(actualizarHorarioInput.body.Entry[i].Subject.Kind)
+          expect(entries_encontradas[i].entry_idaula).toEqual(actualizarHorarioInput.body.Entry[i].Room.Name)
+          expect(entries_encontradas[i].entry_semana).toEqual(actualizarHorarioInput.body.Entry[i].Week)
+          expect(entries_encontradas[i].entry_dia).toEqual(actualizarHorarioInput.body.Entry[i].Weekday)
+        }
+      },
+      25000,
+    );
+
+    it_cond(
+      'Obtener entradas',
+      async () => {
+
+        const argsEntradas = {
+          body: {
+            DegreeSet: actualizarHorarioInput.body.DegreeSet
+          },
+        };
+
+        const argsObtenerEntradas: Args = RabbitContextArgs.construirArgs(
+          JSON.stringify(argsEntradas),
+          null,
+          'obtener-entradas',
+        );
+
+        //Esperamos que se inicialicen todos los repositorios
+        await sleep(1000);
+        const resultadoJSON = await obtenerEntries(testapp, new RmqContext(argsObtenerEntradas));
+        //Buscamos las entradas que hemos introducido en la base de datos en el test anterior
+        const querybuilder = dataSource.createQueryBuilder(Entry, 'entry');
+        const entries_encontradas = await querybuilder
+          .where('entry.plan = :plan AND entry.curso = :curso AND entry.grupo = :grupo', { plan: actualizarHorarioInput.body.DegreeSet.Degree, curso: actualizarHorarioInput.body.DegreeSet.Year, grupo: actualizarHorarioInput.body.DegreeSet.Group })
+          .printSql()
+          .getRawMany();
+        expect(entries_encontradas.length).toEqual(resultadoJSON.resultado.length)
+        for (let i = 0; i < entries_encontradas.length; i++) {
+          expect(entries_encontradas[i].entry_plan).toEqual(resultadoJSON.resultado[i].Degree)
+          expect(entries_encontradas[i].entry_curso).toEqual(resultadoJSON.resultado[i].Year)
+          expect(entries_encontradas[i].entry_grupo).toEqual(resultadoJSON.resultado[i].Group)
+          expect(entries_encontradas[i].entry_inicio).toEqual(resultadoJSON.resultado[i].Init.hour.toString() + ':' + resultadoJSON.resultado[i].Init.min.toString())
+          expect(entries_encontradas[i].entry_fin).toEqual(resultadoJSON.resultado[i].End.hour.toString() + ':' + resultadoJSON.resultado[i].End.min.toString())
+          expect(entries_encontradas[i].entry_nombreasignatura).toEqual(resultadoJSON.resultado[i].Subject.Name)
+          expect(entries_encontradas[i].entry_tipo).toEqual(resultadoJSON.resultado[i].Subject.Kind)
+          expect(entries_encontradas[i].entry_idaula).toEqual(resultadoJSON.resultado[i].Room.Name)
+          expect(entries_encontradas[i].entry_semana).toEqual(resultadoJSON.resultado[i].Week)
+          expect(entries_encontradas[i].entry_dia).toEqual(resultadoJSON.resultado[i].Weekday)
+        }
+
+        //Borramos las entradas del horario que hemos introducido en la base de datos en el test anterior
+        await querybuilder
+          .delete()
+          .from(Entry)
+          .where('plan = :plan AND curso = :curso AND grupo = :grupo', { plan: actualizarHorarioInput.body.DegreeSet.Degree, curso: actualizarHorarioInput.body.DegreeSet.Year, grupo: actualizarHorarioInput.body.DegreeSet.Group })
+          .execute();
+      },
+      25000,
+    );
+  }); // Fin tests de horarios
 });
 
 function cancelarR(testapp: AMQPController, contextRabbit: RmqContext) {
@@ -466,4 +614,20 @@ function modificarIssue(testapp: AMQPController, contextRabbit: RmqContext) {
 
 function obtenerIssues(testapp: AMQPController, contextRabbit: RmqContext) {
   return testapp.obtenerIncidencias(null, contextRabbit);
+}
+
+function listarDegrees(testapp: AMQPController, contextRabbit: RmqContext) {
+  return testapp.obtenerTitulaciones(null, contextRabbit);
+}
+
+function obtenerAvailableHours(testapp: AMQPController, contextRabbit: RmqContext) {
+  return testapp.obtenerHorasDisponibles(null, contextRabbit);
+}
+
+function actualizarScheduler(testapp: AMQPController, contextRabbit: RmqContext) {
+  return testapp.actualizarHorario(null, contextRabbit);
+}
+
+function obtenerEntries(testapp: AMQPController, contextRabbit: RmqContext) {
+  return testapp.obtenerEntradas(null, contextRabbit);
 }

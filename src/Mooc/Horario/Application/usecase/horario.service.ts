@@ -129,9 +129,8 @@ export class HorarioService implements servicioHorarioI {
                 Group: entryObtenida.grupo,
                 Init: { hour: parseInt(entryObtenida.inicio.split(':')[0]), min: parseInt(entryObtenida.inicio.split(':')[1]) },
                 End: { hour: parseInt(entryObtenida.fin.split(':')[0]), min: parseInt(entryObtenida.fin.split(':')[1]) },
-                Subject: entryObtenida.nombreasignatura,
-                Kind: entryObtenida.tipo,
-                Room: entryObtenida.idaula,
+                Subject: { Name: entryObtenida.nombreasignatura, Kind: entryObtenida.tipo },
+                Room: { Name: entryObtenida.idaula },
                 Week: entryObtenida.semana,
                 Weekday: entryObtenida.dia
             };

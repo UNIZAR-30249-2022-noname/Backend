@@ -40,6 +40,14 @@ import { HorarioRepoPGImpl } from '../Mooc/Horario/Infraestructure/horario.repos
     {
       provide: 'IncidenciaRepository',
       useClass: IncidenciaRepoPGImpl,
+    },
+    {
+      provide: 'servicioHorarioI',
+      useClass: HorarioService,
+    },
+    {
+      provide: 'HorarioRepository',
+      useClass: HorarioRepoPGImpl,
     }
   ],
 })

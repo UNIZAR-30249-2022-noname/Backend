@@ -27,12 +27,20 @@ switch (process.env.MOCKED) {
         useClass: IncidenciaService,
       },
       {
+        provide: 'servicioHorarioI',
+        useClass: HorarioService,
+      },
+      {
         provide: 'EspacioRepository',
         useClass: EspacioRepoPGImpl,
       },
       {
         provide: 'IncidenciaRepository',
         useClass: IncidenciaRepoPGImpl,
+      },
+      {
+        provide: 'HorarioRepository',
+        useClass: HorarioRepoPGImpl,
       },
       {
         provide: 'DataSrc',
