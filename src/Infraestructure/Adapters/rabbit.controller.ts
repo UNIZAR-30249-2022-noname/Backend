@@ -224,8 +224,10 @@ export class AMQPController {
   async descargarPDFIncidencias(@Payload() data: number[], @Ctx() context: RmqContext,){
 
     const mensajeRecibido = JSON.parse(context.getMessage().content);
-    const resultado = await this.servicioIncidencias.descargarPDFIncidencias('Ada Byron');
-    return { resultado: resultado, CorrelationId: mensajeRecibido.id };
+    console.log(mensajeRecibido);
+    const array_buffer_pdf: ArrayBuffer = await this.servicioIncidencias.descargarPDFIncidencias('Ada Byron');
+    var bufferPDF = Buffer.from(array_buffer_pdf)
+    return { resultado: bufferPDF, CorrelationId: mensajeRecibido.id };
 
   }
 

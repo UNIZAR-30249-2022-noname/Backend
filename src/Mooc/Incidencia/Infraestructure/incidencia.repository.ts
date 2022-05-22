@@ -56,7 +56,7 @@ export class IncidenciaRepoPGImpl implements IncidenciaRepository {
    *   select DISTINCT i.titulo,s.name, i.descripcion,i.estado, i.etiquetas,s.floor from issue i
    *   INNER JOIN space s
    *   ON i.espacioid = s.id AND s.building = 'Ada Byron'
-   *   ORDER by s.floor;
+   *   ORDER by s.floor,i.estado ASC;
    */
 
   async obtenerIncidenciasPorEdificio(edificio: string): Promise<Issue[]> {

@@ -79,7 +79,7 @@ describe('AMQPController (e2e)', () => {
           'cancelar-reserva',
         );
         //Esperamos que se inicialicen todos los repositorios
-        await sleep(3000);
+        await sleep(1000);
         const resultadoJSON = await realizarR(testapp, new RmqContext(args));
         const querybuilder = dataSource.createQueryBuilder(Reserve, 'reserve');
         //Buscamos que el id devuelvo para la nueva reserva creada exista y lo devolvemos.
@@ -115,7 +115,7 @@ describe('AMQPController (e2e)', () => {
           'cancelar-reserva',
         );
         //Esperamos que se inicialicen todos los repositorios
-        await sleep(3000);
+        await sleep(1000);
         const resultadoJSON = await cancelarR(testapp, new RmqContext(args));
         expect(resultadoJSON.resultado).toBe(false);
       },
@@ -141,7 +141,7 @@ describe('AMQPController (e2e)', () => {
           'realizar-reserva',
         );
         //Esperamos que se inicialicen todos los repositorios
-        await sleep(3000);
+        await sleep(1000);
         const resultadoreserva = await realizarR(
           testapp,
           new RmqContext(argsCrearReserva),
@@ -242,7 +242,7 @@ describe('AMQPController (e2e)', () => {
         });
         //Borramos la reserva.
         const querybuilder = dataSource.createQueryBuilder(Reserve, 'reserve');
-        querybuilder
+        await querybuilder
           .delete()
           .from(Reserve)
           .where('id = :id', { id: resultadoreserva.resultado })
@@ -327,7 +327,7 @@ describe('AMQPController (e2e)', () => {
         expect(issue_encontrada.issue_id).toBe(resultadoJSON.resultado);
         expect(issue_encontrada.issue_titulo).toBe(argsIncidencias.body.title);
         //Borramos la incidencia de la base de datos para no dejar rastro.
-        querybuilder
+        await querybuilder
           .delete()
           .from(Issue)
           .where('id = :id', { id: resultadoJSON.resultado })
@@ -335,6 +335,23 @@ describe('AMQPController (e2e)', () => {
       },
       25000,
     );
+
+    it_cond('Descargar un reporte.', async () => {
+      
+      const argsDescarga = {
+        building: 'Ada Byron'
+      }
+
+      const argsDescargar: Args = RabbitContextArgs.construirArgs(
+        JSON.stringify(argsDescarga),
+        null,
+        'descargar-incidencias',
+      );
+      await sleep(1000);
+      const resultadoJSON = await descargarPDF(testapp, new RmqContext(argsDescargar));
+      expect(resultadoJSON.resultado).toBeInstanceOf(Buffer)
+
+    })
 
     it_cond(
       'Modificar el estado de una incidencia.',
@@ -378,7 +395,7 @@ describe('AMQPController (e2e)', () => {
         //El estado debería ser 2 para esa incidencia
         expect(issue_encontrada.issue_estado).toBe(1)
         //Borramos la incidencia de la base de datos.
-        querybuilder
+        await querybuilder
         .delete()
         .from(Issue)
         .where('id = :id', { id: resultadoJSON.resultado })
@@ -412,4 +429,8 @@ function realizarIssue(testapp: AMQPController, contextRabbit: RmqContext){
 
 function modificarIssue(testapp: AMQPController, contextRabbit: RmqContext){
   return testapp.modificarEstadoIncidencia(null, contextRabbit);
+}
+
+function descargarPDF(testapp: AMQPController, contextRabbit: RmqContext) {
+  return testapp.descargarPDFIncidencias(null, contextRabbit);
 }

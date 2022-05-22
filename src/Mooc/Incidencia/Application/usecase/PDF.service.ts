@@ -36,17 +36,29 @@ export class PDFService {
           //console.log(i + " Total issies: " + total_incidencias);
           //Comprobamos que hay incidencias en esa planta de lo contrario pasamos a la siguiente planta.
           if( total_incidencias !== 0) {
+            if(  ((page_size.height - 10) - (this.ypos + 35)) <= 10 ) {
+                doc.addPage();
+                doc.addImage(base64_img, 'png', 0, 0, page_size.width, page_size.height);
+                this.ypos = 0;
+            }
             doc.setFontSize(18)
-            doc.text(`Planta ${planta_iesima}`, 14, this.ypos + 20)
+            doc.text(`Planta ${planta_iesima}: ${total_incidencias} incidencias totales`, 14, this.ypos + 20)
             autoTable(doc,
               { head: this.headRows(), 
                 body: this.bodyRows(total_incidencias,planta_iesima), 
                 startY: this.ypos + 25, 
                 theme: 'grid',
                 rowPageBreak: 'auto',
+                tableLineColor: "#898d91",
+                tableLineWidth: 0.3,
+                styles: {
+                  lineColor: "#898d91",
+                  lineWidth: 0.3,
+                },
                 //Estilos para el cuerpo de las tablas
                 bodyStyles: { 
                   fontStyle: 'bold',
+                  halign: 'center',
                   fontSize: 10,
                 },
                 //Estilos para las cabeceras de las tablas
