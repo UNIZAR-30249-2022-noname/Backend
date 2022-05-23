@@ -2,12 +2,16 @@ import { Incidencia, IncidenciaProps } from '../../Domain/Entities/incidencia';
 import { IncidenciaRepository } from '../../Domain/IncidenciaRepository';
 import { Injectable, Inject } from '@nestjs/common';
 import { Issue } from '../../Domain/Entities/incidencia.entity';
+import { PDFService } from './PDF.service';
+import { ReportFactory } from '../../Domain/ReportFactory';
+import { Reporte } from '../../Domain/Entities/reporte';
 
 export interface servicioIncidenciaI {
   crearIncidencia(incidenciaProps: IncidenciaProps): Promise<number>;
   modificarEstadoIncidencia(id: number, state: number): Promise<number>;
   eliminarIncidencia(id: number): Promise<number>;
   obtenerTodasIncidencias(): Promise<any[]>;
+  descargarPDFIncidencias(edificio: string): Promise<any>;
 }
 
 @Injectable()
@@ -59,4 +63,13 @@ export class IncidenciaService implements servicioIncidenciaI {
 
     return IncidenciasObtenidas;
   }
+
+  async descargarPDFIncidencias(edificio: string): Promise<ArrayBuffer>{
+      let lista_incidencias: any[] = await this.incidenciarepository.obtenerIncidenciasPorEdificio(edificio);
+      let reporte: Reporte = ReportFactory.generarReporte(lista_incidencias)
+      const pdf_service = new PDFService(reporte);
+      let pdf = pdf_service.createPDF_FromIssues();
+      return pdf.output('arraybuffer');
+  }
+
 }

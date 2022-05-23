@@ -9,6 +9,7 @@ import {
   Delete,
   Req,
   Inject,
+  Res,
 } from '@nestjs/common';
 import {
   ReservaService,
@@ -25,6 +26,8 @@ import { DatosReservaProps } from '../../Mooc/Reserva/Domain/Entities/datosreser
 import { HorarioService, servicioHorarioI } from '../../Mooc/Horario/Application/usecase/horario.service';
 import { HorarioRepoPGImpl } from '../../Mooc/Horario/Infraestructure/horario.repository';
 import { EntradaProps } from '../../Mooc/Horario/Domain/Entities/entrada';
+import { Response } from 'express';
+
 
 @Controller('test')
 export class TestController {
@@ -55,6 +58,7 @@ export class TestController {
     const resultado = await this.servicioEspacios.importarEspaciosAuto();
     return resultado;
   }
+
 
   //PARA ENVIAR EL BODY DESDE POSTMAN HAY QUE UTILIZAR X-WWW-FORM-URLENCODED (RAW BODY NO FUNCIONA)
   @Post('/crearIncidencia')
@@ -155,6 +159,22 @@ export class TestController {
     return { resultado: { InfoSlots, SlotData } };
 
   }
+
+  @Post('/descargarPDF')
+  async descargarPDF(@Body() mensaje: any ,@Res() res: Response,
+  ) {
+    const edificio: string = mensaje.edificio;
+    const array_buffer_pdf: ArrayBuffer = await this.servicioIncidencias.descargarPDFIncidencias(edificio);
+    res.set({
+      'Content-Type': 'application/pdf',
+      'Content-Length': array_buffer_pdf.byteLength,
+    });
+    var newBuffer = Buffer.from(array_buffer_pdf)
+    res.end(newBuffer)
+
+  }
+
+  
 
   @Post('/actualizarHorario')
   async actualizarHorario(@Body() mensaje: any) {
