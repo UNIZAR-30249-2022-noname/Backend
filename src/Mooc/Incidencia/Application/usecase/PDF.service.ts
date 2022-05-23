@@ -27,7 +27,7 @@ export class PDFService {
         console.log("TOtal tablas: " + total_tablas);
         total_tablas = 7;
         let page_size = doc.internal.pageSize
-        const base64_img = this.base64_encode('./src/Mooc/Incidencia/Application/universidad-de-zaragoza.png')
+        const base64_img = this.base64_encode('./src/Assets/universidad-de-zaragoza.png')
         doc.addImage(base64_img, 'png', 0, 0, page_size.width, page_size.height);
         for (let i = 1; i <= total_tablas; i++) {
           const planta_iesima = this.reporte.obtenerPlantaIndice(i);
@@ -42,7 +42,7 @@ export class PDFService {
                 this.ypos = 0;
             }
             doc.setFontSize(18)
-            doc.text(`Planta ${planta_iesima}: ${total_incidencias} incidencias totales`, 14, this.ypos + 20)
+            doc.text(`Planta ${planta_iesima}: ${total_incidencias} incidencia(s) total(es)`, 14, this.ypos + 20)
             autoTable(doc,
               { head: this.headRows(), 
                 body: this.bodyRows(total_incidencias,planta_iesima), 
@@ -105,7 +105,7 @@ export class PDFService {
         if (typeof doc.putTotalPages === 'function') {
           doc.putTotalPages(this.totalPagesExp);
         }
-        doc.save('./src/Mooc/Incidencia/Application/test.pdf');
+        doc.save('./src/Assets/test.pdf');
         return doc;
     }
 
