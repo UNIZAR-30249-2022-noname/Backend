@@ -83,7 +83,9 @@ export class AMQPController {
   @Ctx() context: RmqContext,){
     const mensajeRecibido = JSON.parse(context.getMessage().content);
     const usuarioID: string = mensajeRecibido.body;
+    console.log(mensajeRecibido)
     const resultadoOperacion = await this.servicioReservas.obtenerReservasUsuario(usuarioID)
+    console.log(resultadoOperacion)
     return { resultado: resultadoOperacion, CorrelationId: mensajeRecibido.id };
 
   }

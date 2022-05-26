@@ -37,7 +37,7 @@ export abstract class ReservaAssembler {
             reserva.evento,
             [new Scheduled(Number(reserva.horainicio),60),new Scheduled(Number(reserva.horafin),0)],
             reserva.persona,
-            reserva.id,
+            String(reserva.id),
         )
     })
     return DTOReserve;

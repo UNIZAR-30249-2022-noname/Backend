@@ -5,7 +5,7 @@ export class Scheduled{
 export class ReservasUsuarioDTO {
 
     constructor(
-      public slot: string,
+      public space: string,
       public day: string,
       public event: string,
       public scheduled: Scheduled[],
