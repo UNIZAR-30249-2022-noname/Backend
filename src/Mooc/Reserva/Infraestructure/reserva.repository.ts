@@ -10,11 +10,11 @@ import dataSource from '../../../Config/ormconfig_db';
 import { DataSource, DeleteResult, UpdateResult, Repository } from 'typeorm';
 import {
   initializeDBConnector,
-  returnRepository,
   returnRepositoryTest,
 } from '../../../Infraestructure/Adapters/pg-connection';
 import { Espacio, EspacioProps } from '../../Espacio/Domain/Entities/espacio';
 import { Equal } from 'typeorm';
+import { Space } from '../../Espacio/Domain/Entities/espacio.entity';
 
 enum ReservaQueries {
   QUERY_BUSCAR_RESERVA_POR_ID = 'SELECT * FROM reservas WHERE id=$1',
@@ -35,6 +35,7 @@ export class ReservaRepoPGImpl implements ReservaRepository {
       this.repositorioReservas = repo;
     });
   }
+ 
 
   //Guarda una objeto reserva, devuelve verdad si ha podido insertar la reserva en la base de datos.
   async guardar(reserva: Reserva): Promise<Reserve> {
@@ -109,5 +110,21 @@ export class ReservaRepoPGImpl implements ReservaRepository {
       fecha: Equal(fecha),
     });
     return resultado;
+  }
+  /**
+   *  select r.fecha,r.horainicio,r.horafin,r.persona,r.evento,s.name from reserve r 
+      INNER JOIN space s ON  s.id = r.espacioid
+      WHERE r.persona='x';
+   * @param iduser : Identificador del usuario/ nombre del usuario
+   */
+  async obtenerReservasPorUsuario(iduser: string): Promise<Reserve[]> {
+     const listadoReservas: Reserve[] = await this.repositorioReservas
+      .createQueryBuilder('r')
+      .select(['r.fecha,r.id,r.horainicio,r.horafin,r.persona,r.evento,s.name'])
+      .innerJoin(Space,'s','s.id = r.espacioid')
+      .where('r.persona = :iduser',{iduser})
+      .getRawMany();
+
+      return listadoReservas;
   }
 }

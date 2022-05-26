@@ -397,7 +397,7 @@ describe('AMQPController (e2e)', () => {
     it_cond('Descargar un reporte.', async () => {
       
       const argsDescarga = {
-        building: 'Ada Byron'
+        body: 'Ada Byron'
       }
 
       const argsDescargar: Args = RabbitContextArgs.construirArgs(

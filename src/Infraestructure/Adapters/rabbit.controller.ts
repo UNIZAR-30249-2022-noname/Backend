@@ -76,6 +76,18 @@ export class AMQPController {
     );
     return { resultado: resultadoOperacion, CorrelationId: mensajeRecibido.id };
   }
+
+  @MessagePattern('obtener-reserva-usuario')
+  async obtenerReservasUsuario( 
+  @Payload() data: number[],
+  @Ctx() context: RmqContext,){
+    const mensajeRecibido = JSON.parse(context.getMessage().content);
+    const usuarioID: string = mensajeRecibido.body;
+    const resultadoOperacion = await this.servicioReservas.obtenerReservasUsuario(usuarioID)
+    return { resultado: resultadoOperacion, CorrelationId: mensajeRecibido.id };
+
+  }
+
   /**
    *
    * @param context
@@ -224,8 +236,8 @@ export class AMQPController {
   async descargarPDFIncidencias(@Payload() data: number[], @Ctx() context: RmqContext,){
 
     const mensajeRecibido = JSON.parse(context.getMessage().content);
-    console.log(mensajeRecibido);
-    const array_buffer_pdf: ArrayBuffer = await this.servicioIncidencias.descargarPDFIncidencias('Ada Byron');
+    const edificio: string = mensajeRecibido.body;
+    const array_buffer_pdf: ArrayBuffer = await this.servicioIncidencias.descargarPDFIncidencias(edificio);
     var bufferPDF = Buffer.from(array_buffer_pdf)
     return { resultado: bufferPDF, CorrelationId: mensajeRecibido.id };
 

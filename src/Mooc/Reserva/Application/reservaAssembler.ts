@@ -1,5 +1,7 @@
 import { DatosReserva } from '../Domain/Entities/datosreserva';
+import { Reserve } from '../Domain/Entities/reserva.entity';
 import { ReservasOcupadasDTO } from './reservasOcupadasDTO';
+import { ReservasUsuarioDTO, Scheduled } from './reservasUsuarioDTO';
 
 export abstract class ReservaAssembler {
   public static WriteDto(datosReserva: DatosReserva[]): ReservasOcupadasDTO[] {
@@ -25,5 +27,19 @@ export abstract class ReservaAssembler {
         );
       });
     return listadoReservasEspacio;
+  }
+
+  public static WriteDTOReserve(listadoReservas: any[]){
+    const DTOReserve: ReservasUsuarioDTO[] = listadoReservas.map( (reserva) => {
+        return new ReservasUsuarioDTO(
+            reserva.name,
+            reserva.fecha,
+            reserva.evento,
+            [new Scheduled(Number(reserva.horainicio),60),new Scheduled(Number(reserva.horafin),0)],
+            reserva.persona,
+            reserva.id,
+        )
+    })
+    return DTOReserve;
   }
 }

@@ -8,6 +8,9 @@ import ReservaException from '../src/Mooc/Reserva/Domain/reservaexception';
 
 @Injectable()
 export class MockReservaService implements servicioReservaI {
+  obtenerReservasUsuario(usuario: string): Promise<any[]> {
+    throw new Error('Method not implemented.');
+  }
   obtenerReservasEspacio(
     idEspacio: string,
     fecha: string,

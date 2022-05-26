@@ -68,6 +68,13 @@ export class TestController {
     return resultado;
   }
 
+  @Post('/obtenerReservasUser')
+  async obtenerReservasUser(@Body() body: any){
+    const usuarioID: string = body.user;
+    const resultadoOperacion = await this.servicioReservas.obtenerReservasUsuario(usuarioID)
+    return { resultado: resultadoOperacion};
+  }
+
   @Post('/modificarEstadoIncidencia')
   async modificarEstadoIncidencia(@Body() body: IncidenciaProps) {
     console.log(body);

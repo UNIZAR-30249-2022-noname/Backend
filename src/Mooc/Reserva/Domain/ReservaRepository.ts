@@ -17,4 +17,5 @@ export interface ReservaRepository {
     fecha: string,
   ): Promise<Reserve[]>;
   buscarReservaPorFechayHora(hora: string, fecha: string): Promise<Reserve>;
+  obtenerReservasPorUsuario(iduser: string): Promise<Reserve[]>;
 }

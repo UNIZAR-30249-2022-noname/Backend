@@ -21,6 +21,7 @@ export interface servicioReservaI {
     idEspacio: string,
     fecha: string,
   ): Promise<ReservasOcupadasDTO[]>;
+  obtenerReservasUsuario(usuario: string): Promise<any[]>;
 }
 
 @Injectable()
@@ -29,7 +30,7 @@ export class ReservaService implements servicioReservaI {
     @Inject('ReservaRepository')
     private readonly reservarepository: ReservaRepository,
   ) {}
-
+ 
   async obtenerReservasEspacio(
     idEspacio: string,
     fecha: string,
@@ -79,4 +80,11 @@ export class ReservaService implements servicioReservaI {
     const resultado = this.reservarepository.eliminar(parseInt(idReserva));
     return resultado;
   }
+
+  async obtenerReservasUsuario(usuario: string): Promise<any[]> {
+    const listado_reservas = this.reservarepository.obtenerReservasPorUsuario(usuario);
+    const listaReservasDTO = ReservaAssembler.WriteDTOReserve(await listado_reservas)
+    return listaReservasDTO;
+  }
+
 }
