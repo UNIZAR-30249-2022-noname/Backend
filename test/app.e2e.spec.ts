@@ -507,7 +507,7 @@ describe('AMQPController (e2e)', () => {
           description: "El enchufe no funciona.",
           state: 0,
           tags: ["reparacion"],
-          space: 'CRE.1200.00.040',
+          space: 'AULA_A0.1',
         });
       },
       25000,
