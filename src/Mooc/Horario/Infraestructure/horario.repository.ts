@@ -145,7 +145,7 @@ export class HorarioRepoPGImpl implements HorarioRepository {
                         Name: horasDisponibles.nombre,
                     },
                     RemainingHours: Math.floor(maxHoras - duracionHoras),
-                    RemainingMin: Math.abs(maxMins - duracionMinutos),
+                    RemainingMin: 60 - Math.abs(maxMins - duracionMinutos),
                     MaxHours: maxHoras,
                     MaxMin: maxMins
                 }

@@ -291,8 +291,9 @@ export class AMQPController {
     @Payload() data: number[],
     @Ctx() context: RmqContext,
   ) {
-    // TODO: FALTA CONVERTIR EL BINARIO DE RABBIT A CSV Y PASARSELO A importarCursos. ACTUALMENTE COGE AUTOMÁTICAMENTE EL Listado_207.xlsx
-    const resultado = await this.servicioHorarios.importarCursos();
+    const mensajeRecibido = JSON.parse(context.getMessage().content);
+    console.log('Procesando Solicitud(importar-cursos)', mensajeRecibido);
+    const resultado = await this.servicioHorarios.importarCursos(mensajeRecibido.body);
     return { resultado: resultado };
   }
 
