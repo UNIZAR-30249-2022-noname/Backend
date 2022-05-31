@@ -15,7 +15,8 @@ import XLSX from 'xlsx';
 import lineReader from 'line-reader';
 
 export interface servicioHorarioI {
-    importarCursos(): Promise<Boolean>;
+    importarCursos(csvContent: string): Promise<Boolean>;
+    importarCursosAuto(): Promise<Boolean>;
     actualizarHorario(plan: string, curso: number, grupo: string, entradaProps: EntradaProps[]): Promise<string>;
     obtenerEntradas(plan: string, curso: number, grupo: string): Promise<any[]>;
     obtenerHorasDisponibles(plan: string, curso: number, grupo: string): Promise<any[]>;
@@ -27,7 +28,68 @@ export class HorarioService implements servicioHorarioI {
 
     constructor(@Inject('HorarioRepository') private readonly horariorepository: HorarioRepository) { }
 
-    async importarCursos(): Promise<Boolean> {
+    async importarCursos(csvContent: string): Promise<Boolean> {
+        
+        const InsertarCursosPromise =
+            new Promise<Boolean>((resolve, reject) => {
+                //Creamos un csv a partir del string obtenido de rabbit
+                try {
+                    fs.writeFileSync('./src/Mooc/Horario/Application/usecase/Listado207.csv', csvContent);
+                  } catch (err: any) {
+                    console.log('Error writing courses csv' + err.message)
+                  }
+
+                // Leemos el fichero línea por línea
+                var i = 0
+                var asignaturas: DatosAsignatura[] = [];
+                var titulaciones: DatosTitulacion[] = [];
+                lineReader.eachLine('./src/Mooc/Horario/Application/usecase/Listado207.csv', async function (line: string) {
+                    if (i > 2) {
+                        var fieldsArray = line.split(';')
+                        var asignaturaprops: DatosAsignaturaProps = {
+                            id: 0,
+                            codasig: parseInt(fieldsArray[3]),
+                            nombre: fieldsArray[4],
+                            area: fieldsArray[7],
+                            codplan: parseInt(fieldsArray[11]),
+                            plan: fieldsArray[12],
+                            curso: parseInt(fieldsArray[17]),
+                            periodo: fieldsArray[18],
+                            destvinculo: parseInt(fieldsArray[22]),
+                            numgrupos: parseInt(fieldsArray[23]),
+                            horasestteoria: Math.ceil(parseFloat(fieldsArray[30]) / 15),
+                            horasestproblemas: Math.ceil(parseFloat(fieldsArray[32]) / 15),
+                            horasestpracticas: Math.ceil(parseFloat(fieldsArray[34]) / 15)
+                        };
+                        asignaturas.push(await DatosAsignatura.createDatosAsignatura(asignaturaprops));
+
+                        var titulacionprops: DatosTitulacionProps = {
+                            codplan: parseInt(fieldsArray[11]),
+                            nombre: fieldsArray[12],
+                            numcursos: parseInt(fieldsArray[17]),
+                            numperiodos: 2,
+                            numgrupos: [parseInt(fieldsArray[23])]
+                        };
+                        titulaciones.push(await DatosTitulacion.createDatosTitulacion(titulacionprops));
+                    }
+                    i++
+                }, async (err: any) => {
+                    if (err) throw err;
+                    try {
+                        const titulacionesParseadas: DatosTitulacion[] = await parseTitulaciones(titulaciones);
+                        //console.log(titulacionesParseadas);
+                        const resultadoOperacion = await this.horariorepository.importarCursos(asignaturas, titulacionesParseadas);
+                        resolve(resultadoOperacion)
+                    } catch (error) {
+                        reject(error)
+                    }
+                });
+            });
+
+        return InsertarCursosPromise;
+    }
+
+    async importarCursosAuto(): Promise<Boolean> {
 
         const InsertarCursosPromise =
             new Promise<Boolean>((resolve, reject) => {
@@ -60,9 +122,9 @@ export class HorarioService implements servicioHorarioI {
                             periodo: fieldsArray[18],
                             destvinculo: parseInt(fieldsArray[22]),
                             numgrupos: parseInt(fieldsArray[23]),
-                            horasestteoria: parseFloat(fieldsArray[30]),
-                            horasestproblemas: parseFloat(fieldsArray[32]),
-                            horasestpracticas: parseFloat(fieldsArray[34])
+                            horasestteoria: Math.ceil(parseFloat(fieldsArray[30]) / 15),
+                            horasestproblemas: Math.ceil(parseFloat(fieldsArray[32]) / 15),
+                            horasestpracticas: Math.ceil(parseFloat(fieldsArray[34]) / 15)
                         };
                         asignaturas.push(await DatosAsignatura.createDatosAsignatura(asignaturaprops));
 
@@ -88,21 +150,6 @@ export class HorarioService implements servicioHorarioI {
                     }
                 });
             });
-
-        /*try {
-            console.log(InsertarHorariosPromise)
-            return (await InsertarHorariosPromise).identifiers.length > 0;
-        } catch (error: any) {
-            switch (error.code) {
-                case '23505':
-                    console.log("Los cursos ya se encuentran almacenados en la base de datos.")
-                    break;
-                default:
-                    console.error("Error al insertar cursos en la Base de datos, mensaje de error: ", error.message);
-                    break;
-            }
-            return false
-        }*/
 
         return InsertarCursosPromise;
     }

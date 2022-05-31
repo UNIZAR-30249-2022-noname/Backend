@@ -1,9 +1,10 @@
-import {Entity, Column, PrimaryGeneratedColumn, ManyToOne, JoinColumn, OneToMany} from 'typeorm';
+import {Entity, Column, PrimaryGeneratedColumn, ManyToOne, JoinColumn, OneToMany, Unique} from 'typeorm';
 import { Degree } from './titulacion.entity';
 import { DatosAsignatura } from './datosasignatura';
 import { Entry } from './entrada.entity';
 
 @Entity()
+@Unique(['nombre', 'plan', 'curso'])
 export class Subject {
     @PrimaryGeneratedColumn()
     id: number;

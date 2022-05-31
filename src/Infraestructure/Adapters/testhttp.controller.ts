@@ -49,7 +49,7 @@ export class TestController {
 
   @Post('/subirCursos')
   async subirCursos() {
-    const resultado = await this.servicioHorarios.importarCursos();
+    const resultado = await this.servicioHorarios.importarCursosAuto();
     return (resultado)
   }
 

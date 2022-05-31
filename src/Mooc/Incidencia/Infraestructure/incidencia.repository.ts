@@ -7,6 +7,10 @@ import { initializeDBConnector, returnRepositoryTest } from '../../../Infraestru
 import { Inject, Injectable } from '@nestjs/common';
 import { Space } from '../../../Infraestructure/Persistence/espacio.entity';
 
+enum IncidenciaQueries {
+  QUERY_OBTENER_NOMBRE_ESPACIO = 'SELECT name FROM space WHERE id=$1'
+}
+
 @Injectable()
 export class IncidenciaRepoPGImpl implements IncidenciaRepository {
 
@@ -47,7 +51,16 @@ export class IncidenciaRepoPGImpl implements IncidenciaRepository {
   }
 
   async obtenerTodas(): Promise<Issue[]> {
+    const DataSrc: DataSource = await initializeDBConnector(dataSource);
+
     const IncidenciasObtenidas: Issue[] = await this.repositorioIncidencias.find();
+    await Promise.all(IncidenciasObtenidas.map(async function (
+      IncidenciaObtenida,
+    ) {
+      const nombreEspacio = await DataSrc.query(IncidenciaQueries.QUERY_OBTENER_NOMBRE_ESPACIO, [IncidenciaObtenida.espacioid]);
+      IncidenciaObtenida.espacioid = nombreEspacio[0].name;
+    }));
+
     return IncidenciasObtenidas;
   }
 

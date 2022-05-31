@@ -90,24 +90,6 @@ export class EspacioService implements servicioEspacioI {
               reject(error)
             }
           });
-        /*results = csvContent.split("\n").filter(csvLinea => csvLinea.split(",").length >= 44);
-          const espacios: Espacio[] = results.map(function (result) {
-            const linea: string = result.split(",");
-            const espacio = {
-              ID_ESPACIO: linea[0],
-              ID_CENTRO: linea[3],
-              NMRO_PLAZAS: parseInt(linea[44]),
-              TIPO_DE_USO: linea[6]
-            };
-            //console.log(espacio);
-            return Espacio.crearEspacioPersonalizado(espacio);
-          });
-          try {
-            const resultadoOperacion = await this.espaciorepository.importarEspacios(espacios);
-            resolve(resultadoOperacion)
-          } catch (error) {
-            reject(error)
-          }*/
       });
 
     try {

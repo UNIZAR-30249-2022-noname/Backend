@@ -12,7 +12,7 @@ import { Inject, Injectable } from "@nestjs/common";
 
 enum HorarioQueries {
     QUERY_TRUNCAR_CURSOS = 'TRUNCATE degree, subject RESTART IDENTITY CASCADE',
-    QUERY_OBTENER_HORAS_DISPONIBLES = 'SELECT nombre, tipo, SUM(duracion) AS duracion, horasestteoria, horasestproblemas, horasestpracticas FROM (SELECT * FROM entry WHERE plan=$1 AND curso=$2 AND grupo=$3) AS entry RIGHT JOIN subject ON entry.nombreasignatura=subject.nombre WHERE subject.plan=$1 AND subject.curso=$2 GROUP BY nombreasignatura,nombre,tipo,horasestteoria,horasestproblemas,horasestpracticas',
+    QUERY_OBTENER_HORAS_DISPONIBLES = 'SELECT nombre, tipo, SUM(duracion) AS duracion, horasestteoria, horasestproblemas, horasestpracticas FROM (SELECT * FROM entry WHERE plan=$1 AND curso=$2 AND grupo=$3) AS entry RIGHT JOIN subject ON entry.nombreasignatura=subject.nombre WHERE subject.plan=$1 AND subject.curso=$2 GROUP BY nombreasignatura,nombre,tipo,horasestteoria,horasestproblemas,horasestpracticas ORDER BY nombre',
     QUERY_CONTAR_TITULACIONES = 'SELECT COUNT(*) FROM degree',
     QUERY_CONTAR_ASIGNATURAS = 'SELECT COUNT(*) FROM subject'
 }
@@ -145,7 +145,7 @@ export class HorarioRepoPGImpl implements HorarioRepository {
                         Name: horasDisponibles.nombre,
                     },
                     RemainingHours: Math.floor(maxHoras - duracionHoras),
-                    RemainingMin: Math.abs(maxMins - duracionMinutos),
+                    RemainingMin: 60 - Math.abs(maxMins - duracionMinutos),
                     MaxHours: maxHoras,
                     MaxMin: maxMins
                 }
