@@ -176,7 +176,6 @@ export class AMQPController {
       State: mensajeRecibido.body.state,
       Tags: mensajeRecibido.body.tags,
       IdSpace: mensajeRecibido.body.space,
-      //IdSpace: "CRE.1200.00.040"
     };
 
     let resultado: number = await this.servicioIncidencias.crearIncidencia(incidenciaprops);

@@ -36,12 +36,18 @@ export class IncidenciaRepoPGImpl implements IncidenciaRepository {
     return issueHecha === null ? -1 : issueHecha.id;
   }
 
-  async actualizarEstado(id: number, state: number): Promise<number> {
-    const IncidenciaActualizada: UpdateResult = await this.repositorioIncidencias.update(id, {
-      estado: state,
+  async obtenerPorId(id: number): Promise<Issue> {
+    const IncidenciaObtenida: Issue = await this.repositorioIncidencias.findOneBy({ id: id })
+    console.log(IncidenciaObtenida);
+    return IncidenciaObtenida;
+  }
+
+  async actualizarEstado(incidencia: Incidencia): Promise<number> {
+    const IncidenciaActualizada: UpdateResult = await this.repositorioIncidencias.update(parseInt(incidencia.id.toString()), {
+      estado: incidencia.getDatosIncidenciaProps().State,
     });
     console.log(IncidenciaActualizada);
-    return IncidenciaActualizada.affected > 0 ? id : -1;
+    return IncidenciaActualizada.affected > 0 ? parseInt(incidencia.id.toString()) : -1;
   }
 
   async eliminar(id: number): Promise<number> {

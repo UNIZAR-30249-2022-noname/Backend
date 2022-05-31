@@ -135,8 +135,6 @@ export class HorarioRepoPGImpl implements HorarioRepository {
             for (var i = 0; i < tipoHorasPlantilla.length; i++) {
                 const duracionHoras: number = (horasDisponibles.duracion === null || horasDisponibles.tipo != i + 1) ? 0 : parseInt(horasDisponibles.duracion) / 60;
                 const duracionMinutos: number = (horasDisponibles.duracion === null || horasDisponibles.tipo != i + 1) ? 0 : parseInt(horasDisponibles.duracion) / 60 % 1 * 60;
-                //const maxHoras: number = parseInt(horasDisponibles[tipoHorasPlantilla[horasDisponibles.tipo - 1]].split(".")[0]);
-                //const maxMins: number = parseInt(horasDisponibles[tipoHorasPlantilla[horasDisponibles.tipo - 1]].split(".")[1]) * 60;
                 const maxHoras: number = parseInt(horasDisponibles[tipoHorasPlantilla[i]].split(".")[0]);
                 const maxMins: number = parseInt(horasDisponibles[tipoHorasPlantilla[i]].split(".")[1]) * 60;
                 const AvailableHours = {
