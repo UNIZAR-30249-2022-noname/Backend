@@ -1,13 +1,13 @@
-import { ReservaService } from '../src/Mooc/Reserva/Application/reserva.service';
+import { ReservaService } from '../src/Context/Reserva/Application/reserva.service';
 import { MockReservaService } from './mockReservaRepository';
-import { EspacioService } from '../src/Mooc/Espacio/Application/usecase/espacio.service';
-import { IncidenciaService } from '../src/Mooc/Incidencia/Application/usecase/incidencia.service';
-import { EspacioRepoPGImpl } from '../src/Mooc/Espacio/Infraestructure/espacio.repository';
-import { IncidenciaRepoPGImpl } from '../src/Mooc/Incidencia/Infraestructure/incidencia.repository';
-import { ReservaRepoPGImpl } from '../src/Mooc/Reserva/Infraestructure/reserva.repository';
+import { EspacioService } from '../src/Context/Espacio/Application/usecase/espacio.service';
+import { IncidenciaService } from '../src/Context/Incidencia/Application/usecase/incidencia.service';
+import { EspacioRepoPGImpl } from '../src/Context/Espacio/Infraestructure/espacio.repository';
+import { IncidenciaRepoPGImpl } from '../src/Context/Incidencia/Infraestructure/incidencia.repository';
+import { ReservaRepoPGImpl } from '../src/Context/Reserva/Infraestructure/reserva.repository';
 import dataSource from '../src/Config/ormconfig';
-import { HorarioService } from '../src/Mooc/Horario/Application/usecase/horario.service';
-import { HorarioRepoPGImpl } from '../src/Mooc/Horario/Infraestructure/horario.repository';
+import { HorarioService } from '../src/Context/Horario/Application/usecase/horario.service';
+import { HorarioRepoPGImpl } from '../src/Context/Horario/Infraestructure/horario.repository';
 
 let providers: any = undefined;
 export const it_cond = process.env.MOCKED === 'mocked-test' ? it.skip : it;

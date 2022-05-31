@@ -6,7 +6,7 @@ import {
   ManyToOne,
   JoinColumn,
 } from 'typeorm';
-import { Incidencia } from '../../Mooc/Incidencia/Domain/Entities/incidencia';
+import { Incidencia } from '../../Context/Incidencia/Domain/Entities/incidencia';
 
 @Entity()
 export class Issue {

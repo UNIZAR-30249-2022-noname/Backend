@@ -14,18 +14,18 @@ import {
 import {
   ReservaService,
   servicioReservaI,
-} from '../../Mooc/Reserva/Application/reserva.service';
-import { ReservaRepoPGImpl } from '../../Mooc/Reserva/Infraestructure/reserva.repository';
-import { EspacioService, servicioEspacioI } from '../../Mooc/Espacio/Application/usecase/espacio.service';
-import { Espacio, EspacioProps } from '../../Mooc/Espacio/Domain/Entities/espacio';
-import { EspacioRepoPGImpl } from '../../Mooc/Espacio/Infraestructure/espacio.repository';
-import { IncidenciaService, servicioIncidenciaI } from '../../Mooc/Incidencia/Application/usecase/incidencia.service';
-import { IncidenciaProps } from '../../Mooc/Incidencia/Domain/Entities/incidencia';
-import { IncidenciaRepoPGImpl } from '../../Mooc/Incidencia/Infraestructure/incidencia.repository';
-import { DatosReservaProps } from '../../Mooc/Reserva/Domain/Entities/datosreserva';
-import { HorarioService, servicioHorarioI } from '../../Mooc/Horario/Application/usecase/horario.service';
-import { HorarioRepoPGImpl } from '../../Mooc/Horario/Infraestructure/horario.repository';
-import { EntradaProps } from '../../Mooc/Horario/Domain/Entities/entrada';
+} from '../../Context/Reserva/Application/reserva.service';
+import { ReservaRepoPGImpl } from '../../Context/Reserva/Infraestructure/reserva.repository';
+import { EspacioService, servicioEspacioI } from '../../Context/Espacio/Application/usecase/espacio.service';
+import { Espacio, EspacioProps } from '../../Context/Espacio/Domain/Entities/espacio';
+import { EspacioRepoPGImpl } from '../../Context/Espacio/Infraestructure/espacio.repository';
+import { IncidenciaService, servicioIncidenciaI } from '../../Context/Incidencia/Application/usecase/incidencia.service';
+import { IncidenciaProps } from '../../Context/Incidencia/Domain/Entities/incidencia';
+import { IncidenciaRepoPGImpl } from '../../Context/Incidencia/Infraestructure/incidencia.repository';
+import { DatosReservaProps } from '../../Context/Reserva/Domain/Entities/datosreserva';
+import { HorarioService, servicioHorarioI } from '../../Context/Horario/Application/usecase/horario.service';
+import { HorarioRepoPGImpl } from '../../Context/Horario/Infraestructure/horario.repository';
+import { EntradaProps } from '../../Context/Horario/Domain/Entities/entrada';
 import { Response } from 'express';
 
 

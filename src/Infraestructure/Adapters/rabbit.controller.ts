@@ -1,12 +1,12 @@
 import {
   servicioReservaI,
   ReservaService,
-} from '../../Mooc/Reserva/Application/reserva.service';
-import { DatosReservaProps } from '../../Mooc/Reserva/Domain/Entities/datosreserva';
+} from '../../Context/Reserva/Application/reserva.service';
+import { DatosReservaProps } from '../../Context/Reserva/Domain/Entities/datosreserva';
 import {
   Espacio,
   EspacioProps,
-} from '../../Mooc/Espacio/Domain/Entities/espacio';
+} from '../../Context/Espacio/Domain/Entities/espacio';
 import * as crypto from 'crypto';
 import { Controller, Inject } from '@nestjs/common';
 import {
@@ -17,11 +17,11 @@ import {
   Ctx,
 } from '@nestjs/microservices';
 import { Reserve } from '../Persistence/reserva.entity';
-import { servicioEspacioI } from '../../Mooc/Espacio/Application/usecase/espacio.service';
-import { servicioIncidenciaI } from '../../Mooc/Incidencia/Application/usecase/incidencia.service';
-import { Incidencia, IncidenciaProps } from '../../Mooc/Incidencia/Domain/Entities/incidencia';
-import { servicioHorarioI } from 'src/Mooc/Horario/Application/usecase/horario.service';
-import { Entrada, EntradaProps } from 'src/Mooc/Horario/Domain/Entities/entrada';
+import { servicioEspacioI } from '../../Context/Espacio/Application/usecase/espacio.service';
+import { servicioIncidenciaI } from '../../Context/Incidencia/Application/usecase/incidencia.service';
+import { Incidencia, IncidenciaProps } from '../../Context/Incidencia/Domain/Entities/incidencia';
+import { servicioHorarioI } from 'src/Context/Horario/Application/usecase/horario.service';
+import { Entrada, EntradaProps } from 'src/Context/Horario/Domain/Entities/entrada';
 
 @Controller()
 export class AMQPController {

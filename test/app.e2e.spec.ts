@@ -11,9 +11,9 @@ import { Reserve } from '../src/Infraestructure/Persistence/reserva.entity';
 import { expectedOuputT3, actualizarHorarioInput, ResultadoTestObtenerReservasUsuario } from './test-data/data';
 import { it_cond } from './config';
 import { Issue } from '../src/Infraestructure/Persistence/incidencia.entity';
-import { Entry } from '../src/Mooc/Horario/Domain/Entities/entrada.entity';
-import { Degree } from '../src/Mooc/Horario/Domain/Entities/titulacion.entity';
-import { Subject } from '../src/Mooc/Horario/Domain/Entities/asignatura.entity';
+import { Entry } from '../src/Context/Horario/Domain/Entities/entrada.entity';
+import { Degree } from '../src/Context/Horario/Domain/Entities/titulacion.entity';
+import { Subject } from '../src/Context/Horario/Domain/Entities/asignatura.entity';
 
 function sleep(milliseconds: number) {
   return new Promise((resolve) => {

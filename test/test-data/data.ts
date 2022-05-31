@@ -1,4 +1,4 @@
-import { DatosReservaProps } from '../../src/Mooc/Reserva/Domain/Entities/datosreserva';
+import { DatosReservaProps } from '../../src/Context/Reserva/Domain/Entities/datosreserva';
 
 export const expectedOuputT3 = [
   {

@@ -7,8 +7,8 @@ import {
   JoinColumn,
   Unique,
 } from 'typeorm';
-import { DatosReserva, DatosReservaProps } from '../../Mooc/Reserva/Domain/Entities/datosreserva';
-import { Reserva } from '../../Mooc/Reserva/Domain/Entities/reserva';
+import { DatosReserva, DatosReservaProps } from '../../Context/Reserva/Domain/Entities/datosreserva';
+import { Reserva } from '../../Context/Reserva/Domain/Entities/reserva';
 
 @Entity()
 @Unique(['horainicio', 'fecha'])

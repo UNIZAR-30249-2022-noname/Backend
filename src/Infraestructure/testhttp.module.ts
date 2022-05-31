@@ -1,14 +1,14 @@
 import { Module } from '@nestjs/common';
-import { EspacioService } from '../Mooc/Espacio/Application/usecase/espacio.service';
+import { EspacioService } from '../Context/Espacio/Application/usecase/espacio.service';
 import dataSource from '../Config/ormconfig_db';
-import { ReservaService } from '../Mooc/Reserva/Application/reserva.service';
-import { ReservaRepoPGImpl } from '../Mooc/Reserva/Infraestructure/reserva.repository';
+import { ReservaService } from '../Context/Reserva/Application/reserva.service';
+import { ReservaRepoPGImpl } from '../Context/Reserva/Infraestructure/reserva.repository';
 import { TestController } from './Adapters/testhttp.controller';
-import { EspacioRepoPGImpl } from '../Mooc/Espacio/Infraestructure/espacio.repository';
-import { IncidenciaService } from '../Mooc/Incidencia/Application/usecase/incidencia.service';
-import { IncidenciaRepoPGImpl } from '../Mooc/Incidencia/Infraestructure/incidencia.repository';
-import { HorarioService } from '../Mooc/Horario/Application/usecase/horario.service';
-import { HorarioRepoPGImpl } from '../Mooc/Horario/Infraestructure/horario.repository';
+import { EspacioRepoPGImpl } from '../Context/Espacio/Infraestructure/espacio.repository';
+import { IncidenciaService } from '../Context/Incidencia/Application/usecase/incidencia.service';
+import { IncidenciaRepoPGImpl } from '../Context/Incidencia/Infraestructure/incidencia.repository';
+import { HorarioService } from '../Context/Horario/Application/usecase/horario.service';
+import { HorarioRepoPGImpl } from '../Context/Horario/Infraestructure/horario.repository';
 
 @Module({
   controllers: [TestController],

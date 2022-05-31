@@ -4,15 +4,15 @@ import { Transport } from '@nestjs/microservices';
 import {
   ReservaService,
   servicioReservaI,
-} from './Mooc/Reserva/Application/reserva.service';
+} from './Context/Reserva/Application/reserva.service';
 import { AMQPController } from './Infraestructure/Adapters/rabbit.controller';
-import { ReservaRepoPGImpl } from './Mooc/Reserva/Infraestructure/reserva.repository';
-import { EspacioRepoPGImpl } from './Mooc/Espacio/Infraestructure/espacio.repository';
-import { EspacioService } from './Mooc/Espacio/Application/usecase/espacio.service';
-import { IncidenciaRepoPGImpl } from './Mooc/Incidencia/Infraestructure/incidencia.repository';
-import { IncidenciaService } from './Mooc/Incidencia/Application/usecase/incidencia.service';
-import { HorarioService } from './Mooc/Horario/Application/usecase/horario.service';
-import { HorarioRepoPGImpl } from './Mooc/Horario/Infraestructure/horario.repository';
+import { ReservaRepoPGImpl } from './Context/Reserva/Infraestructure/reserva.repository';
+import { EspacioRepoPGImpl } from './Context/Espacio/Infraestructure/espacio.repository';
+import { EspacioService } from './Context/Espacio/Application/usecase/espacio.service';
+import { IncidenciaRepoPGImpl } from './Context/Incidencia/Infraestructure/incidencia.repository';
+import { IncidenciaService } from './Context/Incidencia/Application/usecase/incidencia.service';
+import { HorarioService } from './Context/Horario/Application/usecase/horario.service';
+import { HorarioRepoPGImpl } from './Context/Horario/Infraestructure/horario.repository';
 import dataSource from './Config/ormconfig_db';
 
 @Module({
