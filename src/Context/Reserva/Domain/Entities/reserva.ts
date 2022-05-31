@@ -14,8 +14,8 @@ export class Reserva extends BEntity {
     return this.Datosreserva.getProps();
   }
 
-  public calcularHoraFin(duracion: number): number {
-    return this.Datosreserva.calcularHoraFin(duracion);
+  public calcularHoraFin(duracion: number): void {
+     this.Datosreserva.calcularHoraFin(duracion);
   }
 
   getEspacio(): string {

@@ -119,7 +119,7 @@ export class EspacioRepoPGImpl implements EspacioRepository {
     // Destructuramos la query y los parámetros.
     const { query, parameters } = this.mapaTraduccionQueries[queryindex];
     const espacio: Espacio =
-      Espacio.Crear_ActualizarInformacionEspacio(espacioprops);
+      Espacio.ActualizarInformacionEspacio(espacioprops);
     //Traduccimos los parámetros.
     const parametrosQuery = sustituirParametros(
       [...parameters],

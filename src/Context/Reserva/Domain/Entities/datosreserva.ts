@@ -49,10 +49,9 @@ export class DatosReserva {
     return datosreserva;
   }
 
-  public calcularHoraFin(duracion: number): number {
+  public calcularHoraFin(duracion: number): void {
     assert(duracion >= 0 && duracion % 60 === 0, 'Duración no valida.');
     this.propsReserva.horaFin = this.propsReserva.horaInicio + duracion / 60;
-    return this.propsReserva.horaFin;
   }
 
   public getProps(): DatosReservaProps {

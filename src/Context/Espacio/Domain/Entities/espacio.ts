@@ -22,7 +22,7 @@ export class Espacio extends BEntity {
     return propsEspacio;
   }
 
-  public static Crear_ActualizarInformacionEspacio(
+  public static ActualizarInformacionEspacio(
     espacioProps: EspacioProps,
   ): Espacio {
     const capacity: number =
