@@ -7,10 +7,10 @@ import { RmqContext } from '@nestjs/microservices';
 import { RabbitContextArgs, Args } from './RabbitContextArgs';
 import providers from './config';
 import dataSource from '../src/Config/ormconfig';
-import { Reserve } from '../src/Mooc/Reserva/Domain/Entities/reserva.entity';
-import { expectedOuputT3, actualizarHorarioInput } from './test-data/data';
+import { Reserve } from '../src/Infraestructure/Persistence/reserva.entity';
+import { expectedOuputT3, actualizarHorarioInput, ResultadoTestObtenerReservasUsuario } from './test-data/data';
 import { it_cond } from './config';
-import { Issue } from '../src/Mooc/Incidencia/Domain/Entities/incidencia.entity';
+import { Issue } from '../src/Infraestructure/Persistence/incidencia.entity';
 import { Entry } from '../src/Mooc/Horario/Domain/Entities/entrada.entity';
 import { Degree } from '../src/Mooc/Horario/Domain/Entities/titulacion.entity';
 import { Subject } from '../src/Mooc/Horario/Domain/Entities/asignatura.entity';
@@ -160,6 +160,94 @@ describe('AMQPController (e2e)', () => {
           null,
           'cancelar-reserva',
         );
+        const resultadoJSON = await cancelarR(testapp, new RmqContext(args));
+        expect(resultadoJSON.resultado).toBe(true);
+      },
+      25000,
+    );
+
+    it_cond(
+      'Obtener las reservas de un usuario sin reservas debería devolver un array vacío sin reservas.',
+      async () => {
+        const argsReserva = {
+          body: 'UNKNOWNUSER123456789'
+        };
+
+        const argsObtenerReservasUsuario: Args = RabbitContextArgs.construirArgs(
+          JSON.stringify(argsReserva),
+          null,
+          'obtener-reserva-usuario',
+        );
+        //Esperamos que se inicialicen todos los repositorios
+        await sleep(1000)
+        const resultadofiltrado = await obtenerReservasUsuario(
+          testapp,
+          new RmqContext(argsObtenerReservasUsuario),
+        );
+        //El array resultante debería ser un array vacio de javascript.
+        expect(resultadofiltrado.resultado).toEqual([]);
+      }
+    );
+
+    it_cond(
+      'Obtener las reservas de un usuario con 1 única reserva debería devolver un array con una componente que contenga la reserva.',
+      async () => {
+        const argsReserva = {
+          body: {
+            day: '13-05-1300',
+            owner: 'UsuarioTestReservas12345',
+            event: 'Evento de reserva',
+            space: 'CRE.1065.00.640', // 'LABORATORIO C4 0 26'
+            scheduled: [{ hour: 9, min: 60 }],
+          },
+        };
+
+        const argsCrearReserva: Args = RabbitContextArgs.construirArgs(
+          JSON.stringify(argsReserva),
+          null,
+          'realizar-reserva',
+        );
+        //Esperamos que se inicialicen todos los repositorios
+        await sleep(1000);
+        const resultadoreserva = await realizarR(
+          testapp,
+          new RmqContext(argsCrearReserva),
+        );
+        //Argumentos a mandar para cancelar la reserva
+        const argsObject = {
+          body: {
+            id: resultadoreserva.resultado,
+          },
+        };
+        //COMPROBAR QUE APAREZCA LA RESERVA PARA EL USUARIO 'UsuarioTest'
+        const argsObtenerReservaUser = {
+          //Como parámetro mandamos al usuario que ha reservado previamente.
+          body: argsReserva.body.owner
+        };
+
+        const argsObtenerReservasUsuario: Args = RabbitContextArgs.construirArgs(
+          JSON.stringify(argsObtenerReservaUser),
+          null,
+          'obtener-reserva-usuario',
+        );
+        const resultadofiltrado = await obtenerReservasUsuario(
+          testapp,
+          new RmqContext(argsObtenerReservasUsuario),
+        );
+        //Comprobamos que se obtiene la reserva correctamente y tan solo 1.
+        expect(resultadofiltrado.resultado.length).toEqual(1);
+        expect(resultadofiltrado.resultado[0].space).toEqual(ResultadoTestObtenerReservasUsuario[0].space);
+        expect(resultadofiltrado.resultado[0].owner).toEqual(ResultadoTestObtenerReservasUsuario[0].owner);
+        expect(resultadofiltrado.resultado[0].event).toEqual(ResultadoTestObtenerReservasUsuario[0].event);
+        expect(resultadofiltrado.resultado[0].key).toEqual(resultadoreserva.resultado.toString())
+
+        //ELIMINAMOS LA RESERVA DE LA BASE DE DATOS
+        const args: Args = RabbitContextArgs.construirArgs(
+          JSON.stringify(argsObject),
+          null,
+          'cancelar-reserva',
+        );
+
         const resultadoJSON = await cancelarR(testapp, new RmqContext(args));
         expect(resultadoJSON.resultado).toBe(true);
       },
@@ -709,4 +797,8 @@ function cancelarIssue(testapp: AMQPController, contextRabbit: RmqContext){
 
 function descargarPDF(testapp: AMQPController, contextRabbit: RmqContext) {
   return testapp.descargarPDFIncidencias(null, contextRabbit);
+}
+
+function obtenerReservasUsuario(testapp: AMQPController, contextRabbit: RmqContext) {
+  return testapp.obtenerReservasUsuario(null, contextRabbit);
 }

@@ -103,6 +103,6 @@ dist
 # TernJS port file
 .tern-port
 #Docker-compose
-#docker-compose.yml
+docker-compose.yml
 #Migrations
 src/Migrations/*

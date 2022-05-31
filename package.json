@@ -91,6 +91,12 @@
     "collectCoverageFrom": [
       "**/*.ts"
     ],
+    "coveragePathIgnorePatterns": [
+      "node_modules",
+      "test-conf.ts",
+      "testhttp.controller.ts",
+      "<rootDir>/src/Migrations"
+    ],
     "roots": [
       "<rootDir>/test"
     ],

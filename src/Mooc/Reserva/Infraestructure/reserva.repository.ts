@@ -1,7 +1,7 @@
 import { Reserva } from '../Domain/Entities/reserva';
 import { ReservaRepository } from '../Domain/ReservaRepository';
 import { Inject, Injectable } from '@nestjs/common';
-import { Reserve } from '../Domain/Entities/reserva.entity';
+import { Reserve } from '../../../Infraestructure/Persistence/reserva.entity';
 import {
   DatosReserva,
   DatosReservaProps,
@@ -14,7 +14,7 @@ import {
 } from '../../../Infraestructure/Adapters/pg-connection';
 import { Espacio, EspacioProps } from '../../Espacio/Domain/Entities/espacio';
 import { Equal } from 'typeorm';
-import { Space } from '../../Espacio/Domain/Entities/espacio.entity';
+import { Space } from '../../../Infraestructure/Persistence/espacio.entity';
 
 enum ReservaQueries {
   QUERY_BUSCAR_RESERVA_POR_ID = 'SELECT * FROM reservas WHERE id=$1',

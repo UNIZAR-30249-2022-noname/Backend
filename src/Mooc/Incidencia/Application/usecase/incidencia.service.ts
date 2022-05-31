@@ -1,7 +1,7 @@
 import { Incidencia, IncidenciaProps } from '../../Domain/Entities/incidencia';
 import { IncidenciaRepository } from '../../Domain/IncidenciaRepository';
 import { Injectable, Inject } from '@nestjs/common';
-import { Issue } from '../../Domain/Entities/incidencia.entity';
+import { Issue } from '../../../../Infraestructure/Persistence/incidencia.entity';
 import { PDFService } from './PDF.service';
 import { ReportFactory } from '../../Domain/ReportFactory';
 import { Reporte } from '../../Domain/Entities/reporte';

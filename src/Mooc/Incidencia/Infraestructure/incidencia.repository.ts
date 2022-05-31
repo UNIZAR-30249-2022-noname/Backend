@@ -1,11 +1,11 @@
 import { Incidencia } from '../Domain/Entities/incidencia';
 import { IncidenciaRepository } from '../Domain/IncidenciaRepository';
-import { Issue } from '../Domain/Entities/incidencia.entity';
+import { Issue } from '../../../Infraestructure/Persistence/incidencia.entity';
 import dataSource from '../../../Config/ormconfig_db';
 import { DataSource, DeleteResult, Repository, UpdateResult } from 'typeorm';
 import { initializeDBConnector, returnRepositoryTest } from '../../../Infraestructure/Adapters/pg-connection';
 import { Inject, Injectable } from '@nestjs/common';
-import { Space } from '../../Espacio/Domain/Entities/espacio.entity';
+import { Space } from '../../../Infraestructure/Persistence/espacio.entity';
 
 @Injectable()
 export class IncidenciaRepoPGImpl implements IncidenciaRepository {

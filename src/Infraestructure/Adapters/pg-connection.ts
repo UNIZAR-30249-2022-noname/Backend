@@ -27,8 +27,3 @@ export async function returnRepositoryTest(
   return repository;
 }
 
-export async function returnRepository(target: any): Promise<Repository<any>> {
-  const DataSrc: DataSource = await initializeDBConnector(dataSource);
-  const repository = DataSrc.getRepository(target);
-  return repository;
-}

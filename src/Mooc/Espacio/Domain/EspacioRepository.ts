@@ -1,6 +1,6 @@
 import { InsertResult } from 'typeorm';
 import { Espacio, EspacioProps } from './Entities/espacio';
-import { Space } from './Entities/espacio.entity';
+import { Space } from '../../../Infraestructure/Persistence/espacio.entity';
 
 export interface EspacioRepository {
   guardar(espacio: Espacio): Promise<Space>;

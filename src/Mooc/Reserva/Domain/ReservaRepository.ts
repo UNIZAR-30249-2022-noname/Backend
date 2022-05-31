@@ -1,6 +1,6 @@
 import { DatosReservaProps } from './Entities/datosreserva';
 import { Reserva } from './Entities/reserva';
-import { Reserve } from './Entities/reserva.entity';
+import { Reserve } from '../../../Infraestructure/Persistence/reserva.entity';
 
 export interface ReservaRepository {
   guardar(reserva: Reserva): Promise<Reserve>;

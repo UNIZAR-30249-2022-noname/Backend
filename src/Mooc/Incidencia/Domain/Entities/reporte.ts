@@ -1,5 +1,5 @@
 import { RowInput } from "jspdf-autotable";
-import { Issue } from "./incidencia.entity";
+import { Issue } from "../../../../Infraestructure/Persistence/incidencia.entity";
 
 export class DatosReporte {
 

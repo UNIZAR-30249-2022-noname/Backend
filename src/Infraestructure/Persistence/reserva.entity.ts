@@ -1,4 +1,4 @@
-import { Space } from '../../../Espacio/Domain/Entities/espacio.entity';
+import { Space } from './espacio.entity';
 import {
   Entity,
   Column,
@@ -7,8 +7,8 @@ import {
   JoinColumn,
   Unique,
 } from 'typeorm';
-import { DatosReserva, DatosReservaProps } from './datosreserva';
-import { Reserva } from './reserva';
+import { DatosReserva, DatosReservaProps } from '../../Mooc/Reserva/Domain/Entities/datosreserva';
+import { Reserva } from '../../Mooc/Reserva/Domain/Entities/reserva';
 
 @Entity()
 @Unique(['horainicio', 'fecha'])

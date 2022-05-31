@@ -1,5 +1,5 @@
 import { Incidencia } from './Entities/incidencia';
-import { Issue } from './Entities/incidencia.entity';
+import { Issue } from '../../../Infraestructure/Persistence/incidencia.entity';
 
 export interface IncidenciaRepository {
   guardar(incidencia: Incidencia): Promise<number>;

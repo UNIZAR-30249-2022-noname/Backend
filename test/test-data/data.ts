@@ -161,3 +161,23 @@ export const actualizarHorarioInput: any = {
     ]
   }
 }
+
+export const ResultadoTestObtenerReservasUsuario = [
+{
+      "space": "LABORATORIO C4 0 26 ",
+      "day": "13-05-1300",
+      "event": "Evento de reserva",
+      "scheduled": [
+          {
+              "hour": 9,
+              "min": 60
+          },
+          {
+              "hour": 10,
+              "min": 0
+          }
+      ],
+      "owner": "UsuarioTestReservas12345",
+      "key": (Math.random() * 10).toString()
+}
+]

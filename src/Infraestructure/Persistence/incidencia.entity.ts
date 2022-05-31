@@ -1,4 +1,4 @@
-import { Space } from '../../../Espacio/Domain/Entities/espacio.entity';
+import { Space } from './espacio.entity';
 import {
   Entity,
   Column,
@@ -6,7 +6,7 @@ import {
   ManyToOne,
   JoinColumn,
 } from 'typeorm';
-import { Incidencia } from './incidencia';
+import { Incidencia } from '../../Mooc/Incidencia/Domain/Entities/incidencia';
 
 @Entity()
 export class Issue {

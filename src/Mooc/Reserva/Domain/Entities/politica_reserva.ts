@@ -1,8 +1,7 @@
-import { returnRepository } from '../../../../Infraestructure/Adapters/pg-connection';
 import ReservaException from '../reservaexception';
 import { ReservaRepository } from '../ReservaRepository';
 import { DatosReservaProps } from './datosreserva';
-import { Reserve } from './reserva.entity';
+import { Reserve } from '../../../../Infraestructure/Persistence/reserva.entity';
 
 function Assert(condition: boolean, message: string) {
   if (!condition) {

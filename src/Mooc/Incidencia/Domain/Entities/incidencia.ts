@@ -1,5 +1,5 @@
 import { BEntity } from '../../../../BaseEntity/BEntity';
-import { Issue } from './incidencia.entity';
+import { Issue } from '../../../../Infraestructure/Persistence/incidencia.entity';
 
 export interface IncidenciaProps {
   Title: string;

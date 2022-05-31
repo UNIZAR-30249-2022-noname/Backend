@@ -3,7 +3,7 @@ import { ValueObject } from 'types-ddd';
 import ReservaException from '../reservaexception';
 import { ReservaRepository } from '../ReservaRepository';
 import { PoliticaReserva } from './politica_reserva';
-import { Reserve } from './reserva.entity';
+import { Reserve } from '../../../../Infraestructure/Persistence/reserva.entity';
 
 export interface DatosReservaProps {
   readonly horaInicio: number;

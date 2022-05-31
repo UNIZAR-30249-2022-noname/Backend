@@ -1,5 +1,5 @@
 import { DatosReserva } from '../Domain/Entities/datosreserva';
-import { Reserve } from '../Domain/Entities/reserva.entity';
+import { Reserve } from '../../../Infraestructure/Persistence/reserva.entity';
 import { ReservasOcupadasDTO } from './reservasOcupadasDTO';
 import { ReservasUsuarioDTO, Scheduled } from './reservasUsuarioDTO';
 

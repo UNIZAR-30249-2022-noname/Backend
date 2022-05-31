@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { ReservasOcupadasDTO } from 'src/Mooc/Reserva/Application/reservasOcupadasDTO';
 import { DatosReservaProps } from 'src/Mooc/Reserva/Domain/Entities/datosreserva';
-import { Reserve } from '../src/Mooc/Reserva/Domain/Entities/reserva.entity';
+import { Reserve } from '../src/Infraestructure/Persistence/reserva.entity';
 import { servicioReservaI } from '../src/Mooc/Reserva/Application/reserva.service';
 import * as fake_data from './test-data/data';
 import ReservaException from '../src/Mooc/Reserva/Domain/reservaexception';

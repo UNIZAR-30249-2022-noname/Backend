@@ -6,7 +6,7 @@ import { Reserva } from '../Domain/Entities/reserva';
 import { Espacio } from '../../Espacio/Domain/Entities/espacio';
 import { ReservaRepository } from '../Domain/ReservaRepository';
 import { Injectable, Inject } from '@nestjs/common';
-import { Reserve } from '../Domain/Entities/reserva.entity';
+import { Reserve } from '../../../Infraestructure/Persistence/reserva.entity';
 import { ReservaRepoPGImpl } from '../Infraestructure/reserva.repository';
 import { ReservaAssembler } from './reservaAssembler';
 import { ReservasOcupadasDTO } from './reservasOcupadasDTO';

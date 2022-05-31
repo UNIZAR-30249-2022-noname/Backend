@@ -1,4 +1,4 @@
-import { Issue } from '../../../Incidencia/Domain/Entities/incidencia.entity';
+import { Issue } from './incidencia.entity';
 import {
   Entity,
   Column,
@@ -6,9 +6,9 @@ import {
   OneToMany,
   PrimaryColumn,
 } from 'typeorm';
-import { Reserve } from '../../../Reserva/Domain/Entities/reserva.entity';
-import { Espacio } from './espacio';
-import { Entry } from '../../../Horario/Domain/Entities/entrada.entity';
+import { Reserve } from './reserva.entity';
+import { Espacio } from '../../Mooc/Espacio/Domain/Entities/espacio';
+import { Entry } from '../../Mooc/Horario/Domain/Entities/entrada.entity';
 
 @Entity()
 export class Space {

@@ -2,10 +2,9 @@ import { Espacio, EspacioProps } from '../Domain/Entities/espacio';
 import { EspacioRepository } from '../Domain/EspacioRepository';
 import {
   initializeDBConnector,
-  returnRepository,
   returnRepositoryTest,
 } from '../../../Infraestructure/Adapters/pg-connection';
-import { Space } from '../Domain/Entities/espacio.entity';
+import { Space } from '../../../Infraestructure/Persistence/espacio.entity';
 import { DataSource, InsertResult, Repository } from 'typeorm';
 import { Inject, Injectable } from '@nestjs/common';
 import dataSource from '../../../Config/ormconfig_db';

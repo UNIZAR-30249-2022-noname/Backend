@@ -2,7 +2,7 @@ import { Espacio, EspacioProps } from '../../Domain/Entities/espacio';
 import { EspacioRepository } from '../../Domain/EspacioRepository';
 import { Reserva } from '../../../Reserva/Domain/Entities/reserva'
 import { Injectable, Inject } from '@nestjs/common';
-import { Space } from '../../Domain/Entities/espacio.entity';
+import { Space } from '../../../../Infraestructure/Persistence/espacio.entity';
 import csv from 'csv-parser';
 import fs from 'fs';
 import { InsertResult } from 'typeorm';
@@ -10,7 +10,6 @@ import { InsertResult } from 'typeorm';
 export interface servicioEspacioI {
   guardarEspacio(espacioProps: EspacioProps): Promise<Space>;
   buscarEspacioPorId(idEspacio: string): Promise<Space>;
-  listarReservas(idEspacio: String, fecha: String): Promise<Reserva[]>;
   importarEspacios(csvContent: string): Promise<Boolean>;
   importarEspaciosAuto(): Promise<Boolean>;
   filtrarEspacios(espacioprops: EspacioProps, fecha?: string, hora?: number): Promise<Space[]>;
@@ -48,10 +47,6 @@ export class EspacioService implements servicioEspacioI {
         hora,
       );
     return listaEspacios;
-  }
-
-  listarReservas(idEspacio: string, fecha: string): Promise<Reserva[]> {
-    throw new Error('Method not implemented.');
   }
 
   async guardarEspacio(espacioProps: EspacioProps): Promise<Space> {
