@@ -66,14 +66,14 @@ export class EspacioService implements servicioEspacioI {
     var results: any[] = [];
     //Creamos un csv a partir del string obtenido de rabbit
     try {
-      fs.writeFileSync('./src/Mooc/Espacio/Application/usecase/TB_ESPACIOS.csv', csvContent);
+      fs.writeFileSync('./src/Context/Espacio/Application/usecase/TB_ESPACIOS.csv', csvContent);
     } catch (err: any) {
       console.log('Error writing spaces csv' + err.message)
     }
     //Creamos una promise que se encarga de insertar todos los campos del fichero CSV en la base de Datos
     const InsertarEspaciosPromise =
       new Promise<InsertResult>(async (resolve, reject) => {
-        fs.createReadStream('./src/Mooc/Espacio/Application/usecase/TB_ESPACIOS.csv')
+        fs.createReadStream('./src/Context/Espacio/Application/usecase/TB_ESPACIOS.csv')
           .on('error', err => {
             reject(err)
           })
@@ -114,7 +114,7 @@ export class EspacioService implements servicioEspacioI {
     //Creamos una promise que se encarga de insertar todos los campos del fichero CSV en la base de Datos
     const InsertarEspaciosPromise =
       new Promise<InsertResult>((resolve, reject) => {
-        fs.createReadStream('./src/Mooc/Espacio/Application/usecase/TB_ESPACIOS_NO_BORRAR.csv')
+        fs.createReadStream('./src/Context/Espacio/Application/usecase/TB_ESPACIOS_NO_BORRAR.csv')
           .on('error', err => {
             reject(err)
           })

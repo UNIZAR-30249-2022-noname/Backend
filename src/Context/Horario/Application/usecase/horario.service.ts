@@ -34,7 +34,7 @@ export class HorarioService implements servicioHorarioI {
             new Promise<Boolean>((resolve, reject) => {
                 //Creamos un csv a partir del string obtenido de rabbit
                 try {
-                    fs.writeFileSync('./src/Mooc/Horario/Application/usecase/Listado207.csv', csvContent);
+                    fs.writeFileSync('./src/Context/Horario/Application/usecase/Listado207.csv', csvContent);
                   } catch (err: any) {
                     console.log('Error writing courses csv' + err.message)
                   }
@@ -43,7 +43,7 @@ export class HorarioService implements servicioHorarioI {
                 var i = 0
                 var asignaturas: DatosAsignatura[] = [];
                 var titulaciones: DatosTitulacion[] = [];
-                lineReader.eachLine('./src/Mooc/Horario/Application/usecase/Listado207.csv', async function (line: string) {
+                lineReader.eachLine('./src/Context/Horario/Application/usecase/Listado207.csv', async function (line: string) {
                     if (i > 2) {
                         var fieldsArray = line.split(';')
                         var asignaturaprops: DatosAsignaturaProps = {
@@ -94,21 +94,21 @@ export class HorarioService implements servicioHorarioI {
         const InsertarCursosPromise =
             new Promise<Boolean>((resolve, reject) => {
                 // Transformamos el fichero .xlsx en .csv
-                const excel = XLSX.readFile('./src/Mooc/Horario/Application/usecase/Listado207 2021-2022_sin TFE_sin_practicas_sin PC.xlsx');
+                const excel = XLSX.readFile('./src/Context/Horario/Application/usecase/Listado207 2021-2022_sin TFE_sin_practicas_sin PC.xlsx');
                 const csvContent = XLSX.utils.sheet_to_csv(excel.Sheets[excel.SheetNames[0]], {FS: ";"})
 
                 try {
-                    fs.writeFileSync('./src/Mooc/Horario/Application/usecase/Listado207.csv', csvContent);
+                    fs.writeFileSync('./src/Context/Horario/Application/usecase/Listado207.csv', csvContent);
                   } catch (err: any) {
                     console.log('Error writing courses csv' + err.message)
                   }
-                //XLSX.writeFile(excel, './src/Mooc/Horario/Application/usecase/Listado207.csv', { bookType: "csv"});
+                //XLSX.writeFile(excel, './src/Context/Horario/Application/usecase/Listado207.csv', { bookType: "csv"});
 
                 // Leemos el fichero línea por línea
                 var i = 0
                 var asignaturas: DatosAsignatura[] = [];
                 var titulaciones: DatosTitulacion[] = [];
-                lineReader.eachLine('./src/Mooc/Horario/Application/usecase/Listado207.csv', async function (line: string) {
+                lineReader.eachLine('./src/Context/Horario/Application/usecase/Listado207.csv', async function (line: string) {
                     if (i > 2) {
                         var fieldsArray = line.split(';')
                         var asignaturaprops: DatosAsignaturaProps = {
