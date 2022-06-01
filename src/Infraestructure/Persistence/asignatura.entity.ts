@@ -1,6 +1,6 @@
 import {Entity, Column, PrimaryGeneratedColumn, ManyToOne, JoinColumn, OneToMany, Unique} from 'typeorm';
 import { Degree } from './titulacion.entity';
-import { DatosAsignatura } from './datosasignatura';
+import { DatosAsignatura } from '../../Context/Horario/Domain/Entities/datosasignatura';
 import { Entry } from './entrada.entity';
 
 @Entity()

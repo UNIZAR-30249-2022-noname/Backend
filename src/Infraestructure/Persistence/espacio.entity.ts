@@ -8,7 +8,7 @@ import {
 } from 'typeorm';
 import { Reserve } from './reserva.entity';
 import { Espacio } from '../../Context/Espacio/Domain/Entities/espacio';
-import { Entry } from '../../Context/Horario/Domain/Entities/entrada.entity';
+import { Entry } from './entrada.entity';
 
 @Entity()
 export class Space {

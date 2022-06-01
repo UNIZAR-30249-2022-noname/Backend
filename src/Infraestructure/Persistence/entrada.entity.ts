@@ -1,9 +1,9 @@
 import {Entity, Column, PrimaryGeneratedColumn, ManyToOne, JoinColumn, Unique, PrimaryColumn} from 'typeorm';
 import { Degree } from './titulacion.entity';
-import { DatosAsignatura } from './datosasignatura';
+import { DatosAsignatura } from '../../Context/Horario/Domain/Entities/datosasignatura';
 import { Subject } from './asignatura.entity';
-import { Entrada } from './entrada';
-import { Space } from '../../../../Infraestructure/Persistence/espacio.entity';
+import { Entrada } from '../../Context/Horario/Domain/Entities/entrada';
+import { Space } from './espacio.entity';
 
 @Entity()
 export class Entry {

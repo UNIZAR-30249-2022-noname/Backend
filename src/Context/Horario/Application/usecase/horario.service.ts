@@ -9,8 +9,8 @@ import path from 'path';
 import { DatosAsignatura, DatosAsignaturaProps } from '../../Domain/Entities/datosasignatura';
 import { DatosTitulacion, DatosTitulacionProps } from '../../Domain/Entities/datostitulacion';
 import { Entrada, EntradaProps } from '../../Domain/Entities/entrada';
-import { Entry } from '../../Domain/Entities/entrada.entity';
-import { Degree } from '../../Domain/Entities/titulacion.entity';
+import { Entry } from '../../../../Infraestructure/Persistence/entrada.entity';
+import { Degree } from '../../../../Infraestructure/Persistence/titulacion.entity';
 import XLSX from 'xlsx';
 import lineReader from 'line-reader';
 

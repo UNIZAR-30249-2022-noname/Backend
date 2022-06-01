@@ -4,10 +4,10 @@ import dataSource from '../../../Config/ormconfig_db';
 import { DatosAsignatura } from "../Domain/Entities/datosasignatura";
 import { DatosTitulacion } from "../Domain/Entities/datostitulacion";
 import { HorarioRepository } from "../Domain/HorarioRepository";
-import { Subject } from "../Domain/Entities/asignatura.entity";
-import { Degree } from "../Domain/Entities/titulacion.entity";
+import { Subject } from "../../../Infraestructure/Persistence/asignatura.entity";
+import { Degree } from "../../../Infraestructure/Persistence/titulacion.entity";
 import { Entrada } from "../Domain/Entities/entrada";
-import { Entry } from "../Domain/Entities/entrada.entity";
+import { Entry } from "../../../Infraestructure/Persistence/entrada.entity";
 import { Inject, Injectable } from "@nestjs/common";
 
 enum HorarioQueries {
