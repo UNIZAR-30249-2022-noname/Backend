@@ -3,11 +3,11 @@ import {DatosReporte, Reporte} from './Entities/reporte'
 export abstract class ReportFactory{
 
     public static generarReporte(incidencias: any[]): Reporte{
-        const reporte: Reporte = this.crearReporte(incidencias)
-        return reporte;
+        const reporte: DatosReporte[] = this.crearReporte(incidencias)
+        return new Reporte(reporte);
     }
 
-    private static crearReporte(incidencias: any[]): Reporte{
+    private static crearReporte(incidencias: any[]): DatosReporte[]{
         const datos_reporte: DatosReporte[] = incidencias.map((issue, _indice) => {
             return new DatosReporte(
                 issue.titulo,
@@ -19,7 +19,7 @@ export abstract class ReportFactory{
                 issue.edificio,
               );
           });
-          return new Reporte(datos_reporte);
+          return datos_reporte;
     }
 
 }

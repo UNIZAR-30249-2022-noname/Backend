@@ -80,10 +80,9 @@ export class TestController {
     console.log(body);
     const incidenciasObtenidas =
       await this.servicioIncidencias.obtenerTodasIncidencias();
-    console.log(incidenciasObtenidas);
     const resultado = await this.servicioIncidencias.modificarEstadoIncidencia(
       parseInt(
-        incidenciasObtenidas[incidenciasObtenidas.length - 1].id.toString(),
+        incidenciasObtenidas[incidenciasObtenidas.length - 1].key.toString(),
       ),
       body.State,
     );

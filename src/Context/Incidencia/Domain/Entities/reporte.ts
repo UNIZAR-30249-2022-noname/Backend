@@ -5,13 +5,13 @@ export class DatosReporte {
 
 
     constructor(
-        public titulo: string,
-        public descripcion: string,
-        public estado: number,
-        public etiquetas: string,
-        public nombre_espacio: string,
-        public planta: string,
-        public edificio: string) {
+        public readonly titulo: string,
+        public readonly descripcion: string,
+        public readonly estado: number,
+        public readonly etiquetas: string,
+        public readonly nombre_espacio: string,
+        public readonly planta: string,
+        public readonly edificio: string) {
         }
 
     //0 nueva incidencia, 1 en progreso y 2 revisada

@@ -31,22 +31,24 @@ export class IncidenciaService implements servicioIncidenciaI {
   }
 
   async modificarEstadoIncidencia(id: number, state: number): Promise<number> {
-    const IncidenciaObtenida: Issue = await this.incidenciarepository.obtenerPorId(id);
+    try{
+      const IncidenciaObtenida: Issue = await this.incidenciarepository.obtenerPorId(id);
 
-    const incidenciaprops: IncidenciaProps = {
-      Title: IncidenciaObtenida.titulo,
-      Description: IncidenciaObtenida.descripcion,
-      State: IncidenciaObtenida.estado,
-      Tags: IncidenciaObtenida.etiquetas.split(','),
-      IdSpace: IncidenciaObtenida.espacioid,
-    };
-    const IncidenciaAModificar: Incidencia = new Incidencia(IncidenciaObtenida.id.toString(), incidenciaprops);
-
-    IncidenciaAModificar.actualizarEstado(state);
-
-    const IncidenciaModificada: number = await this.incidenciarepository.actualizarEstado(IncidenciaAModificar);
-
-    return IncidenciaModificada;
+      const incidenciaprops: IncidenciaProps = {
+        Title: IncidenciaObtenida.titulo,
+        Description: IncidenciaObtenida.descripcion,
+        State: IncidenciaObtenida.estado,
+        Tags: IncidenciaObtenida.etiquetas.split(','),
+        IdSpace: IncidenciaObtenida.espacioid,
+      };
+      const IncidenciaAModificar: Incidencia = new Incidencia(IncidenciaObtenida.id.toString(), incidenciaprops);
+      IncidenciaAModificar.actualizarEstado(state);
+      const IncidenciaModificada: number = await this.incidenciarepository.actualizarEstado(IncidenciaAModificar);
+      return IncidenciaModificada;
+    }catch (err: any){
+      //Estado no valido
+      return -1;
+    }
   }
 
   async eliminarIncidencia(id: number): Promise<number> {

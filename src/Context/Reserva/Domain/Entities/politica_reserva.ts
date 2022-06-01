@@ -1,13 +1,13 @@
 import ReservaException from '../reservaexception';
 import { ReservaRepository } from '../ReservaRepository';
 import { DatosReservaProps } from './datosreserva';
-import { Reserve } from '../../../../Infraestructure/Persistence/reserva.entity';
+import { Assert } from '../../../../shared/assert';
 
-function Assert(condition: boolean, message: string) {
+/*function Assert(condition: boolean, message: string) {
   if (!condition) {
     throw new ReservaException(message || 'Assertion failed');
   }
-}
+}*/
 
 export abstract class PoliticaReserva {
   /**
