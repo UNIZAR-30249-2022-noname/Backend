@@ -95,12 +95,13 @@
       "node_modules",
       "test-conf.ts",
       "testhttp.controller.ts",
-      "<rootDir>/src/Migrations"
+      "<rootDir>/src/Migrations",
+      "<rootDir>/src/BaseEntity"
     ],
     "roots": [
       "<rootDir>/test"
     ],
-    "coverageDirectory": "../coverage",
+    "coverageDirectory": "./coverage",
     "testEnvironment": "node"
   }
 }

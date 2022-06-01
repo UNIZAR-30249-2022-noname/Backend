@@ -13,4 +13,14 @@ export abstract class BEntity {
       id == null ? crypto.randomBytes(64).toString('hex') : id,
     );
   }
+
+  public isEqual(other: BEntity): boolean {
+    if( typeof other !== typeof this){
+      return false;
+    }
+    if(other == null ){
+      return false;
+    }
+    return this.id === other.id
+  }
 }

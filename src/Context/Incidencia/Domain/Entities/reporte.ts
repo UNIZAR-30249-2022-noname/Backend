@@ -1,4 +1,5 @@
 import { RowInput } from "jspdf-autotable";
+import { BEntity } from "../../../../BaseEntity/BEntity";
 import { Issue } from "../../../../Infraestructure/Persistence/incidencia.entity";
 
 export class DatosReporte {
@@ -24,7 +25,7 @@ export class DatosReporte {
  
 }
 
-export class Reporte {
+export class Reporte extends BEntity{
 
     private incidencias_planta: Map<string,number> = new Map([
         ["Sótano",0],
@@ -38,6 +39,7 @@ export class Reporte {
     private last_index:number = 0;
 
     constructor(private datosReporte: DatosReporte[]){
+        super(datosReporte.length.toString());
         this.datosReporte.forEach( (dato) => {
             this.incidencias_planta.set(dato.planta,this.incidencias_planta.get(dato.planta) + 1)
         })
