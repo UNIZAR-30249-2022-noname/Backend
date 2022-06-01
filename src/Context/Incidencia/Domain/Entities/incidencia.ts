@@ -2,7 +2,6 @@ import { Assert } from '../../../../shared/assert';
 import { BEntity } from '../../../../BaseEntity/BEntity';
 import { Issue } from '../../../../Infraestructure/Persistence/incidencia.entity';
 import { estadoValido } from '../estadoValido';
-import estadoValidoException from '../estadoValidoException';
 
 export enum estadoIncidencia {
   NUEVA_INCIDENCIA = 0,
@@ -34,7 +33,7 @@ export class Incidencia extends BEntity {
   *Post: Estado de la incidencia es igual a  nuevoEstado
   */
   public actualizarEstado(nuevoEstado: number){
-    Assert(estadoValido.validarEstadoIncidencia(nuevoEstado),estadoValidoException.WRONG_STATE_MSG);
+    Assert(estadoValido.validarEstadoIncidencia(nuevoEstado),"Estado de la incidencia no valido");
     this.incidenciaProps.State = nuevoEstado;
   }
 
