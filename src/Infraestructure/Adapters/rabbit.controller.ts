@@ -70,7 +70,8 @@ export class AMQPController {
   @MessagePattern('cancelar-reserva')
   async cancelarReserva(@Payload() data: number[], @Ctx() context: RmqContext) {
     const mensajeRecibido = JSON.parse(context.getMessage().content);
-    const idReserva: string = mensajeRecibido.body.id;
+    console.log('Procesando Solicitud(cancelar-reserva)', mensajeRecibido);
+    const idReserva: string = mensajeRecibido.body.key;
     const resultadoOperacion = await this.servicioReservas.eliminarReserva(
       idReserva,
     );

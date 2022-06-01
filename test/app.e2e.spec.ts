@@ -109,7 +109,7 @@ describe('AMQPController (e2e)', () => {
         //Argumentos a mandar para cancelar la reserva
         const argsObject = {
           body: {
-            id: -5,
+            key: -5,
           },
         };
         const args: Args = RabbitContextArgs.construirArgs(
@@ -152,7 +152,7 @@ describe('AMQPController (e2e)', () => {
         //Argumentos a mandar para cancelar la reserva
         const argsObject = {
           body: {
-            id: resultadoreserva.resultado,
+            key: resultadoreserva.resultado,
           },
         };
         const args: Args = RabbitContextArgs.construirArgs(
@@ -216,7 +216,7 @@ describe('AMQPController (e2e)', () => {
         //Argumentos a mandar para cancelar la reserva
         const argsObject = {
           body: {
-            id: resultadoreserva.resultado,
+            key: resultadoreserva.resultado,
           },
         };
         //COMPROBAR QUE APAREZCA LA RESERVA PARA EL USUARIO 'UsuarioTest'
